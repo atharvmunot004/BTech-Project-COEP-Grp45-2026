@@ -1,7 +1,7 @@
 # BTech-Project-COEP-Grp45-2026
 This repo contains our BTech Project. We plan on building a Quantum Hedge Fund
 
-
+```bash
 quant-fund/
   services/
     api/                # FastAPI: health, positions, orders (read-only in MVP)
@@ -23,7 +23,7 @@ quant-fund/
   tests/
   .env.example
   README.md
-
+```
 
 
 ```python
