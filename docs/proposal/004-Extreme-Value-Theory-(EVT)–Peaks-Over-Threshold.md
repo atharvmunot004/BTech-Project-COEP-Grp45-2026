@@ -70,7 +70,7 @@ Once parameters are estimated:
   Another formula:  
   $$
   \text{ES}_\alpha = \frac{ \text{VaR}_\alpha }{1 - \xi} + \frac{ \beta - \xi u }{1 - \xi }
-  $$
+  $$    
 
 - Scale for multi-day horizon if needed (carefully — tail scaling may not follow \(\sqrt{T}\)).
 
