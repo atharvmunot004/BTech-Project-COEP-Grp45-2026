@@ -32,6 +32,8 @@ Ultimately, this will lead to:
 
 ### **3.1 Core Modules**
 
+![architecture](C:\Users\vmuno\OneDrive\Desktop\COEP\BTech Project\Code-Space\docs\architecture-diagrams\architecture-diagram.excalidraw.png)
+
 | Module                                    | Function                                                 | Tools / Frameworks                                           |
 | ----------------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------ |
 | **Market Data Ingestion**                 | Collect & preprocess market and macro data               | `yfinance`, `Polygon.io`, `TimescaleDB`, `Prefect`           |

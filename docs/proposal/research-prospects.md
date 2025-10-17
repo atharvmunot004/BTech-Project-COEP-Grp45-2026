@@ -8,7 +8,7 @@ Can quantum amplitude estimation (QAE) or quantum Monte Carlo estimate portfolio
 **Possible studies**
 
 * Benchmark QAE against classical Monte Carlo for VaR and CVaR on multi-asset portfolios.
-* Measure empirical error vs. sample size → show (O(1/N)) vs (O(1/\sqrt{N})) scaling.
+* Measure empirical error vs. sample size → show $$(O(1/N))$$ vs $$(O(1/\sqrt{N}))$$ scaling.
 * Hybrid workflow: classical scenario generator + QAE evaluation.
 
 **Data / experiments**
