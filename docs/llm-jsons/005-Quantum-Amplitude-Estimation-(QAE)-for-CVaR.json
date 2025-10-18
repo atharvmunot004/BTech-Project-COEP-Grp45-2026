@@ -1,0 +1,361 @@
+{
+  "tool_name": "qae_cvar_estimator",
+  "display_name": "Quantum Amplitude Estimation (QAE) for CVaR",
+  "category": "risk_assessment",
+  "subcategory": "quantum",
+  "description": "Uses Quantum Amplitude Estimation to estimate Conditional Value-at-Risk (CVaR) more efficiently than classical Monte Carlo. Theoretically reduces sample complexity from O(1/epsilon^2) to O(1/epsilon), providing quadratic speedup under suitable quantum circuit constructions.",
+  "use_cases": [
+    "Quantum-enhanced tail-risk estimation",
+    "Speedup CVaR computation vs classical Monte Carlo",
+    "Tool selection by LLM agent under stress regimes",
+    "Comparative study: quantum vs classical risk methods",
+    "Research into quantum advantage for financial risk"
+  ],
+  "quantum_advantage": {
+    "classical_complexity": "O(1/epsilon^2) samples for error epsilon",
+    "quantum_complexity": "O(1/epsilon) queries under ideal conditions",
+    "speedup": "Quadratic speedup in sample complexity",
+    "caveats": [
+      "State preparation bottleneck",
+      "Oracle construction complexity",
+      "NISQ noise degradation",
+      "Depth vs precision tradeoff"
+    ]
+  },
+  "inputs": {
+    "w": {
+      "type": "numpy.ndarray",
+      "shape": "(N,)",
+      "description": "Portfolio weights",
+      "unit": "decimal proportion",
+      "required": true,
+      "source": "optimizer module"
+    },
+    "scenario_distribution": {
+      "type": "quantum-encodable distribution",
+      "description": "Probability distribution over return scenarios or loss states",
+      "required": true,
+      "source": "Derived from historical returns/model (same as Monte Carlo input)",
+      "encoding": "Must be encodable as quantum state amplitudes"
+    },
+    "loss_function": {
+      "type": "callable or quantum oracle",
+      "description": "For scenario x, return loss or indicator of exceeding threshold",
+      "examples": [
+        "f(x) = max(0, L(x) - tau)",
+        "f(x) = indicator(L(x) > tau)"
+      ],
+      "required": true,
+      "source": "risk model definition"
+    },
+    "alpha": {
+      "type": "float",
+      "range": "(0, 1)",
+      "description": "Tail confidence level",
+      "unit": "probability",
+      "required": true,
+      "default": 0.99,
+      "common_values": [0.95, 0.99, 0.995],
+      "source": "risk policy"
+    },
+    "threshold_tau": {
+      "type": "float",
+      "description": "VaR threshold for CVaR definition",
+      "unit": "currency or return units",
+      "required": true,
+      "source": "Either known from classical VaR tool or jointly estimated",
+      "note": "CVaR_alpha = tau + (1/(1-alpha)) * E[max(0, L - tau)]"
+    },
+    "n_q": {
+      "type": "int",
+      "description": "Number of qubits for scenario encoding, ancilla, amplitude estimation",
+      "required": true,
+      "source": "Design parameter constrained by hardware/simulator",
+      "typical_range": [8, 20]
+    },
+    "iterations": {
+      "type": "int",
+      "description": "Number of amplitude estimation calls or measurement rounds",
+      "required": true,
+      "source": "Design parameter to control precision",
+      "typical_range": [10, 1000]
+    },
+    "oracle_circuits": {
+      "type": "quantum circuit objects",
+      "description": "Quantum circuits for state preparation and payoff encoding",
+      "required": true,
+      "components": [
+        "state_preparation_circuit: maps |0> to Σ sqrt(p_i) |i>",
+        "loss_oracle: marks/rotates ancilla based on L(i) > tau"
+      ]
+    }
+  },
+  "outputs": {
+    "CVaR": {
+      "type": "float",
+      "description": "Estimated Conditional Value-at-Risk",
+      "unit": "currency or return units",
+      "computation": "CVaR_alpha = tau + amplitude_estimate",
+      "interpretation": "Average loss in tail beyond VaR threshold"
+    },
+    "amplitude_estimate": {
+      "type": "float",
+      "description": "Estimated quantum amplitude encoding tail expectation",
+      "range": "[0, 1]",
+      "formula": "a = (1/(1-alpha)) * sum_{i: L(i)>tau} p_i * (L(i) - tau)"
+    },
+    "error_bounds": {
+      "type": "tuple",
+      "description": "Confidence intervals or error estimates for amplitude",
+      "unit": "amplitude units"
+    },
+    "runtime": {
+      "type": "float",
+      "description": "Quantum circuit execution time",
+      "unit": "seconds",
+      "use": "Compare classical vs quantum performance"
+    },
+    "circuit_depth": {
+      "type": "int",
+      "description": "Depth of quantum circuit executed",
+      "use": "Track resource requirements"
+    }
+  },
+  "cvar_definition": {
+    "formula": "CVaR_alpha = tau + (1/(1-alpha)) * E[max(0, L - tau)]",
+    "where": {
+      "tau": "VaR_alpha threshold",
+      "L": "Loss random variable",
+      "alpha": "Confidence level"
+    },
+    "alternative": "CVaR_alpha = E[L | L > tau] (conditional expectation form)"
+  },
+  "algorithm_steps": [
+    {
+      "step": 1,
+      "name": "choose_fix_threshold",
+      "description": "Determine VaR threshold tau",
+      "methods": [
+        "Use classical VaR tool output",
+        "Joint estimation with CVaR",
+        "Fixed policy threshold"
+      ]
+    },
+    {
+      "step": 2,
+      "name": "define_quantum_state_oracle",
+      "description": "Design quantum circuits for scenario encoding and loss mapping",
+      "components": {
+        "state_preparation": "Prepare superposition |psi> = Σ_i sqrt(p_i) |i> encoding scenario probabilities",
+        "loss_oracle": "Implement oracle O that rotates ancilla based on loss condition L(i) > tau or encodes (L(i) - tau) in amplitude"
+      },
+      "challenges": [
+        "State preparation may require complex amplitude loading",
+        "Oracle arithmetic circuits for loss computation",
+        "Depth constraints on NISQ devices"
+      ]
+    },
+    {
+      "step": 3,
+      "name": "apply_qae",
+      "description": "Run Quantum Amplitude Estimation algorithm",
+      "variants": [
+        "Standard QAE (phase estimation based)",
+        "Iterative QAE (IQAE) - adaptive, lower depth",
+        "Real QAE - handles signed amplitudes"
+      ],
+      "process": "Estimate amplitude a such that a = (1/(1-alpha)) * sum_{i: L(i)>tau} p_i * (L(i) - tau)"
+    },
+    {
+      "step": 4,
+      "name": "compute_cvar",
+      "description": "Derive CVaR from amplitude estimate",
+      "formula": "CVaR_alpha = tau + a_est"
+    },
+    {
+      "step": 5,
+      "name": "error_precision_analysis",
+      "description": "Analyze error and precision tradeoffs",
+      "considerations": [
+        "Number of oracle calls vs precision",
+        "Circuit depth vs noise",
+        "Shallow depth may degrade to O(M^(-2/3))",
+        "Noise mitigation strategies"
+      ]
+    },
+    {
+      "step": 6,
+      "name": "validation_backtesting",
+      "description": "Compare QAE CVaR with classical baselines",
+      "metrics": [
+        "Error vs classical Monte Carlo",
+        "Error vs EVT / hybrid methods",
+        "Convergence curves",
+        "Variance across runs",
+        "Runtime comparison"
+      ]
+    },
+    {
+      "step": 7,
+      "name": "pipeline_integration",
+      "description": "Integrate into hedge fund system",
+      "tasks": [
+        "Wrap QAE as callable tool (simulator mode initially)",
+        "Feed same inputs as classical risk module (weights, scenarios)",
+        "Output: CVaR estimate, confidence bounds, runtime, circuit depth",
+        "Feed to risk gating / tool-selection frameworks",
+        "Log all parameters, seeds, circuit specs to MLflow"
+      ]
+    }
+  ],
+  "pseudocode": {
+    "language": "python",
+    "function_signature": "def qae_cvar_tool(weights, scenario_dist, alpha, tau, n_q, iterations):",
+    "implementation": "# 1. Build state-prep circuit for scenario distribution\nA = build_quantum_state_preparation(scenario_dist)  # |0> → Σ sqrt(p_i) |i>\n\n# 2. Build oracle O that marks ancilla amplitude with (L(i)-tau) * indicator\nO = build_loss_oracle(weights, tau)\n\n# 3. Combine A and O to form operator U\nU = compose(A, O)\n\n# 4. Run amplitude estimation (e.g. IQAE)\na_est, error_bounds = run_amplitude_estimation(U, n_q, iterations)\n\n# 5. Compute CVaR\ncvar = tau + a_est\n\nreturn cvar, error_bounds"
+  },
+  "dependencies": {
+    "required_libraries": [
+      "qiskit",
+      "qiskit.algorithms",
+      "qiskit.circuit.library",
+      "numpy"
+    ],
+    "optional_libraries": [
+      "qiskit-finance",
+      "cirq (alternative quantum framework)",
+      "pennylane (alternative quantum ML)",
+      "mlflow"
+    ]
+  },
+  "quantum_frameworks": [
+    {
+      "name": "Qiskit",
+      "use": "IBM quantum ecosystem, well-documented QAE implementations",
+      "modules": ["qiskit.algorithms.amplitude_estimators"]
+    },
+    {
+      "name": "Cirq",
+      "use": "Google quantum framework",
+      "note": "May require custom QAE implementation"
+    },
+    {
+      "name": "PennyLane",
+      "use": "Hybrid quantum-classical ML",
+      "note": "Good for variational approaches"
+    }
+  ],
+  "advantages": [
+    "Theoretical quadratic speedup over classical Monte Carlo",
+    "Reduced sample complexity for tail risk estimation",
+    "Enables exploration of quantum advantage in finance",
+    "Modular integration with classical risk tools",
+    "Research frontier for comparative quantum-classical study"
+  ],
+  "limitations": [
+    "State preparation bottleneck - encoding distributions is non-trivial",
+    "Oracle complexity - arithmetic circuits for loss functions are expensive",
+    "Depth vs precision tradeoff - deep circuits suffer from noise on NISQ",
+    "Threshold dependency - CVaR accuracy depends on VaR estimate",
+    "Error mitigation required on real quantum hardware",
+    "Scalability to large portfolios remains research challenge"
+  ],
+  "challenges": {
+    "state_preparation": "Encoding complex probability distributions as quantum states",
+    "oracle_construction": "Implementing loss function arithmetic in quantum circuits",
+    "noise_management": "NISQ devices have limited coherence and gate fidelity",
+    "depth_constraints": "Balancing circuit depth with precision requirements",
+    "validation": "Establishing quantum advantage in practical settings"
+  },
+  "extensions_research_directions": [
+    {
+      "name": "gradient_subgradient_qae_cvar_optimization",
+      "description": "Estimate CVaR gradients with QAE to enable direct quantum optimization of tail-risk portfolios",
+      "references": ["Quantum Subgradient Estimation for CVaR Optimization, arXiv:2510.04736"]
+    },
+    {
+      "name": "depth_limited_iterative_qae",
+      "description": "Use IQAE, real-QAE, or dynamic amplitude estimation to minimize circuit resources while preserving speedup",
+      "references": ["Real quantum amplitude estimation, EPJ Quantum Technology"]
+    },
+    {
+      "name": "hybrid_tail_estimation",
+      "description": "Use classical Monte Carlo/EVT for moderate quantiles and QAE for extreme tail beyond cutoff, blending methods",
+      "benefits": "Minimize quantum burden while targeting most critical risk region"
+    }
+  ],
+  "references": [
+    {
+      "title": "Quantum Risk Analysis: Beyond (Conditional) Value-at-Risk",
+      "authors": "Laudagé & Turkalj",
+      "source": "arXiv",
+      "url": "https://arxiv.org/pdf/2211.04456",
+      "year": 2022,
+      "relevance": "Explicitly develops QAE-based methods for CVaR and VaR with quadratic speedup analysis"
+    },
+    {
+      "title": "Quantum Risk Analysis of Financial Derivatives",
+      "authors": "Stamatopoulos, Clader, Woerner, Zeng",
+      "source": "arXiv",
+      "url": "https://arxiv.org/pdf/2404.10088",
+      "year": 2024,
+      "relevance": "Extends QAE + Quantum Signal Processing for CVaR of derivative portfolios with resource analysis"
+    },
+    {
+      "title": "Quantum risk analysis",
+      "source": "IBM Research",
+      "url": "https://research.ibm.com/publications/quantum-risk-analysis",
+      "year": 2019,
+      "relevance": "Demonstrates QAE for risk measures (VaR, CVaR) with convergence tradeoff analysis"
+    },
+    {
+      "title": "Quantum computing for financial risk measurement",
+      "source": "SpringerLink",
+      "url": "https://link.springer.com/article/10.1007/s11128-022-03777-2",
+      "year": 2022,
+      "relevance": "Analysis of quantum methods for risk estimation in practical finance contexts"
+    },
+    {
+      "title": "Quantum Monte Carlo Integration for Simulation-Based Optimization",
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/2410.03926",
+      "year": 2024,
+      "relevance": "QAE as subroutine in simulation-based optimization including CVaR/MVaR problems"
+    },
+    {
+      "title": "Real quantum amplitude estimation",
+      "source": "EPJ Quantum Technology",
+      "url": "https://epjquantumtechnology.springeropen.com/articles/10.1140/epjqt/s40507-023-00159-0",
+      "year": 2023,
+      "relevance": "Introduces real QAE for signed amplitudes, more practical under NISQ constraints"
+    },
+    {
+      "title": "Quantum Subgradient Estimation for Conditional Value-at-Risk Optimization",
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/2510.04736",
+      "year": 2025,
+      "relevance": "Shows how to estimate CVaR gradients with QAE for quantum portfolio optimization"
+    }
+  ],
+  "logging_metadata": {
+    "inputs_to_log": ["w", "alpha", "threshold_tau", "n_q", "iterations", "scenario_dist_params", "timestamp"],
+    "outputs_to_log": ["CVaR", "amplitude_estimate", "error_bounds", "runtime", "circuit_depth"],
+    "metrics_to_track": ["error_vs_classical", "convergence_rate", "noise_metrics", "speedup_factor"],
+    "storage": "MLflow + specialized quantum experiment tracking"
+  },
+  "integration_points": {
+    "classical_baseline": "Compare with Monte Carlo CVaR",
+    "hybrid_workflow": "Use classical VaR for threshold, QAE for CVaR",
+    "tool_selection": "LLM agent chooses QAE under specific regimes or research mode",
+    "risk_gating": "Feed QAE CVaR to decision logic",
+    "research_logging": "Track quantum vs classical performance metrics"
+  },
+  "computational_resources": {
+    "simulator_mode": "Run on classical quantum simulators (Qiskit Aer, statevector)",
+    "nisq_hardware": "IBM Quantum, IonQ, Rigetti (with noise mitigation)",
+    "qubits_required": "Typically 8-20 qubits depending on problem size",
+    "circuit_depth": "Varies with QAE variant and precision target",
+    "runtime": "Depends on iterations and backend"
+  },
+  "comparative_study_role": "Serves as quantum-enhanced alternative to classical Monte Carlo for tail risk. Key research question: under what conditions (regime, portfolio size, precision) does QAE provide practical advantage?"
+}
+

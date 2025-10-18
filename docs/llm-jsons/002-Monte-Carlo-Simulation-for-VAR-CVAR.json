@@ -1,0 +1,293 @@
+{
+  "tool_name": "monte_carlo_var_cvar",
+  "display_name": "Monte Carlo Simulation for VaR / CVaR",
+  "category": "risk_assessment",
+  "subcategory": "simulation",
+  "description": "Simulates thousands to millions of portfolio outcomes using Monte Carlo methods to estimate VaR (Value-at-Risk) and CVaR (Conditional Value-at-Risk / Expected Shortfall). Does not assume normality and serves as primary non-parametric risk estimator and ground truth baseline.",
+  "use_cases": [
+    "Primary non-parametric risk estimator",
+    "Ground truth baseline for comparing QAE and EVT methods",
+    "Risk gating layer for trade decisions",
+    "Scenario-based stress testing",
+    "Research logs for comparative analysis under varying market regimes"
+  ],
+  "inputs": {
+    "w": {
+      "type": "numpy.ndarray",
+      "shape": "(N,)",
+      "description": "Portfolio weights (must sum to 1)",
+      "unit": "decimal proportion",
+      "required": true,
+      "source": "optimizer (Markowitz, CVaR, QAOA)",
+      "constraints": "sum(w) = 1"
+    },
+    "returns": {
+      "type": "numpy.ndarray",
+      "shape": "(T, N)",
+      "description": "Historical returns for N assets over T periods",
+      "unit": "decimal returns",
+      "required": true,
+      "source": "market data ingestion (yfinance/Polygon/TimescaleDB)",
+      "preprocessing": "Compute from OHLCV data as log-returns or simple returns"
+    },
+    "n_sim": {
+      "type": "int",
+      "description": "Number of Monte Carlo simulations",
+      "range": "[10000, 10000000]",
+      "required": true,
+      "default": 100000,
+      "common_values": [10000, 100000, 1000000],
+      "source": "configuration parameter",
+      "note": "Higher values improve precision but increase computation time"
+    },
+    "alpha": {
+      "type": "float",
+      "range": "(0, 1)",
+      "description": "Confidence level for VaR/CVaR",
+      "unit": "probability",
+      "required": true,
+      "default": 0.99,
+      "common_values": [0.95, 0.99, 0.995],
+      "source": "risk policy"
+    },
+    "dist_model": {
+      "type": "str or object",
+      "description": "Return distribution model for simulation",
+      "required": true,
+      "options": [
+        "empirical_bootstrap",
+        "multivariate_normal",
+        "student_t",
+        "copula",
+        "regime_conditional"
+      ],
+      "default": "multivariate_normal",
+      "source": "modeling choice"
+    },
+    "T": {
+      "type": "float",
+      "description": "Forecast horizon for risk measurement",
+      "unit": "days or consistent with return units",
+      "required": true,
+      "default": 1.0,
+      "common_values": [1, 5, 10],
+      "source": "risk horizon policy"
+    },
+    "covariance_model": {
+      "type": "str",
+      "description": "Covariance estimation method",
+      "required": false,
+      "options": ["empirical", "shrinkage", "garch", "factor"],
+      "default": "empirical",
+      "source": "configuration"
+    },
+    "risk_free": {
+      "type": "float",
+      "description": "Risk-free rate for adjusted returns",
+      "unit": "decimal rate",
+      "required": false,
+      "source": "macro data (FRED, RBI, etc.)"
+    }
+  },
+  "outputs": {
+    "VaR": {
+      "type": "float",
+      "description": "Value-at-Risk at confidence level alpha",
+      "unit": "currency or return units",
+      "computation": "-quantile(portfolio_returns, 1 - alpha)",
+      "interpretation": "Maximum expected loss at confidence alpha"
+    },
+    "CVaR": {
+      "type": "float",
+      "description": "Conditional Value-at-Risk (Expected Shortfall)",
+      "unit": "currency or return units",
+      "computation": "-mean(portfolio_returns[portfolio_returns < -VaR])",
+      "interpretation": "Average loss beyond VaR threshold"
+    },
+    "simulated_returns": {
+      "type": "numpy.ndarray",
+      "shape": "(n_sim,)",
+      "description": "All simulated portfolio returns",
+      "optional": true,
+      "use": "For distribution analysis and visualization"
+    },
+    "runtime": {
+      "type": "float",
+      "description": "Computation time in seconds",
+      "unit": "seconds",
+      "use": "For comparing classical vs quantum performance"
+    }
+  },
+  "algorithm_steps": [
+    {
+      "step": 1,
+      "name": "estimate_statistical_parameters",
+      "description": "Compute rolling mean mu and covariance Sigma of returns",
+      "formula": "mu = (1/T_win) * sum(r_t), Sigma = (1/(T_win - 1)) * sum((r_t - mu)(r_t - mu).T)",
+      "enhancements": "Use robust covariance (Ledoit-Wolf) or dynamic GARCH if volatility clustering is strong"
+    },
+    {
+      "step": 2,
+      "name": "generate_random_scenarios",
+      "description": "Generate n_sim random return scenarios based on chosen distribution model",
+      "methods": {
+        "empirical_bootstrap": "Randomly resample (with replacement) historical return vectors r_t",
+        "multivariate_normal": "Simulate from N(mu, Sigma)",
+        "student_t_copula": "Capture fat tails or nonlinear dependencies",
+        "regime_conditional": "Use separate (mu, Sigma) per market regime from HMM/QBM module"
+      }
+    },
+    {
+      "step": 3,
+      "name": "compute_simulated_portfolio_returns",
+      "description": "For each simulation i, compute portfolio return",
+      "formula": "r_p^(i) = w.T @ r^(i) for i=1..n_sim",
+      "output": "Array of portfolio returns {r_p^(i)}"
+    },
+    {
+      "step": 4,
+      "name": "compute_var_cvar",
+      "description": "Compute VaR and CVaR from simulated returns",
+      "substeps": [
+        "Sort simulated returns",
+        "VaR_alpha = -Quantile_alpha(r_p)",
+        "CVaR_alpha = -E[r_p | r_p < -VaR_alpha]"
+      ],
+      "scaling": "Scale by sqrt(T) if multi-period horizon"
+    },
+    {
+      "step": 5,
+      "name": "backtesting",
+      "description": "Validate VaR/CVaR using realized portfolio losses",
+      "tasks": [
+        "Count VaR exceptions (realized loss > VaR)",
+        "Perform Kupiec (POF) test",
+        "Perform Christoffersen independence test",
+        "Track calibration: actual exception rate ≈ (1 - alpha)"
+      ]
+    },
+    {
+      "step": 6,
+      "name": "pipeline_integration",
+      "description": "Integrate into hedge fund pipeline",
+      "tasks": [
+        "Compute VaR/CVaR daily or intraday via Prefect or Ray",
+        "Feed to risk-gating logic (abort trade if VaR exceeds threshold)",
+        "Feed to LLM selection layer (log which tool chosen under which regime)",
+        "Log to MLflow (all random seeds + outputs for reproducibility)"
+      ]
+    }
+  ],
+  "pseudocode": {
+    "language": "python",
+    "function_signature": "def monte_carlo_var_cvar(returns: np.ndarray, weights: np.ndarray, alpha: float = 0.99, n_sim: int = 100000) -> Tuple[float, float]",
+    "implementation": "# Historical params\nmu = np.mean(returns, axis=0)\nSigma = np.cov(returns.T)\n\n# Simulate returns\nsims = np.random.multivariate_normal(mu, Sigma, n_sim)\nportfolio_returns = sims @ weights\n\n# Compute VaR and CVaR\nvar_value = -np.quantile(portfolio_returns, 1 - alpha)\ncvar_value = -portfolio_returns[portfolio_returns < -var_value].mean()\n\nreturn var_value, cvar_value"
+  },
+  "dependencies": {
+    "required_libraries": [
+      "numpy",
+      "scipy.stats"
+    ],
+    "optional_libraries": [
+      "sklearn.covariance",
+      "statsmodels.tsa.statespace (for regime models)",
+      "arch (for GARCH)",
+      "mlflow",
+      "ray (for parallelization)",
+      "prefect (for orchestration)"
+    ]
+  },
+  "data_flow": [
+    "Ingestion Service: fetch OHLCV data → compute returns → write to TimescaleDB",
+    "Feature Layer: compute rolling covariance, mean, volatility clustering",
+    "Risk Module: sample simulated returns, generate portfolio outcomes, compute VaR/CVaR",
+    "Log Service: record all runs (inputs, random seed, VaR, CVaR, realized losses, exceptions) in MLflow"
+  ],
+  "advantages": [
+    "No restrictive distributional assumptions",
+    "Can accommodate nonlinear payoffs, correlations, and fat tails",
+    "Modular - easy to plug into both classical and quantum estimators",
+    "Industry and academic standard for complex portfolios",
+    "Flexible scenario generation methods"
+  ],
+  "limitations": [
+    "Computationally expensive - requires many simulations for accuracy",
+    "Convergence rate O(1/sqrt(n_sim))",
+    "Quality depends on accuracy of input parameters (mu, Sigma)",
+    "May require variance reduction techniques for efficiency"
+  ],
+  "extensions_research_directions": [
+    {
+      "name": "importance_sampling_stratified_sampling",
+      "description": "Reduce variance and accelerate convergence using importance sampling or stratified sampling techniques",
+      "references": ["Jiang et al. 2025"]
+    },
+    {
+      "name": "regime_adaptive_simulations",
+      "description": "Use separate sampling parameters per regime detected by HMM/QBM module",
+      "references": ["Regime-switching models"]
+    },
+    {
+      "name": "quantum_monte_carlo_qae",
+      "description": "Replace quantile estimation with quantum amplitude-based probability estimation",
+      "references": ["Zhang et al. 2023", "QAE methods"]
+    },
+    {
+      "name": "stress_testing_module",
+      "description": "Simulate correlated shocks or volatility spikes to stress-test VaR",
+      "references": ["Stress testing literature"]
+    }
+  ],
+  "references": [
+    {
+      "title": "Assessing risk forecasting models: Monte Carlo and machine learning approaches",
+      "authors": "Giot & Laurent",
+      "source": "ScienceDirect",
+      "url": "https://www.sciencedirect.com/science/article/abs/pii/S1057521924000152",
+      "year": 2024,
+      "relevance": "Monte Carlo VaR outperforms parametric models under volatility clustering and skewed returns"
+    },
+    {
+      "title": "Monte Carlo and copula-based VaR in turbulent markets",
+      "authors": "Aziz & Nadarajah",
+      "source": "SpringerLink",
+      "url": "https://link.springer.com/article/10.1007/s10479-023-05176-4",
+      "year": 2023,
+      "relevance": "MC-VaR robust to heavy tails and correlation shifts in crisis regimes"
+    },
+    {
+      "title": "Efficient CVaR estimation using importance-sampling Monte Carlo",
+      "authors": "Jiang et al.",
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/2502.04562",
+      "year": 2025,
+      "relevance": "Faster convergence and stability for hedge fund risk portfolios"
+    },
+    {
+      "title": "Hybrid quantum–classical Monte Carlo VaR",
+      "authors": "Zhang et al.",
+      "source": "IEEE Trans. Quantum Engineering",
+      "url": "https://ieeexplore.ieee.org/document/10090514",
+      "year": 2023,
+      "relevance": "Proposes using QAE for speedup of sampling/quantile estimation"
+    }
+  ],
+  "logging_metadata": {
+    "inputs_to_log": ["w", "n_sim", "alpha", "dist_model", "T", "covariance_model", "random_seed", "timestamp"],
+    "outputs_to_log": ["VaR", "CVaR", "runtime", "n_violations"],
+    "metrics_to_track": ["violations", "violation_ratio", "kupiec_test", "runtime", "convergence_diagnostics"],
+    "storage": "MLflow + TimescaleDB + Grafana"
+  },
+  "performance_metrics": {
+    "runtime_tracking": "Log simulation compute time for classical vs quantum comparison",
+    "convergence": "Track error bounds and confidence intervals",
+    "accuracy": "Compare against realized losses and other methods"
+  },
+  "computational_complexity": {
+    "time": "O(n_sim * N) for simulation generation and portfolio return computation",
+    "space": "O(n_sim) for storing simulated returns",
+    "parallelization": "Highly parallelizable across simulations"
+  },
+  "comparative_study_role": "Acts as empirical benchmark for risk layer - baseline against which QAE and Parametric VaR are compared. Produces interpretable, quantitative performance-under-regime data for LLM orchestrator learning."
+}
+

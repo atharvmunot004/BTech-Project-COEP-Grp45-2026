@@ -1,0 +1,269 @@
+{
+  "tool_name": "parametric_var",
+  "display_name": "Parametric VaR (Variance-Covariance Method)",
+  "category": "risk_assessment",
+  "subcategory": "parametric",
+  "description": "Computes Value-at-Risk using the variance-covariance (parametric) method, assuming portfolio returns are approximately multivariate normal. Provides fast, interpretable baseline risk metric for daily/intraday gating and comparison against advanced tools.",
+  "use_cases": [
+    "Baseline risk metric for routine risk computation",
+    "Risk gating layer - abort trades if VaR exceeds threshold",
+    "Comparative benchmark against Monte Carlo, EVT, and QAE methods",
+    "VaR-constrained portfolio optimization"
+  ],
+  "inputs": {
+    "mu": {
+      "type": "numpy.ndarray",
+      "shape": "(N,)",
+      "description": "Expected returns per asset",
+      "unit": "decimal (e.g., 0.001 for 0.1%)",
+      "required": false,
+      "default": "zeros",
+      "source": "rolling historical averages, factor models, or price-prediction module",
+      "estimation_method": "Use rolling windows (e.g., 250 trading days) or exponential weighting"
+    },
+    "Sigma": {
+      "type": "numpy.ndarray",
+      "shape": "(N, N)",
+      "description": "Covariance matrix between asset returns",
+      "unit": "variance units",
+      "required": true,
+      "source": "historical return series estimation",
+      "estimation_method": "Compute from historical returns with optional shrinkage (Ledoit-Wolf) or factor models",
+      "enhancements": [
+        "Rolling windows (250 trading days)",
+        "Exponential weighting for recent volatility",
+        "Shrinkage estimators (Ledoit-Wolf, Oracle)",
+        "Factor models (PCA, Fama-French) for high dimensions"
+      ]
+    },
+    "w": {
+      "type": "numpy.ndarray",
+      "shape": "(N,)",
+      "description": "Portfolio weights (must sum to 1)",
+      "unit": "decimal proportion",
+      "required": true,
+      "source": "portfolio optimizer module (Markowitz, CVaR, QAOA)",
+      "constraints": "sum(w) = 1"
+    },
+    "alpha": {
+      "type": "float",
+      "range": "(0, 1)",
+      "description": "Confidence level for VaR calculation",
+      "unit": "probability",
+      "required": true,
+      "default": 0.99,
+      "common_values": [0.95, 0.99, 0.995],
+      "source": "risk policy configuration"
+    },
+    "T": {
+      "type": "float",
+      "description": "Holding period / forecast horizon",
+      "unit": "days or years (consistent with return units)",
+      "required": true,
+      "default": 1.0,
+      "common_values": [1, 5, 10],
+      "source": "risk horizon policy"
+    },
+    "z_alpha": {
+      "type": "float",
+      "description": "Standard normal quantile for confidence level alpha",
+      "unit": "standard deviations",
+      "required": false,
+      "computation": "scipy.stats.norm.ppf(alpha)",
+      "note": "Can be precomputed or looked up from table"
+    }
+  },
+  "outputs": {
+    "VaR": {
+      "type": "float",
+      "description": "Value-at-Risk at confidence level alpha",
+      "unit": "currency or return units",
+      "interpretation": "Maximum expected loss over horizon T at confidence alpha"
+    },
+    "portfolio_volatility": {
+      "type": "float",
+      "description": "Portfolio standard deviation (sigma_p)",
+      "unit": "return units",
+      "computation": "sqrt(w.T @ Sigma @ w)"
+    },
+    "portfolio_mean_return": {
+      "type": "float",
+      "description": "Expected portfolio return (mu_p)",
+      "unit": "return units",
+      "computation": "w.T @ mu",
+      "optional": true
+    }
+  },
+  "algorithm_steps": [
+    {
+      "step": 1,
+      "name": "gather_return_data",
+      "description": "Fetch price series P_t for t=1..T_window and compute log-returns or simple returns r_t",
+      "input": "price time series",
+      "output": "return series r_t"
+    },
+    {
+      "step": 2,
+      "name": "compute_mean_vector",
+      "description": "Compute sample mean vector",
+      "formula": "mu = (1/T_win) * sum(r_t)",
+      "implementation": "numpy.mean(returns, axis=0)"
+    },
+    {
+      "step": 3,
+      "name": "compute_covariance_matrix",
+      "description": "Compute covariance matrix with optional shrinkage/regularization",
+      "formula": "Sigma = (1/(T_win - 1)) * sum((r_t - mu)(r_t - mu).T)",
+      "implementation": "numpy.cov(returns.T) or apply Ledoit-Wolf shrinkage",
+      "enhancements": "Apply shrinkage, robust estimation, or factor models"
+    },
+    {
+      "step": 4,
+      "name": "compute_portfolio_variance",
+      "description": "Compute portfolio volatility",
+      "formula": "sigma_p = sqrt(w.T @ Sigma @ w)",
+      "implementation": "np.sqrt(w @ Sigma @ w)"
+    },
+    {
+      "step": 5,
+      "name": "compute_var",
+      "description": "Compute Value-at-Risk",
+      "formula": "VaR_alpha = z_alpha * sigma_p * sqrt(T)",
+      "alternative_formula": "VaR = mu_p - z_alpha * sigma_p * sqrt(T) (with drift)",
+      "implementation": "z * sigma_p * np.sqrt(T)"
+    },
+    {
+      "step": 6,
+      "name": "backtesting_validation",
+      "description": "Validate VaR estimates against realized returns",
+      "tasks": [
+        "Compute daily realized portfolio returns",
+        "Count exceptions (losses exceeding VaR)",
+        "Perform Kupiec proportion-of-failures test",
+        "Perform Christoffersen conditional coverage test",
+        "Track violation ratio vs expected (e.g., 1% for 99% VaR)"
+      ]
+    },
+    {
+      "step": 7,
+      "name": "pipeline_integration",
+      "description": "Integrate into hedge fund pipeline",
+      "tasks": [
+        "Run daily/intraday via Prefect or Ray",
+        "Feed computed VaR to risk gating module",
+        "Feed to optimizer modules as constraints",
+        "Log all inputs and outputs (mu, Sigma, w, VaR, violations) to MLflow/TimescaleDB"
+      ]
+    }
+  ],
+  "pseudocode": {
+    "language": "python",
+    "function_signature": "def parametric_var(mu: np.ndarray, Sigma: np.ndarray, w: np.ndarray, alpha: float = 0.99, T: float = 1.0) -> float",
+    "implementation": "z = norm.ppf(alpha)\nsigma_p = np.sqrt(w @ Sigma @ w)\nVaR = z * sigma_p * np.sqrt(T)\nreturn VaR",
+    "with_drift": "mu_p = w @ mu\nVaR = mu_p - z * sigma_p * np.sqrt(T)"
+  },
+  "dependencies": {
+    "required_libraries": [
+      "numpy",
+      "scipy.stats"
+    ],
+    "optional_libraries": [
+      "sklearn.covariance (for Ledoit-Wolf shrinkage)",
+      "statsmodels (for backtesting)",
+      "mlflow (for logging)",
+      "timescaledb/postgresql (for storage)"
+    ]
+  },
+  "advantages": [
+    "Fast computation - analytic closed-form solution",
+    "Interpretable and transparent",
+    "Industry standard baseline (RiskMetrics)",
+    "Easy integration with mean-variance optimization",
+    "Suitable for daily/intraday updates"
+  ],
+  "limitations": [
+    "Assumes normality - underestimates tail risk with skewed/fat-tailed distributions",
+    "Estimation error in covariance degrades accuracy in high dimensions",
+    "Static weights assumption weak for dynamic portfolios",
+    "Not suitable for options or nonlinear payoffs"
+  ],
+  "extensions_research_directions": [
+    {
+      "name": "tail_adjusted_parametric_var",
+      "description": "Augment parametric VaR with tail correction using Generalized Pareto Distribution in tail region, blending parametric central + EVT tail",
+      "references": ["MDPI Transformational Approach", "Prakash et al. 2021"]
+    },
+    {
+      "name": "robust_shrinkage_covariance",
+      "description": "Integrate Ledoit-Wolf, factor-based shrinkage, or robust M-estimators for Sigma estimation to reduce noise",
+      "references": ["Ledoit-Wolf", "Factor models"]
+    },
+    {
+      "name": "regime_adaptive_var",
+      "description": "Use regime detection (HMM, QBM) to switch between multiple covariance models or parametric variants per regime",
+      "references": ["Regime-switching models"]
+    }
+  ],
+  "references": [
+    {
+      "title": "Parametric Method in Value at Risk (VaR): Definition and Examples",
+      "source": "Investopedia",
+      "url": "https://www.investopedia.com/ask/answers/041715/what-variancecovariance-matrix-or-parametric-method-value-risk-var.asp",
+      "year": null,
+      "relevance": "Industry standard explanation and methodology"
+    },
+    {
+      "title": "Transformational Approach to Analytical Value-at-Risk",
+      "authors": "Prakash et al.",
+      "source": "MDPI",
+      "url": "https://www.mdpi.com/1911-8074/14/2/51",
+      "year": 2021,
+      "relevance": "Proposes transforms to handle skewness and kurtosis before normality assumption"
+    },
+    {
+      "title": "Mean-Variance-VaR portfolios: MIQP formulation and performance analysis",
+      "authors": "Cesarone et al.",
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/2111.09773",
+      "year": 2021,
+      "relevance": "Integration of VaR constraints into mean-variance models"
+    },
+    {
+      "title": "On the efficiency of risk measures for funds of hedge funds",
+      "authors": "Laube et al.",
+      "source": "SpringerLink",
+      "url": "https://link.springer.com/article/10.1057/jdhf.2011.3",
+      "year": 2011,
+      "relevance": "Examines parametric methods' stability in hedge fund contexts"
+    }
+  ],
+  "logging_metadata": {
+    "inputs_to_log": ["mu", "Sigma", "w", "alpha", "T", "timestamp"],
+    "outputs_to_log": ["VaR", "portfolio_volatility", "portfolio_mean_return", "z_alpha"],
+    "metrics_to_track": ["violations_count", "violation_ratio", "kupiec_test_pvalue", "christoffersen_test_pvalue"],
+    "storage": "MLflow + TimescaleDB"
+  },
+  "integration_points": {
+    "data_ingestion": "Fetch OHLCV data from yfinance/Polygon → compute returns",
+    "feature_layer": "Compute rolling covariance, mean, volatility clustering",
+    "risk_gating": "Use VaR as threshold to abort/adjust trades",
+    "optimizer": "Feed as constraint in portfolio optimization",
+    "logging": "Record runs, inputs, outputs in MLflow",
+    "comparative_study": "Benchmark against Monte Carlo, EVT, QAE"
+  },
+  "backtesting": {
+    "methods": [
+      "Kupiec proportion-of-failures (POF) test",
+      "Christoffersen conditional coverage test",
+      "Traffic light approach (Basel)"
+    ],
+    "expected_violation_rate": "1 - alpha (e.g., 0.01 for 99% VaR)",
+    "metrics": ["violation_count", "violation_ratio", "test_statistics", "p_values"]
+  },
+  "computational_complexity": {
+    "time": "O(N^2) for covariance matrix multiplication",
+    "space": "O(N^2) for covariance matrix storage",
+    "scalability": "Efficient for N < 1000; use factor models or sparsity for larger N"
+  }
+}
+

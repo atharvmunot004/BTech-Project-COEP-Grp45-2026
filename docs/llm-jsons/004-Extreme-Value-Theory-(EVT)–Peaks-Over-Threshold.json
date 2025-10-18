@@ -1,0 +1,291 @@
+{
+  "tool_name": "evt_pot_tail_risk",
+  "display_name": "Extreme Value Theory (EVT) – Peaks Over Threshold (POT)",
+  "category": "risk_assessment",
+  "subcategory": "tail_modeling",
+  "description": "Focuses on tail behavior of loss distributions using Peaks Over Threshold (POT) method with Generalized Pareto Distribution (GPD). Models excesses above a high threshold to robustly estimate tail-based VaR and Expected Shortfall in high-confidence regimes.",
+  "use_cases": [
+    "Estimate tail-based VaR/ES robustly at high confidence (99.9%+)",
+    "Tail-adjustment complement to parametric and Monte Carlo tools",
+    "Regime-conditional extreme risk estimates",
+    "Benchmark in comparative study for crisis periods",
+    "Stress testing and extreme scenario analysis"
+  ],
+  "inputs": {
+    "losses": {
+      "type": "numpy.ndarray",
+      "shape": "(T,)",
+      "description": "Loss series (or negative returns) for portfolio",
+      "unit": "currency or return units",
+      "required": true,
+      "source": "Compute from historical returns and weights: L_t = -w.T @ r_t",
+      "preprocessing": "Optionally standardize by current volatility (GARCH-normalized residuals)"
+    },
+    "u": {
+      "type": "float",
+      "description": "High threshold beyond which to model as extreme",
+      "unit": "same as losses",
+      "required": true,
+      "source": "Choose via percentile (95th, 98th) or automated threshold selection",
+      "selection_methods": [
+        "Fixed percentile (e.g., 95th, 98th)",
+        "Mean excess plot",
+        "Threshold stability plots",
+        "Automatic threshold selection (bias-variance tradeoff)",
+        "Recent methods (Hambuckers et al. 2023)"
+      ]
+    },
+    "alpha": {
+      "type": "float",
+      "range": "(0, 1)",
+      "description": "Confidence level for VaR/ES calculation",
+      "unit": "probability",
+      "required": true,
+      "default": 0.99,
+      "common_values": [0.99, 0.995, 0.999],
+      "source": "risk policy"
+    },
+    "T_horizon": {
+      "type": "float",
+      "description": "Horizon scaling (time period)",
+      "unit": "days or years",
+      "required": false,
+      "default": 1.0,
+      "source": "risk horizon policy",
+      "note": "Tail scaling may not follow sqrt(T) - use carefully"
+    },
+    "covariates": {
+      "type": "numpy.ndarray or pandas.DataFrame",
+      "description": "Optional explanatory variables for tail parameters",
+      "required": false,
+      "examples": ["volatility regime", "market factors"],
+      "source": "feature pipeline / regime detector"
+    }
+  },
+  "outputs": {
+    "xi": {
+      "type": "float",
+      "description": "GPD tail shape parameter",
+      "interpretation": {
+        "xi > 0": "Heavy tail (Pareto-type)",
+        "xi = 0": "Exponential tail",
+        "xi < 0": "Bounded tail"
+      },
+      "typical_range": "[-0.5, 0.5] for financial data"
+    },
+    "beta": {
+      "type": "float",
+      "description": "GPD scale parameter",
+      "constraints": "beta > 0",
+      "interpretation": "Controls spread of excesses above threshold"
+    },
+    "VaR": {
+      "type": "float",
+      "description": "Tail Value-at-Risk at confidence level alpha",
+      "unit": "currency or return units",
+      "formula": "VaR_alpha = u + (beta/xi) * ((k/n)/(1-alpha))^xi - 1)",
+      "interpretation": "Maximum expected loss in tail region"
+    },
+    "ES": {
+      "type": "float",
+      "description": "Expected Shortfall (CVaR) at confidence level alpha",
+      "unit": "currency or return units",
+      "formula": "ES_alpha = VaR_alpha / (1 - xi) + (beta - xi*u) / (1 - xi)",
+      "interpretation": "Average loss beyond VaR threshold",
+      "constraint": "Valid for xi < 1"
+    },
+    "n_exceedances": {
+      "type": "int",
+      "description": "Number of observations exceeding threshold u",
+      "variable": "k"
+    },
+    "diagnostics": {
+      "type": "dict",
+      "description": "Goodness-of-fit and diagnostic metrics",
+      "includes": ["qq_plot_data", "parameter_stability", "threshold_sensitivity"]
+    }
+  },
+  "gpd_model": {
+    "cdf": "G(y) = 1 - (1 + xi*y/beta)^(-1/xi) for xi != 0",
+    "pdf": "g(y) = (1/beta) * (1 + xi*y/beta)^(-(1+1/xi))",
+    "support": "y >= 0 (excesses above threshold)",
+    "parameters": {
+      "xi": "shape (tail heaviness)",
+      "beta": "scale (spread)"
+    }
+  },
+  "algorithm_steps": [
+    {
+      "step": 1,
+      "name": "preprocessing_loss_series",
+      "description": "Compute portfolio loss series and optionally standardize",
+      "formula": "L_t = -w.T @ r_t",
+      "optional": "Standardize by GARCH volatility: L_t / sigma_t"
+    },
+    {
+      "step": 2,
+      "name": "threshold_selection",
+      "description": "Choose threshold u for defining extreme events",
+      "methods": {
+        "percentile": "Set u as 95th or 98th percentile of losses",
+        "mean_excess_plot": "Plot average excesses vs threshold, look for linearity",
+        "threshold_stability": "Plot parameter estimates vs u, choose stable region",
+        "automated": "Minimize bias-variance tradeoff (recent methods)"
+      },
+      "considerations": "Higher u = fewer exceedances = higher variance but lower bias"
+    },
+    {
+      "step": 3,
+      "name": "extract_excesses",
+      "description": "Extract exceedances above threshold",
+      "formula": "excesses = {y_i = L_i - u | L_i > u}",
+      "count": "k = number of exceedances"
+    },
+    {
+      "step": 4,
+      "name": "fit_gpd_to_excesses",
+      "description": "Estimate GPD parameters xi and beta via Maximum Likelihood",
+      "method": "Maximum Likelihood Estimation (MLE)",
+      "likelihood": "L(xi, beta | excesses) = product_i g(y_i; xi, beta)",
+      "optimization": "Maximize log-likelihood using scipy.optimize.minimize",
+      "enhancements": [
+        "Robust estimation if sample is small or noisy",
+        "Covariate regression: let xi and/or beta depend on features",
+        "Joint threshold-parameter estimation (Hambuckers et al. 2023)"
+      ]
+    },
+    {
+      "step": 5,
+      "name": "compute_tail_var_es",
+      "description": "Calculate tail VaR and Expected Shortfall",
+      "var_formula": "VaR_alpha = u + (beta/xi) * ((k/n)/(1-alpha))^xi - 1)",
+      "es_formula": "ES_alpha = VaR_alpha / (1-xi) + (beta - xi*u) / (1-xi)",
+      "scaling": "For multi-day horizon, scale carefully (tail scaling != sqrt(T))"
+    },
+    {
+      "step": 6,
+      "name": "diagnostics_validation",
+      "description": "Validate GPD fit and tail estimates",
+      "tests": [
+        "QQ-plots of exceedances",
+        "Probability plots",
+        "Parameter stability across thresholds",
+        "Goodness-of-fit tests",
+        "Backtest: count violations beyond VaR/ES",
+        "Kupiec and Christoffersen tests"
+      ]
+    },
+    {
+      "step": 7,
+      "name": "pipeline_integration",
+      "description": "Integrate into hedge fund system",
+      "tasks": [
+        "Run EVT/POT daily or when regime indicates stress",
+        "Compare with parametric and Monte Carlo VaR/ES",
+        "Feed tail estimates to risk gating and LLM tool selection",
+        "Log all parameters, thresholds, estimates to MLflow"
+      ]
+    }
+  ],
+  "pseudocode": {
+    "language": "python",
+    "imports": "import numpy as np\nfrom scipy.stats import genpareto\nfrom scipy.optimize import minimize",
+    "fit_gpd": "def fit_gpd_excesses(excesses):\n    def neg_loglik(params):\n        xi, beta = params\n        if beta <= 0:\n            return np.inf\n        return -np.sum(genpareto.logpdf(excesses, c=xi, scale=beta))\n    res = minimize(neg_loglik, x0=[0.1, np.std(excesses)], bounds=[(-1,2), (1e-6, None)])\n    xi, beta = res.x\n    return xi, beta",
+    "compute_var_es": "def evt_var_es(losses, u, alpha):\n    exceed = losses[losses > u]\n    excesses = exceed - u\n    xi, beta = fit_gpd_excesses(excesses)\n    n = len(losses)\n    k = len(exceed)\n    frac = k / n\n    var = u + (beta / xi) * ((frac / (1 - alpha))**xi - 1)\n    es = var / (1 - xi) + (beta - xi * u) / (1 - xi)\n    return var, es, xi, beta"
+  },
+  "dependencies": {
+    "required_libraries": [
+      "numpy",
+      "scipy.stats",
+      "scipy.optimize"
+    ],
+    "optional_libraries": [
+      "statsmodels (for diagnostics)",
+      "mlflow",
+      "matplotlib (for plots)"
+    ]
+  },
+  "advantages": [
+    "Concentrates modeling power on tail region where risk matters most",
+    "More robust to tail behavior deviations from normality",
+    "Does not dilute estimation over entire distribution",
+    "Well-suited for stress/crisis periods",
+    "Provides extreme quantile estimates (99.9%+) with confidence"
+  ],
+  "limitations": [
+    "Threshold selection is subjective and critical",
+    "Requires sufficient tail data (exceedances)",
+    "Parameter estimates can be unstable with small k",
+    "Scaling to multi-period horizons is non-trivial",
+    "Does not model central distribution"
+  ],
+  "extensions_research_directions": [
+    {
+      "name": "regime_adaptive_pot",
+      "description": "Let threshold u and tail parameters vary by regime (HMM/QBM)",
+      "benefits": "Adapt to regime-specific tail behavior"
+    },
+    {
+      "name": "dynamic_threshold_estimation",
+      "description": "Jointly infer u with GPD parameters (Hambuckers et al. 2023)",
+      "benefits": "Reduce threshold selection subjectivity",
+      "references": ["Hambuckers et al. 2023"]
+    },
+    {
+      "name": "realized_pot_rpot",
+      "description": "Integrate high-frequency data (intraday volatility) to condition tail models",
+      "benefits": "Improve tail forecasts using realized measures",
+      "references": ["Bee et al. Realized POT"]
+    }
+  ],
+  "references": [
+    {
+      "title": "Realized Peaks Over Threshold (Realized POT)",
+      "authors": "Bee et al.",
+      "relevance": "Proposes using intraday data to improve tail forecasts beyond daily-only models"
+    },
+    {
+      "title": "Dynamic threshold exceedance models and extreme risk forecasting",
+      "authors": "Candia et al.",
+      "year": 2024,
+      "relevance": "Surveys dynamic threshold models, showing EVT-based models often outperform conventional ones"
+    },
+    {
+      "title": "Threshold selection and tail risk estimation",
+      "authors": "Benito et al.",
+      "year": 2023,
+      "relevance": "Analyzes how threshold choice affects risk estimates"
+    },
+    {
+      "title": "Efficient Estimation in Extreme Value Regression Models",
+      "authors": "Hambuckers et al.",
+      "year": 2023,
+      "relevance": "Proposes joint estimation of threshold and tail parameters"
+    },
+    {
+      "title": "Conditional EVT models (2T-POT Hawkes)",
+      "authors": "Tomlinson et al.",
+      "year": 2022,
+      "relevance": "Shows improved extreme quantile forecasts vs GARCH-EVT hybrids"
+    }
+  ],
+  "logging_metadata": {
+    "inputs_to_log": ["losses", "u", "alpha", "T_horizon", "n_exceedances", "timestamp"],
+    "outputs_to_log": ["xi", "beta", "VaR", "ES", "threshold_diagnostics"],
+    "metrics_to_track": ["parameter_stability", "qq_plot_scores", "backtest_violations"],
+    "storage": "MLflow + TimescaleDB"
+  },
+  "integration_points": {
+    "data_source": "Historical returns → portfolio losses",
+    "tail_adjustment": "Complement to parametric and Monte Carlo VaR",
+    "regime_detection": "Use EVT when regime indicates stress or crisis",
+    "comparative_study": "Benchmark tail estimates against other methods",
+    "risk_gating": "Use tail VaR/ES for extreme risk thresholds"
+  },
+  "computational_complexity": {
+    "time": "O(T) for threshold selection and exceedance extraction, O(k) for MLE (k = exceedances)",
+    "space": "O(T) for loss series, O(k) for excesses",
+    "scalability": "Efficient for univariate tails; multivariate EVT more complex"
+  }
+}
+

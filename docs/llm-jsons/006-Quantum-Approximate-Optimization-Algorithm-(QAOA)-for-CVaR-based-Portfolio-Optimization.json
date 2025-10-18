@@ -1,0 +1,391 @@
+{
+  "tool_name": "qaoa_cvar_portfolio_optimizer",
+  "display_name": "QAOA for CVaR-based Portfolio Optimization",
+  "category": "portfolio_optimization",
+  "subcategory": "quantum",
+  "description": "Uses Quantum Approximate Optimization Algorithm (QAOA) to solve CVaR-based portfolio optimization problems. Minimizes expected tail losses subject to constraints using variational quantum circuits on NISQ devices. Acts as quantum optimizer alternative to classical CVaR solvers.",
+  "use_cases": [
+    "Quantum optimizer for tail-risk minimization",
+    "Alternative to classical CVaR portfolio solvers",
+    "LLM agent tool selection for quantum vs classical optimization",
+    "Research into quantum advantage for combinatorial portfolio problems",
+    "Discrete portfolio allocation under tail risk constraints"
+  ],
+  "optimization_objective": {
+    "general_form": "min_w [ tau + (1/(1-alpha)) * E[max(0, L(w) - tau)] ]",
+    "subject_to": [
+      "sum(w) = budget",
+      "w_i >= lower_bound",
+      "w_i <= upper_bound",
+      "cardinality constraints (optional)"
+    ],
+    "alternative_form": "min_w CVaR_alpha(w) - lambda * E[return(w)]",
+    "note": "CVaR-return tradeoff with penalty parameter lambda"
+  },
+  "inputs": {
+    "mu": {
+      "type": "numpy.ndarray",
+      "shape": "(N,)",
+      "description": "Expected returns per asset",
+      "unit": "decimal returns",
+      "required": true,
+      "source": "prediction module or historical returns"
+    },
+    "Sigma": {
+      "type": "numpy.ndarray",
+      "shape": "(N, N)",
+      "description": "Covariance matrix or risk estimates",
+      "unit": "variance units",
+      "required": false,
+      "source": "risk / covariance estimation pipeline",
+      "note": "Used if modeling return distribution parametrically"
+    },
+    "scenarios": {
+      "type": "numpy.ndarray",
+      "shape": "(n_scenarios, N)",
+      "description": "Sampled return scenarios for scenario-based optimization",
+      "required": true,
+      "source": "scenario generation or historical sample mapping",
+      "note": "Loss L_i(w) = -w.T @ scenario_i"
+    },
+    "alpha": {
+      "type": "float",
+      "range": "(0, 1)",
+      "description": "Tail confidence level",
+      "unit": "probability",
+      "required": true,
+      "default": 0.95,
+      "common_values": [0.90, 0.95, 0.99],
+      "source": "risk policy"
+    },
+    "budget": {
+      "type": "float",
+      "description": "Total capital to allocate (budget constraint)",
+      "unit": "currency or normalized to 1",
+      "required": true,
+      "default": 1.0,
+      "source": "portfolio constraints"
+    },
+    "weight_bounds": {
+      "type": "tuple or dict",
+      "description": "Lower and upper bounds for each asset weight",
+      "examples": ["(0, 0.3)", "{asset_i: (0.05, 0.25)}"],
+      "required": false,
+      "source": "portfolio constraints"
+    },
+    "cardinality": {
+      "type": "int",
+      "description": "Maximum number of assets to hold",
+      "required": false,
+      "source": "portfolio policy"
+    },
+    "p": {
+      "type": "int",
+      "description": "Number of QAOA layers (circuit depth)",
+      "required": true,
+      "default": 3,
+      "typical_range": [1, 10],
+      "source": "design choice - trades expressivity vs noise",
+      "note": "Higher p = more expressive but deeper circuits"
+    },
+    "shots": {
+      "type": "int",
+      "description": "Number of measurement samples per circuit execution",
+      "required": true,
+      "default": 1024,
+      "typical_range": [100, 10000],
+      "source": "configurable per quantum run"
+    },
+    "penalty_weights": {
+      "type": "dict",
+      "description": "Penalty multipliers for constraint violations in Hamiltonian",
+      "examples": ["{'budget': 10.0, 'bounds': 5.0}"],
+      "required": true,
+      "source": "tuning parameter in cost Hamiltonian"
+    },
+    "encoding_scheme": {
+      "type": "str",
+      "description": "How portfolio weights are encoded onto qubits",
+      "options": ["binary", "discrete_levels", "one-hot"],
+      "required": true,
+      "source": "quantum circuit design"
+    }
+  },
+  "outputs": {
+    "optimal_weights": {
+      "type": "numpy.ndarray",
+      "shape": "(N,)",
+      "description": "Optimized portfolio weights",
+      "unit": "decimal proportion or currency",
+      "constraints": "sum(w) = budget, bounds satisfied"
+    },
+    "optimal_cvar": {
+      "type": "float",
+      "description": "CVaR value of optimal portfolio",
+      "unit": "currency or return units"
+    },
+    "expected_return": {
+      "type": "float",
+      "description": "Expected return of optimal portfolio",
+      "unit": "decimal return"
+    },
+    "qaoa_cost": {
+      "type": "float",
+      "description": "Final QAOA cost function value (Hamiltonian energy)",
+      "note": "Combines CVaR objective + constraint penalties"
+    },
+    "optimal_gamma": {
+      "type": "numpy.ndarray",
+      "shape": "(p,)",
+      "description": "Optimized QAOA cost angles",
+      "interpretation": "Control cost Hamiltonian mixing"
+    },
+    "optimal_beta": {
+      "type": "numpy.ndarray",
+      "shape": "(p,)",
+      "description": "Optimized QAOA mixer angles",
+      "interpretation": "Control state mixing"
+    },
+    "circuit_depth": {
+      "type": "int",
+      "description": "Depth of compiled quantum circuit"
+    },
+    "runtime": {
+      "type": "float",
+      "description": "Total optimization time",
+      "unit": "seconds"
+    },
+    "convergence_history": {
+      "type": "list",
+      "description": "Cost function values over optimization iterations"
+    }
+  },
+  "hamiltonian_construction": {
+    "cost_hamiltonian": "H_C = CVaR_tail(w) + lambda_budget * (sum(w) - B)^2 + lambda_bounds * penalty(bounds) + ...",
+    "components": {
+      "cvar_tail": "Sample-based or analytic tail loss aggregation",
+      "budget_penalty": "Squared penalty for budget constraint violation",
+      "bounds_penalty": "Penalty for weight bound violations",
+      "cardinality_penalty": "Optional penalty for number of assets held"
+    },
+    "mixer_hamiltonian": "H_M = sum_i X_i (standard X-mixer) or custom mixer preserving constraints",
+    "qaoa_circuit": "U(gamma, beta) = product_{j=1}^p [ e^(-i*beta_j*H_M) * e^(-i*gamma_j*H_C) ]"
+  },
+  "algorithm_steps": [
+    {
+      "step": 1,
+      "name": "discretize_weights_encoding",
+      "description": "Decide how to encode portfolio weights onto qubit states",
+      "methods": [
+        "Binary encoding: represent continuous weights in binary form",
+        "Fixed increments: discrete weight levels (e.g., 0%, 5%, 10%, ...)",
+        "One-hot encoding: each asset assigned specific qubits"
+      ],
+      "output": "Mapping between bitstrings and portfolio weight vectors"
+    },
+    {
+      "step": 2,
+      "name": "build_cost_hamiltonian",
+      "description": "Construct cost Hamiltonian combining CVaR objective and constraint penalties",
+      "formula": "H_C = CVaR_term + lambda_budget * (sum(w) - B)^2 + lambda_bounds * bounds_penalty",
+      "cvar_methods": [
+        "Sampling-based: sample scenarios, measure tail losses",
+        "CVaR objective aggregator: take alpha-fraction worst outcomes from shots",
+        "Hybrid classical-quantum: classical sampling inside QAOA evaluation"
+      ]
+    },
+    {
+      "step": 3,
+      "name": "build_mixer_hamiltonian",
+      "description": "Choose mixer appropriate for search space",
+      "options": [
+        "Standard X-mixer: apply X rotations to all qubits",
+        "Custom mixer: respect problem constraints (e.g., preserving weight sum)",
+        "XY-mixer or other constraint-preserving mixers"
+      ]
+    },
+    {
+      "step": 4,
+      "name": "construct_qaoa_circuit",
+      "description": "Build alternating cost and mixer operators with depth p",
+      "circuit": "U(gamma, beta) = prod_j [ U_M(beta_j) * U_C(gamma_j) ]",
+      "initialization": "Start from equal superposition or problem-specific initial state"
+    },
+    {
+      "step": 5,
+      "name": "classical_optimization_loop",
+      "description": "Outer classical loop to optimize angles gamma and beta",
+      "process": [
+        "Initialize angles (random or heuristic)",
+        "For each iteration:",
+        "  - Execute quantum circuit with current angles",
+        "  - Measure samples (bitstrings)",
+        "  - Decode bitstrings to portfolios",
+        "  - Compute costs (CVaR + penalties)",
+        "  - Aggregate objective (e.g., CVaR of worst alpha-fraction)",
+        "  - Update angles via classical optimizer (COBYLA, SPSA, etc.)",
+        "Repeat until convergence"
+      ]
+    },
+    {
+      "step": 6,
+      "name": "shot_sampling_aggregation",
+      "description": "Sample candidate bitstrings and aggregate CVaR objective",
+      "cvar_aggregation": "Take alpha-fraction worst sampled costs as per 'Improving VQO using CVaR' method",
+      "note": "This biases optimization toward robust tail-minimizing solutions"
+    },
+    {
+      "step": 7,
+      "name": "select_best_portfolio",
+      "description": "From measurement outcomes, pick candidate with lowest cost satisfying constraints",
+      "post_processing": "May apply rounding or repair heuristics to satisfy hard constraints"
+    },
+    {
+      "step": 8,
+      "name": "validation_comparison",
+      "description": "Compare to classical CVaR optimizer",
+      "metrics": [
+        "Objective value (CVaR)",
+        "Constraint satisfaction",
+        "Portfolio performance (expected return, Sharpe, max drawdown)",
+        "Tail risk measures",
+        "Regret vs classical solution"
+      ]
+    },
+    {
+      "step": 9,
+      "name": "logging_benchmarking",
+      "description": "Record all experiment details",
+      "log": [
+        "Circuit depth, shots, p",
+        "Parameter sets (gamma, beta)",
+        "Returned portfolio and cost",
+        "Deviations from classical benchmark",
+        "Runtime comparison"
+      ]
+    }
+  ],
+  "pseudocode": {
+    "language": "python",
+    "note": "Conceptual implementation using Qiskit",
+    "setup": "from qiskit import QuantumCircuit\nfrom qiskit.algorithms import QAOA\nfrom qiskit_optimization import QuadraticProgram",
+    "workflow": "# 1. Define cost Hamiltonian (CVaR + constraints as QUBO)\nH_cost = build_cvar_hamiltonian(scenarios, alpha, penalty_weights)\n\n# 2. Define mixer\nH_mixer = build_mixer_hamiltonian()\n\n# 3. Initialize QAOA with depth p\nqaoa = QAOA(optimizer='COBYLA', reps=p, quantum_instance=backend)\n\n# 4. Run optimization\nresult = qaoa.compute_minimum_eigenvalue(H_cost)\n\n# 5. Decode optimal bitstring to weights\noptimal_weights = decode_bitstring(result.optimal_point, encoding_scheme)\n\nreturn optimal_weights, result.optimal_value"
+  },
+  "dependencies": {
+    "required_libraries": [
+      "qiskit",
+      "qiskit.algorithms (QAOA)",
+      "qiskit_optimization",
+      "numpy"
+    ],
+    "optional_libraries": [
+      "qiskit-finance",
+      "scipy.optimize (for classical outer loop)",
+      "mlflow",
+      "cvxpy (for classical CVaR comparison)"
+    ]
+  },
+  "advantages": [
+    "Potential speedup for combinatorial/discrete allocation problems",
+    "Tail-aware optimization directly in quantum cost function",
+    "Useful experimental quantum optimizer for comparative study",
+    "Can handle complex constraint structures via penalty encoding",
+    "Research frontier for quantum finance applications"
+  ],
+  "limitations": [
+    "Scalability: number of qubits and circuit depth grow with assets and discretization",
+    "NISQ noise degrades performance",
+    "Cost sampling aggregation expensive (CVaR via shots)",
+    "Constraint encoding adds Hamiltonian complexity",
+    "No guarantee of global optimum (heuristic algorithm)",
+    "Classical preprocessing and post-processing overhead"
+  ],
+  "extensions_research_directions": [
+    {
+      "name": "adaptive_cvar_aware_qaoa",
+      "description": "Use ascending-CVaR or dynamically adjusted thresholds during variational optimization",
+      "references": ["Kolotouros et al., An evolving objective function, arXiv:2105.11766"]
+    },
+    {
+      "name": "hybrid_classical_quantum_splitting",
+      "description": "Solve moderate-risk portion classically, let QAOA focus on worst-tail optimization, blend outputs",
+      "benefits": "Reduce quantum burden while targeting critical tail risk"
+    },
+    {
+      "name": "noise_aware_ansatz_error_mitigation",
+      "description": "Design low-depth QAOA ansatze or error-aware optimization for NISQ performance",
+      "techniques": ["ZNE (Zero Noise Extrapolation)", "CDR (Clifford Data Regression)", "ansatz warm-starting"]
+    }
+  ],
+  "references": [
+    {
+      "title": "Improving Variational Quantum Optimization using CVaR",
+      "source": "Quantum",
+      "url": "https://quantum-journal.org/papers/q-2020-04-20-256/",
+      "year": 2020,
+      "relevance": "Explicitly uses CVaR as cost aggregation to improve QAOA/VQE solution quality"
+    },
+    {
+      "title": "Portfolio Optimization - Qiskit Finance",
+      "source": "Qiskit Community GitHub",
+      "url": "https://qiskit-community.github.io/qiskit-finance/tutorials/01_portfolio_optimization.html",
+      "relevance": "Tutorial on QAOA for portfolio optimization with quadratic objective and constraints"
+    },
+    {
+      "title": "An evolving objective function for improved variational quantum optimisation",
+      "authors": "Kolotouros et al.",
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/2105.11766",
+      "year": 2021,
+      "relevance": "Proposes ascending-CVaR objective to avoid local minima in QAOA"
+    },
+    {
+      "title": "Improving Variational Quantum Optimization using CVaR - Qiskit Tutorial",
+      "source": "Qiskit Optimization",
+      "url": "https://qiskit-community.github.io/qiskit-optimization/tutorials/08_cvar_optimization.html",
+      "relevance": "Shows how to integrate CVaR into VQE/QAOA frameworks via sampling worst shots"
+    },
+    {
+      "title": "Benchmarking the performance of portfolio optimization with QAOA",
+      "source": "SpringerLink",
+      "url": "https://link.springer.com/article/10.1007/s11128-022-03766-5",
+      "year": 2022,
+      "relevance": "Implements QAOA for portfolio selection, discusses sampling noise, depth, Hamiltonian scaling"
+    },
+    {
+      "title": "Benchmarking Quantum Solvers in Noisy Digital Simulations for Financial Portfolio Optimization",
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/2508.21123",
+      "year": 2025,
+      "relevance": "Shows how QAOA scales and responds to noise in portfolio optimization tasks"
+    },
+    {
+      "title": "Improved Quantum Approximate Optimization Algorithm based on Conditional Value-at-Risk for Portfolio Optimization",
+      "source": "ResearchGate",
+      "url": "https://www.researchgate.net/publication/388016183",
+      "relevance": "Proposes QAOA variants incorporating CVaR directly"
+    }
+  ],
+  "logging_metadata": {
+    "inputs_to_log": ["mu", "alpha", "budget", "weight_bounds", "p", "shots", "penalty_weights", "encoding_scheme", "timestamp"],
+    "outputs_to_log": ["optimal_weights", "optimal_cvar", "expected_return", "qaoa_cost", "optimal_gamma", "optimal_beta", "circuit_depth", "runtime"],
+    "metrics_to_track": ["convergence_history", "constraint_violations", "regret_vs_classical", "tail_risk_measures"],
+    "storage": "MLflow + quantum experiment tracking"
+  },
+  "integration_points": {
+    "scenario_generation": "Feed scenarios from QGAN or classical methods",
+    "classical_baseline": "Compare with cvxpy CVaR optimizer",
+    "tool_selection": "LLM agent chooses QAOA vs classical based on regime/problem characteristics",
+    "risk_assessment": "Evaluate optimized portfolio with VaR/CVaR tools",
+    "backtesting": "Test portfolio performance on historical and simulated data"
+  },
+  "computational_resources": {
+    "simulator_mode": "Qiskit Aer, statevector or qasm simulator",
+    "nisq_hardware": "IBM Quantum, IonQ, Rigetti (with error mitigation)",
+    "qubits_required": "Depends on N assets and discretization (typically 10-30 qubits)",
+    "circuit_depth": "Grows with p and Hamiltonian complexity",
+    "classical_optimizer": "COBYLA, SPSA, Powell, or gradient-based methods"
+  },
+  "comparative_study_role": "Experimental quantum optimizer for tail-risk portfolios. Research questions: When does QAOA outperform classical CVaR solvers? What are the tradeoffs in solution quality, runtime, and noise sensitivity?"
+}
+

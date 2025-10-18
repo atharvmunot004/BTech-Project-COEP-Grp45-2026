@@ -1,0 +1,313 @@
+{
+  "tool_name": "garch_volatility_forecaster",
+  "display_name": "GARCH(1,1) Volatility Forecasting",
+  "category": "volatility_modeling",
+  "subcategory": "time_series",
+  "description": "Models time-varying volatility using GARCH(1,1) to capture volatility clustering. Provides forward-looking conditional variance estimates that feed into VaR/CVaR tools, risk gating, scenario simulation, and position sizing.",
+  "use_cases": [
+    "Feed volatility forecasts into parametric VaR and Monte Carlo",
+    "Time-adaptive position sizing (volatility targeting)",
+    "Trigger regime signals when volatility spikes",
+    "Comparative baseline vs hybrid ML/quantum models",
+    "Intraday risk estimation with finer granularity"
+  ],
+  "inputs": {
+    "returns": {
+      "type": "numpy.ndarray",
+      "shape": "(T,)",
+      "description": "Return series (e.g., daily log-returns) for single asset or portfolio",
+      "unit": "decimal returns",
+      "required": true,
+      "source": "market data ingestion (OHLC → returns)",
+      "preprocessing": "Compute log-returns or simple returns from price series"
+    },
+    "mu": {
+      "type": "float or numpy.ndarray",
+      "description": "Mean return (optional, for GARCH-in-mean models)",
+      "unit": "decimal",
+      "required": false,
+      "source": "sample mean or forecasting model"
+    },
+    "horizon": {
+      "type": "int",
+      "description": "Number of steps ahead to forecast",
+      "unit": "periods (e.g., days)",
+      "required": true,
+      "default": 1,
+      "common_values": [1, 5, 10, 20],
+      "source": "risk horizon policy"
+    },
+    "mean_model": {
+      "type": "str",
+      "description": "Mean equation specification",
+      "required": false,
+      "options": ["Zero", "Constant", "AR", "ARX"],
+      "default": "Zero",
+      "source": "model configuration"
+    },
+    "vol_model": {
+      "type": "str",
+      "description": "Volatility model type",
+      "required": false,
+      "options": ["GARCH", "EGARCH", "GJR-GARCH"],
+      "default": "GARCH",
+      "source": "model configuration"
+    },
+    "p": {
+      "type": "int",
+      "description": "GARCH order for lagged variances",
+      "required": false,
+      "default": 1,
+      "source": "model specification"
+    },
+    "q": {
+      "type": "int",
+      "description": "ARCH order for lagged squared returns",
+      "required": false,
+      "default": 1,
+      "source": "model specification"
+    }
+  },
+  "outputs": {
+    "omega": {
+      "type": "float",
+      "description": "GARCH constant term parameter",
+      "constraints": "omega > 0",
+      "interpretation": "Long-run variance baseline"
+    },
+    "alpha": {
+      "type": "float",
+      "description": "Coefficient on lagged squared return (ARCH term)",
+      "constraints": "alpha >= 0",
+      "interpretation": "Impact of recent shocks on volatility"
+    },
+    "beta": {
+      "type": "float",
+      "description": "Coefficient on lagged variance (GARCH term)",
+      "constraints": "beta >= 0, alpha + beta < 1",
+      "interpretation": "Volatility persistence"
+    },
+    "forecasted_variance": {
+      "type": "numpy.ndarray",
+      "shape": "(horizon,)",
+      "description": "Forecasted conditional variances for h steps ahead",
+      "unit": "variance units",
+      "computation": "sigma_t+h^2 forecast"
+    },
+    "forecasted_volatility": {
+      "type": "numpy.ndarray",
+      "shape": "(horizon,)",
+      "description": "Forecasted conditional standard deviations",
+      "unit": "return units",
+      "computation": "sqrt(forecasted_variance)"
+    },
+    "fit_diagnostics": {
+      "type": "dict",
+      "description": "Model fit statistics",
+      "includes": ["log_likelihood", "AIC", "BIC", "convergence_flag"]
+    }
+  },
+  "model_specification": {
+    "standard_garch_1_1": {
+      "mean_equation": "r_t = mu + epsilon_t",
+      "variance_equation": "sigma_t^2 = omega + alpha * epsilon_{t-1}^2 + beta * sigma_{t-1}^2",
+      "constraints": "omega > 0, alpha >= 0, beta >= 0, alpha + beta < 1 (stationarity)"
+    },
+    "variants": [
+      {
+        "name": "GARCH-in-Mean",
+        "description": "Volatility enters mean equation",
+        "equation": "r_t = mu + lambda * sigma_t + epsilon_t"
+      },
+      {
+        "name": "EGARCH",
+        "description": "Allows asymmetric impact (negative shocks impact more)",
+        "use_case": "Leverage effect modeling"
+      },
+      {
+        "name": "GJR-GARCH",
+        "description": "Threshold GARCH for asymmetric volatility",
+        "use_case": "Bad news vs good news differential impact"
+      },
+      {
+        "name": "Regime-switching GARCH",
+        "description": "Different parameter sets per regime",
+        "use_case": "Structural breaks and regime changes"
+      }
+    ]
+  },
+  "algorithm_steps": [
+    {
+      "step": 1,
+      "name": "prepare_return_series",
+      "description": "Extract return series from price data",
+      "preprocessing": [
+        "Remove outliers if necessary",
+        "Check for stationarity",
+        "Compute residuals if using mean model"
+      ]
+    },
+    {
+      "step": 2,
+      "name": "specify_garch_model",
+      "description": "Define GARCH model structure",
+      "parameters": ["mean_model", "vol_model", "p", "q"],
+      "library": "arch.arch_model"
+    },
+    {
+      "step": 3,
+      "name": "estimate_parameters",
+      "description": "Estimate GARCH parameters via Maximum Likelihood",
+      "method": "Maximum Likelihood Estimation (MLE)",
+      "log_likelihood": "L = sum_t ( -1/2 * (ln(2*pi) + ln(sigma_t^2) + epsilon_t^2/sigma_t^2) )",
+      "optimization": "Maximize L using scipy.optimize or built-in optimizer",
+      "initialization": "Initialize sigma_0^2 as sample variance"
+    },
+    {
+      "step": 4,
+      "name": "validate_parameters",
+      "description": "Check parameter constraints and stationarity",
+      "constraints": [
+        "omega > 0",
+        "alpha >= 0",
+        "beta >= 0",
+        "alpha + beta < 1 (stationarity)"
+      ]
+    },
+    {
+      "step": 5,
+      "name": "forecast_volatility",
+      "description": "Generate h-step ahead volatility forecasts",
+      "one_step_ahead": "sigma_{T+1}^2 = omega + alpha * epsilon_T^2 + beta * sigma_T^2",
+      "h_step_ahead": "E[sigma_{T+h}^2] = omega * (1 - (alpha + beta)^h) / (1 - (alpha + beta)) + (alpha + beta)^h * sigma_T^2",
+      "output": "Forecasted standard deviation: sqrt(E[sigma_{T+h}^2])"
+    },
+    {
+      "step": 6,
+      "name": "diagnostics_validation",
+      "description": "Validate model fit and forecasts",
+      "tests": [
+        "Check standardized residuals for autocorrelation",
+        "Ljung-Box test on squared residuals",
+        "Compare forecasted vs realized volatility",
+        "Track forecast errors"
+      ]
+    },
+    {
+      "step": 7,
+      "name": "pipeline_integration",
+      "description": "Integrate into hedge fund pipeline",
+      "uses": [
+        "Feed sigma_t+1 into parametric VaR/Monte Carlo as volatility estimate",
+        "Time-adaptive position sizing (scale inversely with forecasted vol)",
+        "Trigger regime signals if volatility spikes",
+        "Log forecasts, errors vs realized, parameter drift"
+      ]
+    }
+  ],
+  "pseudocode": {
+    "language": "python",
+    "imports": "from arch import arch_model\nimport numpy as np",
+    "fit_function": "def fit_garch11(returns):\n    # returns: 1D numpy array of historic returns\n    am = arch_model(returns, vol='Garch', p=1, q=1, mean='Zero')\n    res = am.fit(disp='off')\n    return res",
+    "forecast_function": "def forecast_vol(res, steps=1):\n    # res: fitted model result\n    f = res.forecast(horizon=steps)\n    var_forecast = f.variance.values[-1, :]\n    return var_forecast  # shape (steps,)"
+  },
+  "dependencies": {
+    "required_libraries": [
+      "arch",
+      "numpy",
+      "scipy.optimize"
+    ],
+    "optional_libraries": [
+      "statsmodels",
+      "pandas",
+      "mlflow",
+      "matplotlib (for diagnostics)"
+    ]
+  },
+  "advantages": [
+    "Captures volatility clustering / persistence - stylized fact of financial returns",
+    "Lightweight and interpretable - fast for daily updates",
+    "Works well as volatility baseline in calm-to-moderate markets",
+    "Industry standard in volatility modeling",
+    "Easy to integrate into risk and optimization pipelines"
+  ],
+  "limitations": [
+    "Assumes symmetric impact of shocks (unless using EGARCH/GJR)",
+    "May not capture structural breaks without regime-switching",
+    "Parameter instability in non-stationary periods",
+    "Does not model intraday patterns without extension"
+  ],
+  "extensions_research_directions": [
+    {
+      "name": "hybrid_garch_neural_network",
+      "description": "GARCH residuals into LSTM/GRU to capture nonlinear effects",
+      "references": ["Hybrid GARCH-LSTM", "GARCH-GRU papers", "arXiv:2504.09380"]
+    },
+    {
+      "name": "regime_dependent_garch",
+      "description": "Estimate separate GARCH parameters per regime using HMM/MS-GARCH",
+      "references": ["Forecasting hedge funds volatility: Markov switching GARCH"]
+    },
+    {
+      "name": "robust_range_based_garch",
+      "description": "Use robust M-estimators or range-based methods to reduce outlier sensitivity",
+      "references": ["Robust estimation of range-based GARCH, 2024"]
+    }
+  ],
+  "references": [
+    {
+      "title": "Integrated GARCH-GRU in Financial Volatility Forecasting",
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/2504.09380",
+      "year": 2025,
+      "relevance": "Embeds GARCH into GRU cell improving forecasts, showing GARCH structure stays relevant with sequence models"
+    },
+    {
+      "title": "Forecasting conditional volatility based on hybrid GARCH",
+      "authors": "Huang et al.",
+      "source": "ScienceDirect",
+      "url": "https://www.sciencedirect.com/science/article/abs/pii/S1062940824000731",
+      "year": 2024,
+      "relevance": "Hybrid models mixing GARCH, long memory, regime switching show improved forecasts"
+    },
+    {
+      "title": "Value at Risk, GARCH Modelling and the Forecasting",
+      "authors": "Füss",
+      "source": "SpringerLink",
+      "url": "https://link.springer.com/chapter/10.1057/9781137554178_5",
+      "relevance": "GARCH-based VaR captures time-varying volatility better than static normal VaR"
+    },
+    {
+      "title": "Robust estimation of the range-based GARCH model",
+      "source": "ScienceDirect",
+      "url": "https://www.sciencedirect.com/science/article/pii/S026499932400244X",
+      "year": 2024,
+      "relevance": "Enhances GARCH robustness using M-estimators for noisy/outlier data"
+    },
+    {
+      "title": "Forecasting hedge funds volatility: a Markov regime-switching GARCH",
+      "source": "SSRN",
+      "url": "https://papers.ssrn.com/sol3/Delivery.cfm/SSRN_ID1768864_code639897.pdf",
+      "relevance": "Regime-switching GARCH for better adaptation to structural shifts"
+    }
+  ],
+  "logging_metadata": {
+    "inputs_to_log": ["returns", "mean_model", "vol_model", "p", "q", "timestamp"],
+    "outputs_to_log": ["omega", "alpha", "beta", "forecasted_variance", "log_likelihood", "AIC", "BIC"],
+    "metrics_to_track": ["forecast_errors", "realized_vs_forecasted_volatility", "parameter_stability"],
+    "storage": "MLflow + TimescaleDB"
+  },
+  "integration_points": {
+    "data_source": "OHLC data from market ingestion → returns",
+    "risk_tools": "Feed forecasted volatility into VaR/CVaR calculators",
+    "position_sizing": "Scale positions inversely with forecasted vol (volatility targeting)",
+    "regime_detection": "Flag regime shifts when volatility exceeds thresholds",
+    "comparative_study": "Compare GARCH vol forecasts vs realized, vs ML/quantum models"
+  },
+  "computational_complexity": {
+    "time": "O(T) for parameter estimation (iterative optimization)",
+    "space": "O(T) for storing return series and variance series",
+    "scalability": "Very efficient for single-asset models; multivariate GARCH (MGARCH) more complex"
+  }
+}
+
