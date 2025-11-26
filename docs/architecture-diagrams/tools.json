@@ -1,0 +1,186 @@
+{
+  "orange_tools": [
+    {
+      "id": "U5_27_Krk8EjufHEsgoqT",
+      "name": "Variance–Covariance Value-at- Risk (Parametric VaR)",
+      "type": "text"
+    },
+    {
+      "id": "IEUf9zXOoZJyjR44w4nOF",
+      "name": "Monte Carlo Simulation for VaR / CVaR",
+      "type": "text"
+    },
+    {
+      "id": "fHC35SRm8SoNDrcRvWJMs",
+      "name": "GARCH(1,1) Volatility Forecasting",
+      "type": "text"
+    },
+    {
+      "id": "IZvSm0qCU4uYNGWeUVqvy",
+      "name": "Extreme Value Theory (EVT) – Peaks Over Threshold",
+      "type": "text"
+    },
+    {
+      "id": "Oij6mSmC0ekOZjCDKQqV9",
+      "name": "ARIMA (AutoRegressive Integrated Moving Average)",
+      "type": "text"
+    },
+    {
+      "id": "1jUGT9zm_uQrdobshETeZ",
+      "name": "LSTM (Long Short-Term Memory) Neural Network",
+      "type": "text"
+    },
+    {
+      "id": "CPtwzBNuy-gK7XPnv0Uni",
+      "name": "Random Forest / Gradient Boosted Trees (e.g. XGBoost)",
+      "type": "text"
+    },
+    {
+      "id": "3ogW3B9pTnmQ4KoMrhAGY",
+      "name": "Support Vector Regression (SVR)",
+      "type": "text"
+    },
+    {
+      "id": "Niny0BYdYg_kPXMtulyFC",
+      "name": "Markowitz Mean–Variance",
+      "type": "text"
+    },
+    {
+      "id": "tVkg_GIMRU3doeBoC6bLi",
+      "name": "Pairs Trading (Statistical Arbitrage)",
+      "type": "text"
+    },
+    {
+      "id": "P4Z-e9jYkRmDLG4B31g3D",
+      "name": "Momentum Strategy",
+      "type": "text"
+    },
+    {
+      "id": "MXglfrqLMOP3OC_SRv65S",
+      "name": "Reinforcement Learning (RL) Trading Agent",
+      "type": "text"
+    },
+    {
+      "id": "WCaQBKfwS2hYnZIg_Zo6Z",
+      "name": "Black–Litterman",
+      "type": "text"
+    },
+    {
+      "id": "VFs1FTXdpw6VmVJXdRCpT",
+      "name": "Risk Parity / ERC",
+      "type": "text"
+    },
+    {
+      "id": "EJbljw15D4FVmp4_B2tZb",
+      "name": "CVaR Optimization",
+      "type": "text"
+    },
+    {
+      "id": "WKDp-p4pZZTAQ7an4go3r",
+      "name": "Hidden Markov Model (HMM)",
+      "type": "text"
+    },
+    {
+      "id": "1tQlde2OIxdroBs8Da7-F",
+      "name": "Gaussian Mixture Model (GMM)",
+      "type": "text"
+    },
+    {
+      "id": "W84g1KfdgGwms59nTiyWt",
+      "name": "Regime-Switching GARCH",
+      "type": "text"
+    },
+    {
+      "id": "PkcP_2j6n1seYfCnwFcOm",
+      "name": "PCA + K-Means",
+      "type": "text"
+    }
+  ],
+  "green_tools": [
+    {
+      "id": "mFKHb0zyC0VWx2t2jdUKO",
+      "name": "Quantum Amplitude Estimation (QAE) for CVaR",
+      "type": "text"
+    },
+    {
+      "id": "5RVHjSR27rcDzma32llF8",
+      "name": "Quantum Approximate Optimization Algorithm (QAOA) for CVaR-based Portfolio Optimization",
+      "type": "text"
+    },
+    {
+      "id": "Q5Euypjq8IIttXrqQf2fh",
+      "name": "Quantum Generative Adversarial Network (QGAN) for Scenario Generation",
+      "type": "text"
+    },
+    {
+      "id": "p4BhxHGDvUGQSTYnDag2z",
+      "name": "Quantum PCA (qPCA) for Factor Risk Analysis",
+      "type": "text"
+    },
+    {
+      "id": "trWIbfF3LZnERi94Ankxe",
+      "name": "Quantum Support Vector Machine (QSVM)",
+      "type": "text"
+    },
+    {
+      "id": "GcXSyCaurOk7GIvrIbHlE",
+      "name": "Quantum Boltzmann Machine (QBM)",
+      "type": "text"
+    },
+    {
+      "id": "ccqShgnbRAJIDkPskQPk7",
+      "name": "Quantum Long Short- Term Memory (Q-LSTM)",
+      "type": "text"
+    },
+    {
+      "id": "U40f5rpyHV2QNSRhLJmHv",
+      "name": "Quantum Amplitude Estimation (QAE) for Expected Return",
+      "type": "text"
+    },
+    {
+      "id": "KcLXWSh97fuqF84yz_iIh",
+      "name": "Quantum Reinforcement Learning (QRL)",
+      "type": "text"
+    },
+    {
+      "id": "lZK0Bd2btCISggZ7aoRv-",
+      "name": "Quantum Mean–Variance Optimization (QMV)",
+      "type": "text"
+    },
+    {
+      "id": "fmFvRg6g0DozAmgzLanWW",
+      "name": "Quantum Amplitude Estimation (QAE) for Expected Return and Risk",
+      "type": "text"
+    },
+    {
+      "id": "C8l0ZZtkTqGaY_PApI68s",
+      "name": "Quantum Boltzmann Machine (QBM) for Market Regime Detection",
+      "type": "text"
+    },
+    {
+      "id": "z1JoBfS8BUfR9wFPkbOQE",
+      "name": "Quantum Mean–Variance Optimization (QMV / QUBO Formulation)",
+      "type": "text"
+    },
+    {
+      "id": "Jm7YJhJ88OVBqMZX1_hac",
+      "name": "Quantum Annealing for Multi-Objective Portfolio Construction",
+      "type": "text"
+    },
+    {
+      "id": "yNO-ftdTIohVU3_vXG9o8",
+      "name": "Quantum k-Means / Clustering",
+      "type": "text"
+    },
+    {
+      "id": "nDs63YAdq79AniMdPkVZQ",
+      "name": "Quantum Neural Network (QNN)",
+      "type": "text"
+    }
+  ],
+  "summary": {
+    "total_orange_tools": 19,
+    "total_green_tools": 16,
+    "total_tools": 35
+  }
+}

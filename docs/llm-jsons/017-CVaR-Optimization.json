@@ -1,0 +1,259 @@
+{
+  "tool_name": "cvar_optimization",
+  "display_name": "CVaR Optimization",
+  "category": "portfolio_optimization",
+  "subcategory": "risk_aware",
+  "description": "Advanced portfolio optimization framework that minimizes tail risk (expected loss beyond VaR threshold) rather than just variance. Explicitly accounts for tail risk and is more robust to extreme events. Complements Markowitz mean-variance and can be compared against quantum CVaR methods (QAOA for CVaR).",
+  "use_cases": [
+    "Tail risk management with explicit tail risk control",
+    "Comparative study vs Markowitz, quantum methods (QAOA for CVaR)",
+    "Regime-adaptive optimization with regime-specific scenarios",
+    "Regulatory compliance (CVaR used in risk management frameworks)",
+    "Research into scenario generation methods (Monte Carlo vs QGAN)"
+  ],
+  "inputs": {
+    "returns": {
+      "type": "numpy.ndarray",
+      "shape": "(T, N)",
+      "description": "Historical returns for N assets",
+      "unit": "returns",
+      "required": true,
+      "source": "Market data ingestion"
+    },
+    "scenarios": {
+      "type": "numpy.ndarray",
+      "shape": "(S, N)",
+      "description": "Scenario returns (from Monte Carlo, historical, etc.)",
+      "unit": "returns",
+      "required": false,
+      "default": "Use historical returns as scenarios",
+      "source": "From scenario generation (Monte Carlo, QGAN)",
+      "typical_S": [1000, 10000]
+    },
+    "alpha": {
+      "type": "float",
+      "description": "Confidence level for CVaR",
+      "required": true,
+      "default": 0.95,
+      "typical_values": [0.90, 0.95, 0.99],
+      "source": "Risk policy"
+    },
+    "target_return": {
+      "type": "float",
+      "description": "Target expected return (optional)",
+      "required": false,
+      "source": "Investment objective"
+    },
+    "risk_aversion": {
+      "type": "float",
+      "description": "Risk aversion parameter (alternative to target_return)",
+      "required": false,
+      "source": "Risk policy"
+    },
+    "constraints": {
+      "type": "dict",
+      "description": "Portfolio constraints",
+      "required": false,
+      "default": {"long_only": true, "budget": true},
+      "options": {
+        "long_only": "weights >= 0",
+        "budget": "sum(weights) = 1",
+        "sector_limits": "dict of sector -> limit"
+      }
+    }
+  },
+  "outputs": {
+    "weights": {
+      "type": "numpy.ndarray",
+      "shape": "(N,)",
+      "description": "Optimal portfolio weights",
+      "unit": "decimal proportion"
+    },
+    "cvar": {
+      "type": "float",
+      "description": "Conditional Value-at-Risk",
+      "unit": "returns",
+      "computation": "CVaR_alpha = VaR + (1/(1-alpha)) * E[max(0, VaR - r_p)]"
+    },
+    "var": {
+      "type": "float",
+      "description": "Value-at-Risk at confidence level alpha",
+      "unit": "returns",
+      "computation": "VaR_alpha = -quantile(r_p, alpha)"
+    },
+    "expected_return": {
+      "type": "float",
+      "description": "Expected portfolio return",
+      "unit": "returns",
+      "computation": "mu^T @ weights"
+    },
+    "status": {
+      "type": "str",
+      "description": "Optimization status",
+      "values": ["optimal", "infeasible", "unbounded"]
+    }
+  },
+  "cvar_definition": {
+    "formula": "CVaR_alpha = VaR_alpha + (1/(1-alpha)) * E[max(0, VaR_alpha - r_p)]",
+    "where": {
+      "VaR_alpha": "Value-at-Risk at confidence level alpha",
+      "r_p": "Portfolio return",
+      "alpha": "Confidence level"
+    },
+    "alternative": "CVaR_alpha = E[r_p | r_p <= -VaR_alpha] (conditional expectation form)"
+  },
+  "optimization_formulations": {
+    "minimize_cvar": {
+      "formula": "min_w CVaR_alpha(w)",
+      "constraints": "w^T mu >= mu_target, sum(w) = 1, w >= 0"
+    },
+    "maximize_return_subject_to_cvar": {
+      "formula": "max_w w^T mu",
+      "constraints": "CVaR_alpha(w) <= CVaR_limit, sum(w) = 1, w >= 0"
+    },
+    "maximize_utility": {
+      "formula": "max_w w^T mu - lambda * CVaR_alpha(w)",
+      "constraints": "sum(w) = 1, w >= 0"
+    }
+  },
+  "algorithm_steps": [
+    {
+      "step": 1,
+      "name": "scenario_generation",
+      "description": "Generate scenario returns",
+      "methods": [
+        "Monte Carlo simulation",
+        "Historical bootstrap",
+        "Quantum methods (QGAN)",
+        "Use historical returns as scenarios"
+      ],
+      "typical_S": [1000, 10000]
+    },
+    {
+      "step": 2,
+      "name": "cvar_calculation",
+      "description": "Compute CVaR for portfolio weights",
+      "process": [
+        "For each portfolio weight vector w, compute portfolio returns: r_p = scenarios @ w",
+        "Compute VaR: VaR_alpha = -quantile(r_p, alpha)",
+        "Compute CVaR: CVaR_alpha = -mean(r_p[r_p <= -VaR_alpha])"
+      ]
+    },
+    {
+      "step": 3,
+      "name": "optimization",
+      "description": "Solve CVaR optimization problem",
+      "methods": [
+        "Linear programming reformulation",
+        "General optimization (cvxpy, scipy)"
+      ],
+      "formulations": [
+        "Minimize CVaR subject to return constraint",
+        "Maximize return subject to CVaR constraint",
+        "Maximize utility (return - lambda * CVaR)"
+      ]
+    },
+    {
+      "step": 4,
+      "name": "post_processing",
+      "description": "Validate and compute portfolio statistics",
+      "tasks": [
+        "Validate constraints are satisfied",
+        "Compute portfolio statistics (expected return, CVaR, VaR, Sharpe ratio)",
+        "Compare against Markowitz portfolio"
+      ]
+    },
+    {
+      "step": 5,
+      "name": "pipeline_integration",
+      "description": "Integrate into hedge fund pipeline",
+      "tasks": [
+        "Run daily/weekly with updated scenarios",
+        "Feed optimal weights to execution layer",
+        "Log all inputs, outputs, scenarios to MLflow"
+      ]
+    }
+  ],
+  "pseudocode": {
+    "language": "python",
+    "function_signature": "def cvar_optimization(returns: np.ndarray, scenarios: np.ndarray = None, alpha: float = 0.95, target_return: float = None, risk_aversion: float = None, constraints: dict = None):",
+    "implementation": "# Generate scenarios if not provided\nif scenarios is None:\n    scenarios = returns\nS, N = scenarios.shape\n\n# Portfolio variables\nw = cp.Variable(N)\nVaR = cp.Variable()\nu = cp.Variable(S)\n\n# Portfolio returns under scenarios\nr_portfolio = scenarios @ w\n\n# CVaR constraint\nCVaR = VaR + (1 / (1 - alpha)) * cp.mean(u)\nconstraint_list = [cp.sum(w) == 1, w >= 0, u >= 0, u >= VaR - r_portfolio]\n\nif target_return is not None:\n    constraint_list.append(mu @ w >= target_return)\n\n# Solve\nobjective = cp.Minimize(CVaR) if risk_aversion is None else cp.Maximize(mu @ w - risk_aversion * CVaR)\nproblem = cp.Problem(objective, constraint_list)\nproblem.solve()\n\nreturn {'weights': w.value, 'cvar': CVaR.value, 'var': var_opt, 'expected_return': portfolio_return}"
+  },
+  "dependencies": {
+    "required_libraries": [
+      "numpy",
+      "cvxpy"
+    ],
+    "optional_libraries": [
+      "scipy.optimize",
+      "mlflow"
+    ]
+  },
+  "advantages": [
+    "Focuses on tail risk (more relevant for extreme events)",
+    "Coherent risk measure (mathematically sound)",
+    "Less sensitive to outliers than variance",
+    "Regulatory relevance",
+    "Explicit tail risk control"
+  ],
+  "limitations": [
+    "Requires scenario generation (computational cost)",
+    "Sensitive to scenario quality",
+    "May produce more conservative portfolios than Markowitz",
+    "Computational complexity grows with number of scenarios"
+  ],
+  "extensions_research_directions": [
+    {
+      "name": "quantum_cvar_optimization",
+      "description": "Compare classical CVaR optimization against quantum methods (QAOA for CVaR), exploring when quantum advantage emerges for large-scale problems",
+      "benefits": "Research into quantum advantage for risk-aware optimization"
+    },
+    {
+      "name": "robust_cvar",
+      "description": "Incorporate uncertainty sets for scenarios or use robust optimization techniques to handle scenario misspecification",
+      "benefits": "More robust to scenario errors"
+    },
+    {
+      "name": "regime_aware_cvar",
+      "description": "Use regime detection to generate regime-specific scenarios or use different CVaR parameters per regime, adapting to market conditions",
+      "benefits": "Adapts to changing market regimes"
+    }
+  ],
+  "references": [
+    {
+      "title": "Optimization of Conditional Value-at-Risk",
+      "authors": "Rockafellar & Uryasev",
+      "source": "Journal of Risk",
+      "url": "https://www.jstor.org/stable/2586997",
+      "year": 2000,
+      "relevance": "Introduces CVaR optimization framework"
+    },
+    {
+      "title": "Conditional value-at-risk for general loss distributions",
+      "authors": "Krokhmal et al.",
+      "source": "Journal of Banking & Finance",
+      "url": "https://www.sciencedirect.com/science/article/pii/S0378426602001042",
+      "year": 2002,
+      "relevance": "Extends CVaR to general distributions"
+    }
+  ],
+  "logging_metadata": {
+    "inputs_to_log": ["returns_shape", "scenarios_shape", "alpha", "target_return", "risk_aversion", "constraints", "timestamp"],
+    "outputs_to_log": ["weights", "cvar", "var", "expected_return", "status"],
+    "metrics_to_track": ["optimization_time", "scenario_generation_time", "portfolio_turnover"],
+    "storage": "MLflow + TimescaleDB"
+  },
+  "integration_points": {
+    "scenario_generation": "Use Monte Carlo, QGAN, or historical returns as scenarios",
+    "risk_modules": "Compare CVaR vs VaR, Monte Carlo VaR",
+    "regime_detection": "Use regime-specific scenarios or parameters",
+    "execution": "Feed optimal weights to execution layer",
+    "comparative_study": "Benchmark against Markowitz, QAOA for CVaR"
+  },
+  "computational_complexity": {
+    "time": "O(S * N) for CVaR calculation, O(S * N^2) for optimization",
+    "space": "O(S * N) for scenario storage",
+    "scalability": "Efficient for moderate S and N; computational cost grows with scenarios"
+  }
+}
+

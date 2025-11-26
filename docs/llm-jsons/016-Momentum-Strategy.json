@@ -1,0 +1,242 @@
+{
+  "tool_name": "momentum_strategy",
+  "display_name": "Momentum Strategy",
+  "category": "trading_strategy",
+  "subcategory": "trend_following",
+  "description": "Trend-following trading approach that buys assets that have performed well recently and sells assets that have performed poorly, based on assumption that trends persist. Can be enhanced with ML/quantum methods for signal generation, position sizing, and regime detection.",
+  "use_cases": [
+    "Trend-following strategy for trending markets",
+    "ML-enhanced momentum prediction using ML/quantum methods",
+    "Regime-aware momentum with adaptive parameters",
+    "Multi-factor momentum combining with other factors",
+    "Research comparing classical vs ML/quantum-enhanced variants"
+  ],
+  "inputs": {
+    "returns": {
+      "type": "numpy.ndarray",
+      "shape": "(T, N)",
+      "description": "Historical returns for N assets",
+      "unit": "returns",
+      "required": true,
+      "source": "Market data ingestion"
+    },
+    "lookback_period": {
+      "type": "int",
+      "description": "Period for momentum calculation",
+      "unit": "days",
+      "required": true,
+      "default": 252,
+      "typical_values": [21, 63, 126, 252],
+      "source": "Hyperparameter"
+    },
+    "holding_period": {
+      "type": "int",
+      "description": "Period to hold positions",
+      "unit": "days",
+      "required": true,
+      "default": 21,
+      "typical_values": [5, 21, 63],
+      "source": "Hyperparameter"
+    },
+    "top_n": {
+      "type": "int",
+      "description": "Number of top assets to buy",
+      "required": true,
+      "default": 10,
+      "typical_values": [5, 10, 20],
+      "source": "Hyperparameter"
+    },
+    "bottom_n": {
+      "type": "int",
+      "description": "Number of bottom assets to short",
+      "required": false,
+      "default": 10,
+      "typical_values": [0, 5, 10, 20],
+      "source": "Hyperparameter",
+      "note": "Set to 0 for long-only strategy"
+    },
+    "rebalance_frequency": {
+      "type": "str",
+      "description": "Rebalancing frequency",
+      "required": true,
+      "default": "monthly",
+      "values": ["daily", "weekly", "monthly"],
+      "source": "Policy"
+    }
+  },
+  "outputs": {
+    "signals": {
+      "type": "list",
+      "description": "Trading signals for each rebalance date",
+      "components": {
+        "date": "Rebalance date index",
+        "long_assets": "List of asset indices to buy",
+        "short_assets": "List of asset indices to short",
+        "weights": "Portfolio weights (N,)",
+        "momentum_scores": "Momentum scores for all assets"
+      }
+    },
+    "positions": {
+      "type": "numpy.ndarray",
+      "shape": "(num_rebalances, N)",
+      "description": "Portfolio weights for each rebalance",
+      "unit": "decimal proportion"
+    },
+    "momentum": {
+      "type": "numpy.ndarray",
+      "shape": "(T, N)",
+      "description": "Momentum scores (cumulative returns) for all assets over time",
+      "computation": "momentum[t] = prod(1 + returns[t-lookback:t]) - 1"
+    }
+  },
+  "algorithm_steps": [
+    {
+      "step": 1,
+      "name": "momentum_calculation",
+      "description": "Compute momentum for each asset",
+      "process": [
+        "Compute cumulative returns over lookback period for each asset",
+        "Rank assets by momentum (highest to lowest)",
+        "Optionally use risk-adjusted momentum (Sharpe ratio, information ratio)"
+      ]
+    },
+    {
+      "step": 2,
+      "name": "signal_generation",
+      "description": "Generate buy/sell signals",
+      "rules": {
+        "long_positions": "Select top N assets (highest momentum)",
+        "short_positions": "Select bottom N assets (lowest momentum, if shorting allowed)"
+      }
+    },
+    {
+      "step": 3,
+      "name": "portfolio_construction",
+      "description": "Construct portfolio from signals",
+      "tasks": [
+        "Allocate capital equally or by momentum strength",
+        "Apply position sizing rules (volatility-based, risk parity)",
+        "Ensure portfolio constraints (long-only, sector limits, etc.)"
+      ]
+    },
+    {
+      "step": 4,
+      "name": "risk_management",
+      "description": "Apply risk controls",
+      "tasks": [
+        "Set stop-loss levels",
+        "Monitor portfolio-level risk (VaR, CVaR)",
+        "Apply risk gating if risk exceeds thresholds"
+      ]
+    },
+    {
+      "step": 5,
+      "name": "backtesting_validation",
+      "description": "Validate strategy performance",
+      "metrics": [
+        "Walk-forward backtest with rebalancing",
+        "Compute performance metrics (Sharpe ratio, max drawdown, win rate)",
+        "Compare against buy-and-hold and other strategies"
+      ]
+    },
+    {
+      "step": 6,
+      "name": "pipeline_integration",
+      "description": "Integrate into hedge fund pipeline",
+      "tasks": [
+        "Run daily/weekly to generate signals",
+        "Feed signals to execution layer",
+        "Log all signals, positions, performance to MLflow"
+      ]
+    }
+  ],
+  "pseudocode": {
+    "language": "python",
+    "function_signature": "def momentum_strategy(returns: np.ndarray, lookback_period: int = 252, holding_period: int = 21, top_n: int = 10, bottom_n: int = 10, rebalance_frequency: str = 'monthly'):",
+    "implementation": "# Compute momentum (cumulative returns)\nmomentum = np.zeros((T, N))\nfor t in range(lookback_period, T):\n    momentum[t] = np.prod(1 + returns[t-lookback_period:t], axis=0) - 1\n\n# Generate signals at rebalance dates\nfor t in rebalance_dates:\n    # Rank assets by momentum\n    momentum_ranks = np.argsort(momentum[t])[::-1]\n    \n    # Select top and bottom assets\n    long_assets = momentum_ranks[:top_n]\n    short_assets = momentum_ranks[-bottom_n:] if bottom_n > 0 else []\n    \n    # Generate position weights (equal-weighted)\n    weights = np.zeros(N)\n    if len(long_assets) > 0:\n        weights[long_assets] = 1.0 / len(long_assets)\n    if len(short_assets) > 0:\n        weights[short_assets] = -1.0 / len(short_assets)\n\nreturn {'signals': signals, 'positions': positions, 'momentum': momentum}"
+  },
+  "dependencies": {
+    "required_libraries": [
+      "numpy",
+      "pandas"
+    ],
+    "optional_libraries": [
+      "mlflow"
+    ]
+  },
+  "advantages": [
+    "Well-documented anomaly with persistent returns",
+    "Simple to implement and understand",
+    "Works across multiple asset classes",
+    "Profitable in trending markets"
+  ],
+  "limitations": [
+    "Can suffer large drawdowns during reversals",
+    "Transaction costs can erode profits",
+    "May underperform in mean-reverting markets",
+    "Requires careful risk management"
+  ],
+  "extensions_research_directions": [
+    {
+      "name": "ml_enhanced_momentum",
+      "description": "Use machine learning (LSTM, tree methods) or quantum methods to predict momentum persistence, identify optimal lookback/holding periods, or combine momentum with other factors",
+      "benefits": "More sophisticated momentum prediction and signal generation"
+    },
+    {
+      "name": "regime_aware_momentum",
+      "description": "Use regime detection (HMM, GMM) to adapt momentum strategy or pause trading during regime shifts when momentum may reverse",
+      "benefits": "Adapts to changing market conditions"
+    },
+    {
+      "name": "quantum_optimized_momentum_portfolio",
+      "description": "Use quantum optimization (QMV, QAOA) to construct optimal momentum portfolio, balancing risk and return across multiple assets",
+      "benefits": "Optimal portfolio construction for momentum strategy"
+    }
+  ],
+  "references": [
+    {
+      "title": "Returns to Buying Winners and Selling Losers",
+      "authors": "Jegadeesh & Titman",
+      "source": "Journal of Finance",
+      "url": "https://www.jstor.org/stable/2328882",
+      "year": 1993,
+      "relevance": "Establishes momentum effect"
+    },
+    {
+      "title": "Value and Momentum Everywhere",
+      "authors": "Asness et al.",
+      "source": "Journal of Finance",
+      "url": "https://onlinelibrary.wiley.com/doi/abs/10.1111/jofi.12068",
+      "year": 2013,
+      "relevance": "Shows momentum works across asset classes"
+    },
+    {
+      "title": "Time series momentum",
+      "authors": "Moskowitz et al.",
+      "source": "Journal of Financial Economics",
+      "url": "https://www.sciencedirect.com/science/article/pii/S0304407612000286",
+      "year": 2012,
+      "relevance": "Demonstrates momentum in time series"
+    }
+  ],
+  "logging_metadata": {
+    "inputs_to_log": ["returns_shape", "lookback_period", "holding_period", "top_n", "bottom_n", "rebalance_frequency", "timestamp"],
+    "outputs_to_log": ["signals", "positions", "momentum"],
+    "metrics_to_track": ["sharpe_ratio", "max_drawdown", "win_rate", "total_return", "turnover"],
+    "storage": "MLflow + TimescaleDB"
+  },
+  "integration_points": {
+    "data_ingestion": "Fetch historical returns for assets",
+    "ml_forecasting": "Use ML/quantum methods to predict momentum persistence",
+    "regime_detection": "Adapt strategy or pause trading during regime shifts",
+    "execution": "Feed signals to execution layer",
+    "portfolio_optimizer": "Use quantum optimization for portfolio construction",
+    "risk_modules": "Monitor portfolio-level risk and apply gating"
+  },
+  "computational_complexity": {
+    "time": "O(T * N) for momentum calculation, O(N log N) for ranking",
+    "space": "O(T * N) for storing momentum scores",
+    "scalability": "Efficient for moderate N; scales linearly with assets"
+  }
+}
+

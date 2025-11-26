@@ -1,0 +1,267 @@
+{
+  "tool_name": "arima_forecast",
+  "display_name": "ARIMA (AutoRegressive Integrated Moving Average)",
+  "category": "forecasting",
+  "subcategory": "classical_time_series",
+  "description": "Classical time-series forecasting model combining autoregressive (AR), differencing (I), and moving average (MA) components. Provides interpretable, parametric forecasts for asset returns, volatility, or other financial time series. Serves as baseline forecasting tool for comparison against ML and quantum methods.",
+  "use_cases": [
+    "Short-to-medium-term return forecasting",
+    "Volatility prediction (when applied to squared returns)",
+    "Baseline comparison against machine learning and quantum methods",
+    "Regime-adaptive forecasting when combined with regime detection",
+    "Expected returns input for portfolio optimizers"
+  ],
+  "inputs": {
+    "returns": {
+      "type": "numpy.ndarray",
+      "shape": "(T,)",
+      "description": "Time series of returns or prices",
+      "unit": "returns (log or simple)",
+      "required": true,
+      "source": "Market data ingestion (yfinance/Polygon/TimescaleDB)"
+    },
+    "p": {
+      "type": "int",
+      "description": "Autoregressive order (AR)",
+      "required": false,
+      "default": "auto",
+      "selection_method": "AIC/BIC minimization or auto_arima",
+      "typical_range": [0, 5]
+    },
+    "d": {
+      "type": "int",
+      "description": "Differencing order (I)",
+      "required": false,
+      "default": "auto",
+      "selection_method": "ADF test or auto_arima",
+      "typical_range": [0, 2]
+    },
+    "q": {
+      "type": "int",
+      "description": "Moving average order (MA)",
+      "required": false,
+      "default": "auto",
+      "selection_method": "AIC/BIC minimization or auto_arima",
+      "typical_range": [0, 5]
+    },
+    "seasonal": {
+      "type": "bool or dict",
+      "description": "Seasonal ARIMA (SARIMA) parameters",
+      "required": false,
+      "default": false,
+      "use": "For intraday/weekly patterns"
+    },
+    "forecast_horizon": {
+      "type": "int",
+      "description": "Number of steps ahead to forecast",
+      "required": true,
+      "default": 1,
+      "typical_values": [1, 5, 10],
+      "source": "Risk/strategy policy"
+    },
+    "training_window": {
+      "type": "int",
+      "description": "Historical window for model fitting",
+      "required": true,
+      "default": 250,
+      "typical_values": [250, 500, 1000],
+      "source": "Policy (e.g., 250 trading days)"
+    }
+  },
+  "outputs": {
+    "forecast": {
+      "type": "numpy.ndarray",
+      "shape": "(forecast_horizon,)",
+      "description": "Point forecasts for forecast_horizon steps ahead",
+      "unit": "returns or prices"
+    },
+    "forecast_ci": {
+      "type": "numpy.ndarray",
+      "shape": "(forecast_horizon, 2)",
+      "description": "Prediction intervals (confidence bands)",
+      "unit": "returns or prices",
+      "columns": ["lower_bound", "upper_bound"]
+    },
+    "model_order": {
+      "type": "tuple",
+      "description": "Selected (p, d, q) orders",
+      "format": "(p, d, q)"
+    },
+    "aic": {
+      "type": "float",
+      "description": "Akaike Information Criterion",
+      "use": "Model selection metric"
+    },
+    "bic": {
+      "type": "float",
+      "description": "Bayesian Information Criterion",
+      "use": "Model selection metric"
+    },
+    "residuals": {
+      "type": "numpy.ndarray",
+      "description": "Model residuals",
+      "use": "Diagnostic checking (Ljung-Box test)"
+    },
+    "ljung_box_pvalue": {
+      "type": "float",
+      "description": "Ljung-Box test p-value for residual white noise",
+      "interpretation": "p > 0.05 suggests residuals are white noise"
+    }
+  },
+  "algorithm_steps": [
+    {
+      "step": 1,
+      "name": "data_preprocessing",
+      "description": "Prepare time series data",
+      "tasks": [
+        "Fetch historical price/return series",
+        "Check for stationarity (ADF test)",
+        "Apply differencing if needed (determine d)",
+        "Handle missing values and outliers"
+      ]
+    },
+    {
+      "step": 2,
+      "name": "model_selection",
+      "description": "Select optimal ARIMA orders",
+      "methods": [
+        "Grid search over (p, d, q) combinations",
+        "Auto_arima (pmdarima) automatic selection",
+        "Minimize AIC or BIC",
+        "Validate on hold-out set"
+      ]
+    },
+    {
+      "step": 3,
+      "name": "model_fitting",
+      "description": "Fit ARIMA model to training data",
+      "process": "Estimate parameters via maximum likelihood",
+      "validation": "Check residuals for white noise (Ljung-Box test)"
+    },
+    {
+      "step": 4,
+      "name": "forecasting",
+      "description": "Generate forecasts and prediction intervals",
+      "outputs": [
+        "Point forecasts for forecast_horizon steps",
+        "Confidence intervals (typically 95%)",
+        "Forecast variance"
+      ]
+    },
+    {
+      "step": 5,
+      "name": "validation_backtesting",
+      "description": "Validate model performance",
+      "metrics": [
+        "Walk-forward validation",
+        "Forecast errors (MAE, RMSE, MAPE)",
+        "Comparison against naive baseline (random walk)"
+      ]
+    },
+    {
+      "step": 6,
+      "name": "pipeline_integration",
+      "description": "Integrate into hedge fund pipeline",
+      "tasks": [
+        "Run daily/weekly to update forecasts",
+        "Feed forecasts into portfolio optimizer (expected returns)",
+        "Log all parameters, forecasts, errors to MLflow"
+      ]
+    }
+  ],
+  "pseudocode": {
+    "language": "python",
+    "function_signature": "def arima_forecast(returns: np.ndarray, forecast_horizon: int = 1, training_window: int = 250):",
+    "implementation": "# Use auto_arima to select optimal (p, d, q)\nmodel = auto_arima(returns[-training_window:], \n                   seasonal=False,\n                   stepwise=True,\n                   suppress_warnings=True,\n                   error_action='ignore')\n\n# Get selected orders\np, d, q = model.order\n\n# Fit model\nfitted_model = ARIMA(returns[-training_window:], order=(p, d, q))\nfitted_model = fitted_model.fit()\n\n# Generate forecasts\nforecast = fitted_model.forecast(steps=forecast_horizon)\nforecast_ci = fitted_model.get_forecast(steps=forecast_horizon).conf_int()\n\n# Validate residuals\nresiduals = fitted_model.resid\nljung_box = acorr_ljungbox(residuals, lags=10, return_df=True)\n\nreturn {\n    'forecast': forecast,\n    'forecast_ci': forecast_ci,\n    'model_order': (p, d, q),\n    'aic': fitted_model.aic,\n    'bic': fitted_model.bic,\n    'residuals': residuals,\n    'ljung_box_pvalue': ljung_box['lb_pvalue'].iloc[-1]\n}"
+  },
+  "dependencies": {
+    "required_libraries": [
+      "numpy",
+      "pandas",
+      "statsmodels.tsa.arima.model",
+      "pmdarima"
+    ],
+    "optional_libraries": [
+      "statsmodels.stats.diagnostic (for Ljung-Box test)",
+      "statsmodels.tsa.stattools (for ADF test)",
+      "mlflow"
+    ]
+  },
+  "advantages": [
+    "Interpretable and statistically rigorous",
+    "Proven track record in finance and econometrics",
+    "Fast computation and easy to implement",
+    "Provides confidence intervals",
+    "Baseline benchmark for comparative studies",
+    "Works well for short-to-medium-term forecasts"
+  ],
+  "limitations": [
+    "Assumes linear relationships (misses nonlinear patterns)",
+    "Parameter stability can degrade in non-stationary markets",
+    "Long-horizon forecasts tend to revert to mean",
+    "May struggle with regime shifts",
+    "Requires stationarity (differencing may lose information)"
+  ],
+  "extensions_research_directions": [
+    {
+      "name": "regime_switching_arima",
+      "description": "Use regime detection (HMM, GMM) to fit separate ARIMA models per regime, switching models based on current regime state",
+      "benefits": "Adapts to changing market conditions"
+    },
+    {
+      "name": "arima_garch_hybrid",
+      "description": "Combine ARIMA for mean forecasting with GARCH for volatility modeling, capturing both return dynamics and volatility clustering",
+      "benefits": "More comprehensive modeling of return and volatility"
+    },
+    {
+      "name": "ensemble_arima_quantum",
+      "description": "Use ARIMA as classical baseline and combine with quantum forecasting methods (Q-LSTM, QNN) in ensemble, comparing performance under different market conditions",
+      "benefits": "Leverage strengths of both classical and quantum methods"
+    }
+  ],
+  "references": [
+    {
+      "title": "ARIMA models - Forecasting: Principles and Practice",
+      "authors": "Hyndman & Athanasopoulos",
+      "source": "OTexts",
+      "url": "https://otexts.com/fpp3/arima.html",
+      "year": 2021,
+      "relevance": "Establishes ARIMA as fundamental baseline for time-series forecasting"
+    },
+    {
+      "title": "Time Series Analysis: Forecasting and Control",
+      "authors": "Box & Jenkins",
+      "source": "Wiley",
+      "url": "https://www.wiley.com/en-us/Time+Series+Analysis%3A+Forecasting+and+Control%2C+5th+Edition-p-9781118675021",
+      "year": 1976,
+      "relevance": "Original ARIMA methodology remains standard in econometrics and finance"
+    },
+    {
+      "title": "Using ARIMA model to forecast stock price",
+      "authors": "Pai & Lin",
+      "source": "ScienceDirect",
+      "url": "https://www.sciencedirect.com/science/article/pii/S0305054805000081",
+      "year": 2005,
+      "relevance": "Demonstrates ARIMA's applicability to financial time series"
+    }
+  ],
+  "logging_metadata": {
+    "inputs_to_log": ["returns_shape", "p", "d", "q", "forecast_horizon", "training_window", "timestamp"],
+    "outputs_to_log": ["forecast", "forecast_ci", "model_order", "aic", "bic", "ljung_box_pvalue"],
+    "metrics_to_track": ["mae", "rmse", "mape", "forecast_accuracy", "residual_whiteness"],
+    "storage": "MLflow + TimescaleDB"
+  },
+  "integration_points": {
+    "data_ingestion": "Fetch OHLCV data → compute returns → prepare time series",
+    "portfolio_optimizer": "Feed forecasts as expected returns to Markowitz, Black-Litterman",
+    "risk_modules": "Use forecasts for volatility prediction (ARIMA-GARCH)",
+    "regime_detection": "Fit separate ARIMA models per regime",
+    "comparative_study": "Benchmark against LSTM, quantum forecasting methods"
+  },
+  "computational_complexity": {
+    "time": "O(T * (p+q)^2) for fitting, O(forecast_horizon) for forecasting",
+    "space": "O(T) for data storage",
+    "scalability": "Efficient for moderate T (< 10,000), scales well with auto_arima"
+  }
+}
+

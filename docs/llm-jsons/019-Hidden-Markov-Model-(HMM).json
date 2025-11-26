@@ -1,0 +1,245 @@
+{
+  "tool_name": "hmm_regime_detection",
+  "display_name": "Hidden Markov Model (HMM)",
+  "category": "regime_detection",
+  "subcategory": "classical",
+  "description": "Probabilistic model assuming system is a Markov process with unobserved (hidden) states. Used for regime detection - identifying different market states (bull/bear, high/low volatility) that drive observed returns. Serves as classical regime detection tool comparable to quantum methods (QBM) and used to condition other tools.",
+  "use_cases": [
+    "Regime detection for adaptive strategies",
+    "Regime-conditional modeling (separate ARIMA, LSTM, optimizers per regime)",
+    "Risk management with regime-adjusted parameters",
+    "Comparative study vs GMM, Regime-Switching GARCH, quantum methods (QBM)",
+    "Research into regime persistence and transition patterns"
+  ],
+  "inputs": {
+    "returns": {
+      "type": "numpy.ndarray",
+      "shape": "(T,)",
+      "description": "Time series of returns",
+      "unit": "returns",
+      "required": true,
+      "source": "Market data ingestion"
+    },
+    "features": {
+      "type": "numpy.ndarray",
+      "shape": "(T, F)",
+      "description": "Additional features (volatility, volume, etc.)",
+      "required": false,
+      "source": "Feature engineering layer"
+    },
+    "n_states": {
+      "type": "int",
+      "description": "Number of hidden states",
+      "required": true,
+      "default": 3,
+      "typical_range": [2, 5],
+      "source": "Hyperparameter",
+      "interpretation": "e.g., 2: bull/bear, 3: bull/bear/sideways"
+    },
+    "n_iter": {
+      "type": "int",
+      "description": "Maximum iterations for EM algorithm",
+      "required": true,
+      "default": 100,
+      "typical_values": [50, 100, 200],
+      "source": "Hyperparameter"
+    },
+    "covariance_type": {
+      "type": "str",
+      "description": "Type of covariance matrix",
+      "required": true,
+      "default": "full",
+      "values": ["full", "diag", "spherical"],
+      "source": "Hyperparameter"
+    }
+  },
+  "outputs": {
+    "states": {
+      "type": "numpy.ndarray",
+      "shape": "(T,)",
+      "description": "Most likely state sequence (Viterbi decoding)",
+      "values": "integers 0 to n_states-1"
+    },
+    "state_probs": {
+      "type": "numpy.ndarray",
+      "shape": "(T, n_states)",
+      "description": "State probabilities at each time (forward-backward)",
+      "unit": "probability",
+      "interpretation": "Probability of being in each state at each time"
+    },
+    "state_means": {
+      "type": "numpy.ndarray",
+      "shape": "(n_states,)",
+      "description": "Mean return for each state",
+      "unit": "returns"
+    },
+    "state_stds": {
+      "type": "numpy.ndarray",
+      "shape": "(n_states,)",
+      "description": "Standard deviation of returns for each state",
+      "unit": "returns"
+    },
+    "transition_matrix": {
+      "type": "numpy.ndarray",
+      "shape": "(n_states, n_states)",
+      "description": "State transition probabilities",
+      "unit": "probability",
+      "interpretation": "P(state_t+1 | state_t)"
+    },
+    "initial_probs": {
+      "type": "numpy.ndarray",
+      "shape": "(n_states,)",
+      "description": "Initial state distribution",
+      "unit": "probability"
+    },
+    "current_state": {
+      "type": "int",
+      "description": "Most likely current state",
+      "use": "For regime-conditional strategies"
+    },
+    "current_state_probs": {
+      "type": "numpy.ndarray",
+      "shape": "(n_states,)",
+      "description": "Current state probabilities",
+      "use": "For uncertainty-aware strategies"
+    }
+  },
+  "algorithm_steps": [
+    {
+      "step": 1,
+      "name": "model_specification",
+      "description": "Define HMM structure",
+      "components": [
+        "Number of states (e.g., 2: bull/bear, 3: bull/bear/sideways)",
+        "Observation distribution (typically Gaussian)",
+        "Initialize parameters (transition matrix, emission probabilities, initial state distribution)"
+      ]
+    },
+    {
+      "step": 2,
+      "name": "parameter_estimation",
+      "description": "Estimate parameters via EM algorithm",
+      "process": [
+        "E-step: Compute posterior probabilities of states given observations",
+        "M-step: Update parameters to maximize likelihood",
+        "Iterate until convergence"
+      ]
+    },
+    {
+      "step": 3,
+      "name": "state_decoding",
+      "description": "Decode state sequence",
+      "methods": [
+        "Viterbi algorithm: Find most likely state sequence",
+        "Forward-backward algorithm: Compute state probabilities at each time"
+      ]
+    },
+    {
+      "step": 4,
+      "name": "regime_identification",
+      "description": "Interpret and validate regimes",
+      "tasks": [
+        "Interpret states (e.g., high return/low vol, low return/high vol)",
+        "Validate regime characteristics (mean returns, volatilities per state)"
+      ]
+    },
+    {
+      "step": 5,
+      "name": "prediction",
+      "description": "Predict future state probabilities",
+      "use": "For regime-conditional forecasting or risk adjustment"
+    },
+    {
+      "step": 6,
+      "name": "pipeline_integration",
+      "description": "Integrate into hedge fund pipeline",
+      "tasks": [
+        "Run daily/weekly to detect current regime",
+        "Feed regime probabilities to other tools (ARIMA, LSTM, optimizers)",
+        "Log all parameters, state sequences, probabilities to MLflow"
+      ]
+    }
+  ],
+  "pseudocode": {
+    "language": "python",
+    "function_signature": "def hmm_regime_detection(returns: np.ndarray, n_states: int = 3, n_iter: int = 100, covariance_type: str = 'full'):",
+    "implementation": "# Initialize and fit HMM\nmodel = hmm.GaussianHMM(n_components=n_states, covariance_type=covariance_type, n_iter=n_iter)\nmodel.fit(returns.reshape(-1, 1))\n\n# Decode most likely state sequence\nstates = model.predict(returns.reshape(-1, 1))\n\n# Compute state probabilities\nstate_probs = model.predict_proba(returns.reshape(-1, 1))\n\n# Interpret states\nstate_means = [np.mean(returns[states == s]) for s in range(n_states)]\nstate_stds = [np.std(returns[states == s]) for s in range(n_states)]\n\nreturn {'model': model, 'states': states, 'state_probs': state_probs, 'state_means': state_means, 'state_stds': state_stds, 'transition_matrix': model.transmat_, 'current_state': states[-1]}"
+  },
+  "dependencies": {
+    "required_libraries": [
+      "numpy",
+      "hmmlearn"
+    ],
+    "optional_libraries": [
+      "pandas",
+      "mlflow"
+    ]
+  },
+  "advantages": [
+    "Captures regime-switching behavior",
+    "Provides state probabilities (uncertainty quantification)",
+    "Well-established methodology",
+    "Interpretable states",
+    "Can be extended to multivariate observations"
+  ],
+  "limitations": [
+    "Assumes Markov property (state depends only on previous state)",
+    "Number of states must be specified",
+    "Can be sensitive to initialization",
+    "Computational cost grows with number of states"
+  ],
+  "extensions_research_directions": [
+    {
+      "name": "quantum_boltzmann_machine_comparison",
+      "description": "Compare classical HMM against quantum methods (QBM for regime detection), exploring when quantum advantage emerges for complex regime structures",
+      "benefits": "Research into quantum advantage for regime detection"
+    },
+    {
+      "name": "deep_hmm",
+      "description": "Extend to deep HMM variants that can capture more complex state dependencies and observation patterns",
+      "benefits": "More sophisticated regime modeling"
+    },
+    {
+      "name": "regime_conditional_tool_integration",
+      "description": "Use HMM regime probabilities to condition other tools (ARIMA per regime, LSTM with regime features, regime-specific portfolio optimizers)",
+      "benefits": "Adaptive strategies based on regime"
+    }
+  ],
+  "references": [
+    {
+      "title": "A New Approach to the Economic Analysis of Nonstationary Time Series",
+      "authors": "Hamilton",
+      "source": "Econometrica",
+      "url": "https://www.jstor.org/stable/1912559",
+      "year": 1989,
+      "relevance": "Establishes regime-switching models"
+    },
+    {
+      "title": "International Asset Allocation with Regime Shifts",
+      "authors": "Ang & Bekaert",
+      "source": "Review of Financial Studies",
+      "url": "https://academic.oup.com/rfs/article/15/4/1137/1586418",
+      "year": 2002,
+      "relevance": "Applies HMM to portfolio allocation"
+    }
+  ],
+  "logging_metadata": {
+    "inputs_to_log": ["returns_shape", "n_states", "n_iter", "covariance_type", "timestamp"],
+    "outputs_to_log": ["states", "state_probs", "state_means", "state_stds", "transition_matrix", "current_state"],
+    "metrics_to_track": ["regime_persistence", "transition_frequencies", "state_characteristics"],
+    "storage": "MLflow + TimescaleDB"
+  },
+  "integration_points": {
+    "data_ingestion": "Fetch historical returns for regime detection",
+    "forecasting": "Use regime probabilities to condition ARIMA, LSTM models",
+    "portfolio_optimizer": "Use regime-specific mu and Sigma",
+    "risk_modules": "Adjust VaR/CVaR parameters based on regime",
+    "comparative_study": "Benchmark against GMM, Regime-Switching GARCH, QBM"
+  },
+  "computational_complexity": {
+    "time": "O(T * n_states^2) for Viterbi, O(T * n_states^2 * n_iter) for EM",
+    "space": "O(T * n_states) for state probabilities",
+    "scalability": "Efficient for moderate T and n_states; scales well"
+  }
+}
+

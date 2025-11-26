@@ -1,0 +1,219 @@
+{
+  "tool_name": "black_litterman",
+  "display_name": "Black-Litterman Portfolio Optimization",
+  "category": "portfolio_optimization",
+  "subcategory": "classical_advanced",
+  "description": "Advanced portfolio optimization framework that combines market equilibrium returns (from CAPM) with investor views (subjective forecasts) in a Bayesian framework. Addresses estimation error problem in Markowitz by starting from market-implied returns and incorporating views with confidence levels.",
+  "use_cases": [
+    "Advanced classical optimizer for comparative studies",
+    "Incorporating ML/quantum forecasts as investor views",
+    "Reducing extreme weights and turnover vs pure Markowitz",
+    "Regime-adaptive optimization with regime-specific views",
+    "Research into view formulation impact on performance"
+  ],
+  "inputs": {
+    "market_weights": {
+      "type": "numpy.ndarray",
+      "shape": "(N,)",
+      "description": "Market capitalization weights",
+      "unit": "decimal proportion",
+      "required": true,
+      "source": "From market data (market cap of each asset)",
+      "alternative": "Can use equal weights or other proxy if market caps unavailable"
+    },
+    "risk_aversion": {
+      "type": "float",
+      "description": "Risk aversion parameter (delta)",
+      "required": true,
+      "default": 3.0,
+      "typical_range": [2, 4],
+      "source": "Estimated from market or set by policy"
+    },
+    "Sigma": {
+      "type": "numpy.ndarray",
+      "shape": "(N, N)",
+      "description": "Covariance matrix of asset returns",
+      "unit": "variance units",
+      "required": true,
+      "source": "From historical returns or GARCH"
+    },
+    "views": {
+      "type": "dict",
+      "description": "Investor views (absolute or relative)",
+      "required": true,
+      "components": {
+        "P": "matrix (K, N) mapping views to assets",
+        "Q": "vector (K,) expected returns from views",
+        "Omega": "matrix (K, K) uncertainty matrix for views"
+      },
+      "source": "From forecasting tools (ARIMA, LSTM, quantum methods)",
+      "view_types": {
+        "absolute": "Asset i will return X%",
+        "relative": "Asset i will outperform asset j by Y%"
+      }
+    },
+    "tau": {
+      "type": "float",
+      "description": "Scaling factor for uncertainty",
+      "required": true,
+      "default": 0.05,
+      "typical_range": [0.05, 0.5],
+      "interpretation": "Controls confidence in equilibrium vs views (lower = more weight on views)"
+    }
+  },
+  "outputs": {
+    "expected_returns": {
+      "type": "numpy.ndarray",
+      "shape": "(N,)",
+      "description": "Black-Litterman posterior expected returns",
+      "unit": "returns",
+      "computation": "mu_BL = M @ (tau_Sigma_inv @ Pi + P.T @ Omega_inv @ Q)"
+    },
+    "covariance": {
+      "type": "numpy.ndarray",
+      "shape": "(N, N)",
+      "description": "Black-Litterman posterior covariance",
+      "unit": "variance units",
+      "computation": "Sigma_BL = Sigma + M"
+    },
+    "equilibrium_returns": {
+      "type": "numpy.ndarray",
+      "shape": "(N,)",
+      "description": "Market-implied equilibrium returns (Pi)",
+      "unit": "returns",
+      "computation": "Pi = delta * Sigma @ market_weights"
+    },
+    "optimal_weights": {
+      "type": "numpy.ndarray",
+      "shape": "(N,)",
+      "description": "Optimal portfolio weights from Markowitz with BL inputs",
+      "unit": "decimal proportion",
+      "optional": true,
+      "computation": "Use mu_BL and Sigma_BL in Markowitz optimization"
+    }
+  },
+  "algorithm_steps": [
+    {
+      "step": 1,
+      "name": "compute_equilibrium_returns",
+      "description": "Compute market-implied returns from market weights",
+      "formula": "Pi = delta * Sigma @ market_weights",
+      "where": "delta is risk aversion parameter"
+    },
+    {
+      "step": 2,
+      "name": "formulate_views",
+      "description": "Define investor views with confidence",
+      "components": [
+        "View matrix P (K × N) mapping views to assets",
+        "View vector Q (K,) with expected returns from views",
+        "Uncertainty matrix Omega (K × K) for view confidences"
+      ]
+    },
+    {
+      "step": 3,
+      "name": "combine_equilibrium_views",
+      "description": "Combine equilibrium and views using Bayesian framework",
+      "formula": "mu_BL = [(tau*Sigma)^(-1) + P^T * Omega^(-1) * P]^(-1) * [(tau*Sigma)^(-1) * Pi + P^T * Omega^(-1) * Q]",
+      "posterior_covariance": "Sigma_BL = Sigma + M"
+    },
+    {
+      "step": 4,
+      "name": "optimize_portfolio",
+      "description": "Use BL expected returns and covariance in Markowitz optimization",
+      "process": "Solve for optimal weights using mu_BL and Sigma_BL"
+    },
+    {
+      "step": 5,
+      "name": "pipeline_integration",
+      "description": "Integrate into hedge fund pipeline",
+      "tasks": [
+        "Use forecasts from ARIMA/LSTM/quantum as views",
+        "Run daily/weekly with updated views",
+        "Log all inputs, views, outputs to MLflow"
+      ]
+    }
+  ],
+  "pseudocode": {
+    "language": "python",
+    "function_signature": "def black_litterman(market_weights: np.ndarray, Sigma: np.ndarray, views: dict, tau: float = 0.05, risk_aversion: float = 3.0):",
+    "implementation": "# Market equilibrium returns\nPi = risk_aversion * Sigma @ market_weights\n\n# Extract views\nP = views['P']  # (K, N) view matrix\nQ = views['Q']  # (K,) view returns\nOmega = views['Omega']  # (K, K) uncertainty matrix\n\n# Black-Litterman formula\ntau_Sigma_inv = inv(tau * Sigma)\nM = inv(tau_Sigma_inv + P.T @ inv(Omega) @ P)\nmu_BL = M @ (tau_Sigma_inv @ Pi + P.T @ inv(Omega) @ Q)\nSigma_BL = Sigma + M\n\nreturn {'expected_returns': mu_BL, 'covariance': Sigma_BL, 'equilibrium_returns': Pi}"
+  },
+  "dependencies": {
+    "required_libraries": [
+      "numpy",
+      "scipy.linalg"
+    ],
+    "optional_libraries": [
+      "cvxpy (for portfolio optimization)",
+      "mlflow"
+    ]
+  },
+  "advantages": [
+    "Reduces estimation error impact vs pure Markowitz",
+    "More stable, diversified portfolios",
+    "Natural framework for incorporating forecasts",
+    "Reduces extreme weights and turnover",
+    "Starts from market equilibrium (more stable)"
+  ],
+  "limitations": [
+    "Requires market cap data (may not be available for all assets)",
+    "View formulation requires careful calibration",
+    "Still assumes normal returns (can combine with CVaR)",
+    "Tau parameter selection can be subjective"
+  ],
+  "extensions_research_directions": [
+    {
+      "name": "ml_enhanced_views",
+      "description": "Use forecasts from LSTM, quantum methods (Q-LSTM, QNN) as views, with confidence based on model performance metrics",
+      "benefits": "Leverage ML/quantum forecasts as structured views"
+    },
+    {
+      "name": "regime_switching_black_litterman",
+      "description": "Use regime-specific market weights and views, adapting to changing market conditions",
+      "benefits": "Adapts to regime shifts"
+    },
+    {
+      "name": "robust_black_litterman",
+      "description": "Incorporate robust optimization or uncertainty sets for views to handle model misspecification",
+      "benefits": "More robust to view errors"
+    }
+  ],
+  "references": [
+    {
+      "title": "Global Portfolio Optimization",
+      "authors": "Black & Litterman",
+      "source": "Financial Analysts Journal",
+      "url": "https://www.jstor.org/stable/4479577",
+      "year": 1992,
+      "relevance": "Introduces framework combining equilibrium and views"
+    },
+    {
+      "title": "A Step-by-Step Guide to the Black-Litterman Model",
+      "authors": "Idzorek",
+      "source": "SSRN",
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=1314585",
+      "year": 2005,
+      "relevance": "Practical implementation guide"
+    }
+  ],
+  "logging_metadata": {
+    "inputs_to_log": ["market_weights", "Sigma", "views", "tau", "risk_aversion", "timestamp"],
+    "outputs_to_log": ["expected_returns", "covariance", "equilibrium_returns", "optimal_weights"],
+    "metrics_to_track": ["view_impact", "portfolio_turnover", "weight_stability"],
+    "storage": "MLflow + TimescaleDB"
+  },
+  "integration_points": {
+    "forecasting": "Use forecasts from ARIMA, LSTM, quantum methods as views",
+    "market_data": "Fetch market capitalization for market weights",
+    "risk_modules": "Use Sigma from GARCH, historical estimation",
+    "regime_detection": "Use regime-specific market weights and views",
+    "comparative_study": "Benchmark against Markowitz, CVaR optimization, quantum methods"
+  },
+  "computational_complexity": {
+    "time": "O(N^3) for matrix inversions, O(N^2) for matrix multiplications",
+    "space": "O(N^2) for covariance matrix storage",
+    "scalability": "Efficient for N < 1000; similar to Markowitz"
+  }
+}
+

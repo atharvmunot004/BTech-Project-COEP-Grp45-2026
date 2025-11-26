@@ -1,0 +1,294 @@
+{
+  "tool_name": "tree_ensemble_forecast",
+  "display_name": "Random Forest / Gradient Boosted Trees (XGBoost)",
+  "category": "forecasting",
+  "subcategory": "machine_learning",
+  "description": "Ensemble machine learning methods combining multiple decision trees to capture complex nonlinear relationships and feature interactions. Random Forest uses bagging, while XGBoost uses gradient boosting with regularization. Provide strong forecasting baselines for comparison against LSTM, quantum methods, and other advanced techniques.",
+  "use_cases": [
+    "Return and volatility forecasting with nonlinear patterns",
+    "Feature importance analysis to identify predictive factors",
+    "Regime-aware forecasting when combined with regime detection",
+    "Comparative study against LSTM, quantum methods",
+    "Multi-asset forecasting via multi-output regression"
+  ],
+  "inputs": {
+    "features": {
+      "type": "numpy.ndarray",
+      "shape": "(T, F)",
+      "description": "Feature matrix (returns, volatility, volume, technical indicators, etc.)",
+      "required": true,
+      "source": "Feature engineering layer",
+      "feature_types": [
+        "Technical indicators (RSI, MACD, Bollinger Bands)",
+        "Lagged returns and volatilities",
+        "Market regime indicators (from HMM/GMM)",
+        "Cross-asset features (correlations, spreads)"
+      ]
+    },
+    "target": {
+      "type": "numpy.ndarray",
+      "shape": "(T,)",
+      "description": "Target variable (returns, volatility, etc.)",
+      "required": true,
+      "source": "Market data or computed metrics"
+    },
+    "model_type": {
+      "type": "str",
+      "description": "Type of ensemble model",
+      "required": true,
+      "default": "xgboost",
+      "values": ["xgboost", "random_forest"],
+      "note": "XGBoost typically performs better but requires more tuning"
+    },
+    "n_estimators": {
+      "type": "int",
+      "description": "Number of trees in ensemble",
+      "required": true,
+      "default": 500,
+      "typical_values": [100, 500, 1000, 2000],
+      "source": "Hyperparameter"
+    },
+    "max_depth": {
+      "type": "int",
+      "description": "Maximum depth of trees",
+      "required": true,
+      "default": 5,
+      "typical_values": [3, 5, 7, 10],
+      "source": "Hyperparameter"
+    },
+    "learning_rate": {
+      "type": "float",
+      "description": "Learning rate (for XGBoost)",
+      "required": false,
+      "default": 0.1,
+      "typical_values": [0.01, 0.1, 0.3],
+      "source": "Hyperparameter",
+      "note": "Only for XGBoost"
+    },
+    "subsample": {
+      "type": "float",
+      "description": "Fraction of samples for each tree",
+      "required": false,
+      "default": 0.8,
+      "typical_values": [0.6, 0.8, 1.0],
+      "source": "Hyperparameter"
+    },
+    "colsample_bytree": {
+      "type": "float",
+      "description": "Fraction of features for each tree",
+      "required": false,
+      "default": 0.8,
+      "typical_values": [0.6, 0.8, 1.0],
+      "source": "Hyperparameter"
+    },
+    "forecast_horizon": {
+      "type": "int",
+      "description": "Steps ahead to forecast",
+      "required": true,
+      "default": 1,
+      "typical_values": [1, 5, 10],
+      "source": "Policy"
+    },
+    "training_window": {
+      "type": "int",
+      "description": "Historical window for training",
+      "required": true,
+      "default": 1000,
+      "typical_values": [1000, 2000, 3000],
+      "source": "Policy"
+    }
+  },
+  "outputs": {
+    "forecast": {
+      "type": "numpy.ndarray",
+      "shape": "(forecast_horizon,)",
+      "description": "Point forecasts",
+      "unit": "target units (returns, volatility, etc.)"
+    },
+    "forecast_ci": {
+      "type": "numpy.ndarray",
+      "shape": "(forecast_horizon, 2)",
+      "description": "Prediction intervals (if using quantile regression)",
+      "optional": true
+    },
+    "model": {
+      "type": "sklearn/xgboost model",
+      "description": "Trained ensemble model",
+      "use": "For future predictions or feature importance"
+    },
+    "feature_importance": {
+      "type": "numpy.ndarray",
+      "shape": "(F,)",
+      "description": "Feature importance scores",
+      "interpretation": "Higher values indicate more predictive features",
+      "use": "Feature selection and interpretation"
+    },
+    "test_mae": {
+      "type": "float",
+      "description": "Mean absolute error on test set",
+      "unit": "target units"
+    },
+    "test_rmse": {
+      "type": "float",
+      "description": "Root mean squared error on test set",
+      "unit": "target units"
+    }
+  },
+  "algorithm_steps": [
+    {
+      "step": 1,
+      "name": "data_preparation",
+      "description": "Prepare features and target",
+      "tasks": [
+        "Fetch historical features and target variable",
+        "Handle missing values and outliers",
+        "Create train/validation/test splits",
+        "Optionally scale features (tree methods are scale-invariant)"
+      ]
+    },
+    {
+      "step": 2,
+      "name": "model_training",
+      "description": "Train ensemble model",
+      "methods": {
+        "random_forest": "Train ensemble of decision trees on bootstrapped samples",
+        "xgboost": "Train gradient boosting ensemble with regularization"
+      },
+      "process": [
+        "Use early stopping on validation set",
+        "Tune hyperparameters via grid search or Bayesian optimization"
+      ]
+    },
+    {
+      "step": 3,
+      "name": "feature_importance_analysis",
+      "description": "Extract and analyze feature importance",
+      "tasks": [
+        "Extract feature importance scores",
+        "Identify most predictive features",
+        "Use for feature selection or interpretation"
+      ]
+    },
+    {
+      "step": 4,
+      "name": "forecasting",
+      "description": "Generate forecasts",
+      "methods": [
+        "Generate point forecasts",
+        "Optionally compute prediction intervals via quantile regression or bootstrap"
+      ]
+    },
+    {
+      "step": 5,
+      "name": "validation_backtesting",
+      "description": "Validate model performance",
+      "metrics": [
+        "Evaluate on test set (out-of-sample)",
+        "Compute forecast errors (MAE, RMSE, MAPE)",
+        "Compare against ARIMA, LSTM, and other baselines"
+      ]
+    },
+    {
+      "step": 6,
+      "name": "pipeline_integration",
+      "description": "Integrate into hedge fund pipeline",
+      "tasks": [
+        "Retrain periodically (daily/weekly) or use online learning",
+        "Feed forecasts into portfolio optimizer",
+        "Log all hyperparameters, forecasts, feature importance to MLflow"
+      ]
+    }
+  ],
+  "pseudocode": {
+    "language": "python",
+    "function_signature": "def tree_ensemble_forecast(features: np.ndarray, target: np.ndarray, model_type: str = 'xgboost', n_estimators: int = 500, max_depth: int = 5, learning_rate: float = 0.1, forecast_horizon: int = 1):",
+    "implementation": "# Split data\nn_train = int(0.7 * len(features))\nn_val = int(0.15 * len(features))\nX_train, y_train = features[:n_train], target[:n_train]\nX_val, y_val = features[n_train:n_train+n_val], target[n_train:n_train+n_val]\nX_test, y_test = features[n_train+n_val:], target[n_train+n_val:]\n\n# Train model\nif model_type == 'xgboost':\n    model = XGBRegressor(n_estimators=n_estimators, max_depth=max_depth, learning_rate=learning_rate, subsample=0.8, colsample_bytree=0.8, early_stopping_rounds=10)\n    model.fit(X_train, y_train, eval_set=[(X_val, y_val)], verbose=False)\nelse:\n    model = RandomForestRegressor(n_estimators=n_estimators, max_depth=max_depth, n_jobs=-1)\n    model.fit(X_train, y_train)\n\n# Forecast\nforecast = model.predict(X_test[-forecast_horizon:])\nfeature_importance = model.feature_importances_\n\nreturn {'forecast': forecast, 'model': model, 'feature_importance': feature_importance}"
+  },
+  "dependencies": {
+    "required_libraries": [
+      "numpy",
+      "scikit-learn",
+      "xgboost"
+    ],
+    "optional_libraries": [
+      "pandas",
+      "mlflow",
+      "optuna (for hyperparameter optimization)"
+    ]
+  },
+  "advantages": [
+    "Strong performance on tabular data (often better than neural networks)",
+    "Interpretable via feature importance",
+    "Handles missing values and outliers well",
+    "Fast training and prediction",
+    "Can capture complex nonlinear relationships"
+  ],
+  "limitations": [
+    "May overfit with many features and small samples",
+    "Less effective for pure time-series dependencies (LSTM may be better)",
+    "Hyperparameter tuning is important",
+    "Requires careful feature engineering"
+  ],
+  "extensions_research_directions": [
+    {
+      "name": "regime_aware_tree_ensembles",
+      "description": "Use regime detection (HMM, GMM) to train separate models per regime or use regime as feature, adapting to market conditions",
+      "benefits": "Adapts to changing market regimes"
+    },
+    {
+      "name": "quantile_regression_forests",
+      "description": "Extend to quantile regression for prediction intervals and tail risk estimation, complementing CVaR tools",
+      "benefits": "Provides uncertainty estimates and tail risk"
+    },
+    {
+      "name": "quantum_enhanced_feature_selection",
+      "description": "Use quantum methods to identify optimal feature subsets or combine tree methods with quantum feature engineering",
+      "benefits": "Leverage quantum advantage for feature selection"
+    }
+  ],
+  "references": [
+    {
+      "title": "Random Forests",
+      "authors": "Breiman",
+      "source": "Machine Learning",
+      "url": "https://link.springer.com/article/10.1023/A:1010933404324",
+      "year": 2001,
+      "relevance": "Introduces method combining multiple decision trees"
+    },
+    {
+      "title": "XGBoost: A Scalable Tree Boosting System",
+      "authors": "Chen & Guestrin",
+      "source": "KDD",
+      "url": "https://dl.acm.org/doi/10.1145/2939672.2939785",
+      "year": 2016,
+      "relevance": "Presents XGBoost with regularization"
+    },
+    {
+      "title": "Empirical Asset Pricing via Machine Learning",
+      "authors": "Gu et al.",
+      "source": "Review of Financial Studies",
+      "url": "https://academic.oup.com/rfs/article/33/5/2223/5731311",
+      "year": 2020,
+      "relevance": "Demonstrates tree methods' effectiveness for asset pricing"
+    }
+  ],
+  "logging_metadata": {
+    "inputs_to_log": ["features_shape", "model_type", "n_estimators", "max_depth", "learning_rate", "forecast_horizon", "timestamp"],
+    "outputs_to_log": ["forecast", "feature_importance", "test_mae", "test_rmse"],
+    "metrics_to_track": ["mae", "rmse", "mape", "feature_importance_rankings", "training_time"],
+    "storage": "MLflow + TimescaleDB"
+  },
+  "integration_points": {
+    "feature_layer": "Use engineered features (technical indicators, regime indicators)",
+    "forecasting": "Generate return/volatility forecasts",
+    "portfolio_optimizer": "Feed forecasts as expected returns",
+    "regime_detection": "Use regime indicators as features or train separate models",
+    "comparative_study": "Benchmark against ARIMA, LSTM, quantum methods"
+  },
+  "computational_complexity": {
+    "time": "O(T * F * n_estimators * max_depth) for training",
+    "space": "O(n_estimators * max_depth * F) for model storage",
+    "scalability": "Efficient for moderate T and F; XGBoost is highly optimized"
+  }
+}
+

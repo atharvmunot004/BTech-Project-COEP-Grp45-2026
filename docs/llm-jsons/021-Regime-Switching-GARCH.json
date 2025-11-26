@@ -1,0 +1,195 @@
+{
+  "tool_name": "regime_switching_garch",
+  "display_name": "Regime-Switching GARCH",
+  "category": "volatility_forecasting",
+  "subcategory": "regime_aware",
+  "description": "Extends standard GARCH model by allowing volatility parameters to switch between different regimes (high/low volatility). Captures changing volatility dynamics and provides more accurate volatility forecasts than standard GARCH in regime-shifting markets. Combines GARCH with regime detection.",
+  "use_cases": [
+    "Regime-aware volatility forecasting",
+    "Risk management with regime-specific volatility for VaR/CVaR",
+    "Regime detection for volatility regimes",
+    "Comparative study vs standard GARCH, HMM, GMM",
+    "Research into volatility regime persistence and transitions"
+  ],
+  "inputs": {
+    "returns": {
+      "type": "numpy.ndarray",
+      "shape": "(T,)",
+      "description": "Time series of returns",
+      "unit": "returns",
+      "required": true,
+      "source": "Market data ingestion"
+    },
+    "n_regimes": {
+      "type": "int",
+      "description": "Number of volatility regimes",
+      "required": true,
+      "default": 2,
+      "typical_range": [2, 3],
+      "source": "Hyperparameter",
+      "interpretation": "e.g., 2: high vol, low vol"
+    },
+    "garch_order": {
+      "type": "tuple",
+      "description": "GARCH order (p, q)",
+      "required": true,
+      "default": "(1, 1)",
+      "typical_values": ["(1,1)", "(1,2)", "(2,1)"],
+      "source": "Hyperparameter"
+    },
+    "regime_model": {
+      "type": "str",
+      "description": "Regime switching model",
+      "required": true,
+      "default": "Markov",
+      "values": ["Markov", "threshold"],
+      "source": "Hyperparameter"
+    }
+  },
+  "outputs": {
+    "regimes": {
+      "type": "numpy.ndarray",
+      "shape": "(T,)",
+      "description": "Regime sequence",
+      "values": "integers 0 to n_regimes-1"
+    },
+    "volatility_forecast": {
+      "type": "float",
+      "description": "Forecasted volatility",
+      "unit": "returns"
+    },
+    "garch_models": {
+      "type": "list",
+      "description": "Fitted GARCH models for each regime",
+      "use": "For regime-specific volatility forecasting"
+    },
+    "current_regime": {
+      "type": "int",
+      "description": "Current volatility regime",
+      "use": "For regime-conditional strategies"
+    }
+  },
+  "algorithm_steps": [
+    {
+      "step": 1,
+      "name": "model_specification",
+      "description": "Define Regime-Switching GARCH structure",
+      "components": [
+        "Number of regimes (e.g., 2: high vol, low vol)",
+        "GARCH order for each regime",
+        "Regime switching mechanism (Markov or threshold)"
+      ]
+    },
+    {
+      "step": 2,
+      "name": "parameter_estimation",
+      "description": "Estimate model parameters",
+      "process": [
+        "Estimate GARCH parameters for each regime",
+        "Estimate regime transition probabilities (if Markov)",
+        "Use maximum likelihood or Bayesian methods"
+      ]
+    },
+    {
+      "step": 3,
+      "name": "regime_identification",
+      "description": "Identify regimes",
+      "tasks": [
+        "Identify current regime at each time",
+        "Compute regime probabilities"
+      ]
+    },
+    {
+      "step": 4,
+      "name": "volatility_forecasting",
+      "description": "Forecast volatility",
+      "process": [
+        "Forecast volatility using regime-specific GARCH",
+        "Account for regime uncertainty",
+        "Provide volatility forecasts and confidence intervals"
+      ]
+    },
+    {
+      "step": 5,
+      "name": "pipeline_integration",
+      "description": "Integrate into hedge fund pipeline",
+      "tasks": [
+        "Run daily to update volatility forecasts",
+        "Feed to risk modules (VaR, CVaR)",
+        "Log all parameters, regime sequences, forecasts to MLflow"
+      ]
+    }
+  ],
+  "pseudocode": {
+    "language": "python",
+    "function_signature": "def regime_switching_garch(returns: np.ndarray, n_regimes: int = 2, garch_order: tuple = (1, 1), regime_model: str = 'Markov'):",
+    "implementation": "# Identify regimes (e.g., using HMM on squared returns)\nhmm_model = hmm.GaussianHMM(n_components=n_regimes)\nhmm_model.fit(squared_returns.reshape(-1, 1))\nregimes = hmm_model.predict(squared_returns.reshape(-1, 1))\n\n# Fit GARCH for each regime\nfor r in range(n_regimes):\n    regime_returns = returns[regimes == r]\n    model = arch_model(regime_returns, vol='Garch', p=garch_order[0], q=garch_order[1])\n    fitted = model.fit(disp='off')\n    garch_models.append(fitted)\n\n# Forecast using current regime's GARCH\ncurrent_regime = regimes[-1]\nforecast = garch_models[current_regime].forecast(horizon=1)\nvolatility_forecast = np.sqrt(forecast.variance.values[-1, 0])\n\nreturn {'regimes': regimes, 'garch_models': garch_models, 'volatility_forecast': volatility_forecast, 'current_regime': current_regime}"
+  },
+  "dependencies": {
+    "required_libraries": [
+      "numpy",
+      "arch (for GARCH)",
+      "hmmlearn (for regime detection)"
+    ],
+    "optional_libraries": [
+      "mlflow"
+    ]
+  },
+  "advantages": [
+    "Captures changing volatility dynamics",
+    "More accurate forecasts than standard GARCH",
+    "Provides regime-specific volatility",
+    "Combines volatility modeling with regime detection"
+  ],
+  "limitations": [
+    "More complex than standard GARCH",
+    "Requires regime identification",
+    "Computational cost higher",
+    "May require specialized libraries or custom implementation"
+  ],
+  "extensions_research_directions": [
+    {
+      "name": "quantum_enhanced_regime_detection",
+      "description": "Use quantum methods (QBM) for regime detection in Regime-Switching GARCH, potentially improving regime identification",
+      "benefits": "Improved regime detection via quantum methods"
+    },
+    {
+      "name": "deep_regime_switching_garch",
+      "description": "Extend to deep learning variants that can capture more complex regime structures and volatility patterns",
+      "benefits": "More sophisticated volatility modeling"
+    },
+    {
+      "name": "multi_asset_regime_switching_garch",
+      "description": "Extend to multivariate case, modeling regime-switching in covariance matrices",
+      "benefits": "Multi-asset volatility modeling with regime switching"
+    }
+  ],
+  "references": [
+    {
+      "title": "Autoregressive conditional heteroskedasticity and changes in regime",
+      "authors": "Hamilton & Susmel",
+      "source": "Journal of Econometrics",
+      "url": "https://www.sciencedirect.com/science/article/pii/0304407694900208",
+      "year": 1994,
+      "relevance": "Introduces regime-switching ARCH"
+    }
+  ],
+  "logging_metadata": {
+    "inputs_to_log": ["returns_shape", "n_regimes", "garch_order", "regime_model", "timestamp"],
+    "outputs_to_log": ["regimes", "volatility_forecast", "current_regime"],
+    "metrics_to_track": ["regime_persistence", "volatility_forecast_accuracy", "regime_transition_frequencies"],
+    "storage": "MLflow + TimescaleDB"
+  },
+  "integration_points": {
+    "data_ingestion": "Fetch historical returns",
+    "regime_detection": "Use HMM or other methods for regime identification",
+    "risk_modules": "Feed volatility forecasts to VaR, CVaR",
+    "comparative_study": "Benchmark against standard GARCH, HMM, GMM"
+  },
+  "computational_complexity": {
+    "time": "O(T * n_regimes) for regime identification + GARCH fitting",
+    "space": "O(T) for regime sequence storage",
+    "scalability": "Efficient for moderate T; complexity grows with n_regimes"
+  }
+}
+

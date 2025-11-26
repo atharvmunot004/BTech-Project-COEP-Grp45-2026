@@ -1,0 +1,194 @@
+{
+  "tool_name": "pca_kmeans_clustering",
+  "display_name": "PCA + K-Means",
+  "category": "regime_detection",
+  "subcategory": "clustering",
+  "description": "Two-stage clustering approach combining Principal Component Analysis (PCA) for dimensionality reduction with K-Means clustering for regime detection or asset grouping. PCA reduces feature space to principal components, then K-Means clusters observations in reduced space. Serves as classical clustering/regime detection tool comparable to quantum methods.",
+  "use_cases": [
+    "Regime detection via clustering",
+    "Asset grouping for portfolio construction",
+    "Dimensionality reduction before other analysis",
+    "Comparative study vs quantum methods (Quantum k-Means, Quantum PCA)",
+    "Research into regime characteristics and transitions"
+  ],
+  "inputs": {
+    "features": {
+      "type": "numpy.ndarray",
+      "shape": "(T, F)",
+      "description": "Feature matrix (returns, volatility, etc.)",
+      "required": true,
+      "source": "Feature engineering layer"
+    },
+    "n_components": {
+      "type": "int",
+      "description": "Number of principal components",
+      "required": true,
+      "default": 3,
+      "typical_range": [2, 10],
+      "source": "Hyperparameter"
+    },
+    "n_clusters": {
+      "type": "int",
+      "description": "Number of clusters",
+      "required": true,
+      "default": 3,
+      "typical_range": [2, 5],
+      "source": "Hyperparameter"
+    },
+    "explained_variance_threshold": {
+      "type": "float",
+      "description": "Minimum explained variance for PCA",
+      "required": false,
+      "default": 0.8,
+      "typical_values": [0.7, 0.8, 0.9],
+      "source": "Hyperparameter"
+    }
+  },
+  "outputs": {
+    "features_pca": {
+      "type": "numpy.ndarray",
+      "shape": "(T, n_components)",
+      "description": "Features in PCA space",
+      "use": "Reduced-dimension representation"
+    },
+    "clusters": {
+      "type": "numpy.ndarray",
+      "shape": "(T,)",
+      "description": "Cluster assignments",
+      "values": "integers 0 to n_clusters-1"
+    },
+    "cluster_centroids": {
+      "type": "numpy.ndarray",
+      "shape": "(n_clusters, n_components)",
+      "description": "Cluster centroids in PCA space"
+    },
+    "explained_variance": {
+      "type": "float",
+      "description": "Total explained variance by selected components",
+      "unit": "proportion (0-1)"
+    },
+    "current_cluster": {
+      "type": "int",
+      "description": "Current cluster assignment",
+      "use": "For cluster-conditional strategies"
+    }
+  },
+  "algorithm_steps": [
+    {
+      "step": 1,
+      "name": "pca_dimensionality_reduction",
+      "description": "Reduce feature space via PCA",
+      "process": [
+        "Standardize features",
+        "Compute covariance matrix",
+        "Extract principal components",
+        "Select components explaining sufficient variance"
+      ]
+    },
+    {
+      "step": 2,
+      "name": "kmeans_clustering",
+      "description": "Cluster in reduced PCA space",
+      "process": [
+        "Apply K-Means to reduced PCA space",
+        "Initialize centroids (k-means++ or random)",
+        "Iterate until convergence",
+        "Assign observations to clusters"
+      ]
+    },
+    {
+      "step": 3,
+      "name": "interpretation",
+      "description": "Interpret results",
+      "tasks": [
+        "Analyze principal components (loadings, explained variance)",
+        "Analyze clusters (centroids, characteristics)",
+        "Label clusters/regimes"
+      ]
+    },
+    {
+      "step": 4,
+      "name": "pipeline_integration",
+      "description": "Integrate into hedge fund pipeline",
+      "tasks": [
+        "Run daily/weekly to detect current cluster/regime",
+        "Feed cluster assignments to other tools",
+        "Log all parameters, assignments, components to MLflow"
+      ]
+    }
+  ],
+  "pseudocode": {
+    "language": "python",
+    "function_signature": "def pca_kmeans_clustering(features: np.ndarray, n_components: int = 3, n_clusters: int = 3, explained_variance_threshold: float = 0.8):",
+    "implementation": "# Standardize\nscaler = StandardScaler()\nfeatures_scaled = scaler.fit_transform(features)\n\n# PCA\npca = PCA(n_components=n_components)\nfeatures_pca = pca.fit_transform(features_scaled)\n\n# K-Means\nkmeans = KMeans(n_clusters=n_clusters, random_state=42, n_init=10)\nclusters = kmeans.fit_predict(features_pca)\n\nreturn {'pca_model': pca, 'kmeans_model': kmeans, 'features_pca': features_pca, 'clusters': clusters, 'cluster_centroids': kmeans.cluster_centers_, 'explained_variance': np.sum(pca.explained_variance_ratio_), 'current_cluster': clusters[-1]}"
+  },
+  "dependencies": {
+    "required_libraries": [
+      "numpy",
+      "sklearn.decomposition",
+      "sklearn.cluster",
+      "sklearn.preprocessing"
+    ],
+    "optional_libraries": [
+      "mlflow"
+    ]
+  },
+  "advantages": [
+    "Fast and efficient",
+    "Interpretable results",
+    "Reduces dimensionality",
+    "Well-established methodology",
+    "Combines benefits of PCA and K-Means"
+  ],
+  "limitations": [
+    "Number of clusters must be specified",
+    "Assumes linear relationships (PCA)",
+    "May miss nonlinear patterns",
+    "Sensitive to initialization"
+  ],
+  "extensions_research_directions": [
+    {
+      "name": "quantum_pca_kmeans_comparison",
+      "description": "Compare classical PCA + K-Means against quantum methods (Quantum PCA, Quantum k-Means), exploring when quantum advantage emerges",
+      "benefits": "Research into quantum advantage for clustering"
+    },
+    {
+      "name": "dynamic_pca_kmeans",
+      "description": "Adapt PCA components and clusters over time using rolling windows or regime detection, responding to changing market conditions",
+      "benefits": "Adapts to changing market conditions"
+    },
+    {
+      "name": "deep_pca_kmeans",
+      "description": "Extend to deep learning variants (autoencoders + clustering) that can capture nonlinear patterns",
+      "benefits": "Captures nonlinear patterns"
+    }
+  ],
+  "references": [
+    {
+      "title": "Principal Component Analysis",
+      "authors": "Jolliffe",
+      "source": "Springer",
+      "url": "https://link.springer.com/book/10.1007/978-1-4757-1904-8",
+      "year": 2002,
+      "relevance": "Comprehensive treatment of PCA"
+    }
+  ],
+  "logging_metadata": {
+    "inputs_to_log": ["features_shape", "n_components", "n_clusters", "explained_variance_threshold", "timestamp"],
+    "outputs_to_log": ["clusters", "cluster_centroids", "explained_variance", "current_cluster"],
+    "metrics_to_track": ["cluster_separation", "explained_variance", "cluster_sizes"],
+    "storage": "MLflow + TimescaleDB"
+  },
+  "integration_points": {
+    "feature_layer": "Use engineered features as input",
+    "regime_detection": "Alternative to HMM, GMM for regime detection",
+    "portfolio_optimizer": "Use clusters for asset grouping",
+    "comparative_study": "Benchmark against quantum methods (Quantum k-Means, Quantum PCA)"
+  },
+  "computational_complexity": {
+    "time": "O(T * F^2) for PCA + O(T * n_clusters * n_components * iterations) for K-Means",
+    "space": "O(T * n_components) for PCA features",
+    "scalability": "Efficient for moderate T and F; scales well"
+  }
+}
+

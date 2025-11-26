@@ -1,0 +1,221 @@
+{
+  "tool_name": "risk_parity_erc",
+  "display_name": "Risk Parity / ERC (Equal Risk Contribution)",
+  "category": "portfolio_optimization",
+  "subcategory": "risk_based",
+  "description": "Portfolio construction approach that allocates capital such that each asset contributes equally to portfolio risk, rather than equal dollar amounts. Results in more diversified portfolios than equal-weighting and can outperform mean-variance optimization in certain regimes. Complements Markowitz and CVaR optimization.",
+  "use_cases": [
+    "Risk-based diversification alternative to equal-weighting and mean-variance",
+    "Comparative study vs Markowitz, CVaR optimization, quantum methods",
+    "Regime-adaptive optimization with regime-specific covariance",
+    "Leveraged strategies to achieve target returns while maintaining risk parity",
+    "Research into performance across different market regimes"
+  ],
+  "inputs": {
+    "Sigma": {
+      "type": "numpy.ndarray",
+      "shape": "(N, N)",
+      "description": "Covariance matrix of asset returns",
+      "unit": "variance units",
+      "required": true,
+      "source": "From historical returns, GARCH, or factor models"
+    },
+    "target_volatility": {
+      "type": "float",
+      "description": "Target portfolio volatility (optional)",
+      "unit": "returns",
+      "required": false,
+      "source": "Risk policy"
+    },
+    "leverage": {
+      "type": "float",
+      "description": "Leverage factor (optional)",
+      "required": false,
+      "default": 1.0,
+      "typical_values": [1.0, 1.5, 2.0],
+      "source": "Risk policy",
+      "note": "Use leverage to achieve target return while maintaining risk parity"
+    },
+    "constraints": {
+      "type": "dict",
+      "description": "Portfolio constraints",
+      "required": false,
+      "default": {"long_only": true, "budget": true},
+      "options": {
+        "long_only": "weights >= 0",
+        "budget": "sum(weights) = 1"
+      }
+    }
+  },
+  "outputs": {
+    "weights": {
+      "type": "numpy.ndarray",
+      "shape": "(N,)",
+      "description": "Risk parity portfolio weights",
+      "unit": "decimal proportion",
+      "property": "Each asset contributes equally to portfolio risk"
+    },
+    "risk_contributions": {
+      "type": "numpy.ndarray",
+      "shape": "(N,)",
+      "description": "Risk contribution of each asset",
+      "unit": "risk units",
+      "computation": "RC_i = w_i * (Sigma @ w)_i / sqrt(w^T @ Sigma @ w)",
+      "property": "Should be approximately equal for all assets"
+    },
+    "portfolio_volatility": {
+      "type": "float",
+      "description": "Portfolio volatility",
+      "unit": "returns",
+      "computation": "sqrt(w^T @ Sigma @ w)"
+    },
+    "leverage": {
+      "type": "float",
+      "description": "Effective leverage (sum of absolute weights)",
+      "unit": "ratio",
+      "note": "Equals 1.0 if no leverage applied"
+    }
+  },
+  "risk_contribution_formula": {
+    "definition": "Risk contribution of asset i: RC_i = w_i * (Sigma @ w)_i / sqrt(w^T @ Sigma @ w)",
+    "property": "In risk parity, RC_i ≈ RC_j for all i, j"
+  },
+  "optimization_formulation": {
+    "objective": "min_w sum_i sum_j (w_i (Sigma w)_i - w_j (Sigma w)_j)^2",
+    "constraints": "sum(w) = 1, w >= 0 (if long-only)",
+    "interpretation": "Minimize sum of squared differences from equal risk contributions"
+  },
+  "algorithm_steps": [
+    {
+      "step": 1,
+      "name": "risk_parity_optimization",
+      "description": "Find weights with equal risk contributions",
+      "objective": "Minimize sum of squared differences from equal risk contributions",
+      "methods": [
+        "Nonlinear optimization (scipy.optimize)",
+        "Iterative approach starting from equal weights"
+      ]
+    },
+    {
+      "step": 2,
+      "name": "leverage_application",
+      "description": "Apply leverage if specified",
+      "process": [
+        "Scale weights by leverage factor",
+        "Maintain risk parity property"
+      ],
+      "optional": true
+    },
+    {
+      "step": 3,
+      "name": "volatility_scaling",
+      "description": "Scale to target volatility if specified",
+      "process": [
+        "Compute current portfolio volatility",
+        "Scale weights to achieve target volatility"
+      ],
+      "optional": true
+    },
+    {
+      "step": 4,
+      "name": "validation",
+      "description": "Validate risk parity property",
+      "tasks": [
+        "Compute risk contributions for each asset",
+        "Verify they are approximately equal",
+        "Compute portfolio statistics (volatility, expected return, Sharpe ratio)"
+      ]
+    },
+    {
+      "step": 5,
+      "name": "pipeline_integration",
+      "description": "Integrate into hedge fund pipeline",
+      "tasks": [
+        "Run daily/weekly with updated covariance",
+        "Feed optimal weights to execution layer",
+        "Log all inputs, outputs, risk contributions to MLflow"
+      ]
+    }
+  ],
+  "pseudocode": {
+    "language": "python",
+    "function_signature": "def risk_parity_optimization(Sigma: np.ndarray, target_volatility: float = None, leverage: float = 1.0, constraints: dict = None):",
+    "implementation": "def risk_contributions(w):\n    portfolio_vol = np.sqrt(w @ Sigma @ w)\n    marginal_contrib = Sigma @ w\n    risk_contrib = w * marginal_contrib / portfolio_vol\n    return risk_contrib\n\ndef objective(w):\n    rc = risk_contributions(w)\n    target_rc = np.mean(rc)\n    return np.sum((rc - target_rc)**2)\n\n# Optimize\nw0 = np.ones(N) / N  # Equal weights initial guess\nresult = minimize(objective, w0, method='SLSQP', bounds=bounds, constraints=constraint_list)\nw_opt = result.x\n\n# Apply leverage and scaling if specified\nif leverage != 1.0:\n    w_opt = w_opt * leverage\nif target_volatility is not None:\n    current_vol = np.sqrt(w_opt @ Sigma @ w_opt)\n    w_opt = w_opt * (target_volatility / current_vol)\n\nreturn {'weights': w_opt, 'risk_contributions': risk_contributions(w_opt), 'portfolio_volatility': np.sqrt(w_opt @ Sigma @ w_opt)}"
+  },
+  "dependencies": {
+    "required_libraries": [
+      "numpy",
+      "scipy.optimize"
+    ],
+    "optional_libraries": [
+      "cvxpy (alternative optimization)",
+      "mlflow"
+    ]
+  },
+  "advantages": [
+    "More robust to return estimation errors",
+    "Better diversification than equal-weighting",
+    "Less extreme weights than mean-variance",
+    "Focuses on risk (more stable)",
+    "Well-established method with proven track record"
+  ],
+  "limitations": [
+    "May underperform in strong trending markets",
+    "Requires leverage for higher returns (adds complexity)",
+    "Still sensitive to covariance estimation",
+    "May not be optimal for all risk preferences"
+  ],
+  "extensions_research_directions": [
+    {
+      "name": "dynamic_risk_parity",
+      "description": "Adapt risk parity weights over time using regime detection or time-varying covariance models (GARCH, Regime-Switching GARCH), responding to changing market conditions",
+      "benefits": "Adapts to changing market regimes"
+    },
+    {
+      "name": "quantum_optimized_risk_parity",
+      "description": "Use quantum optimization methods to solve risk parity problem for large-scale portfolios, exploring when quantum advantage emerges",
+      "benefits": "Research into quantum advantage for risk-based optimization"
+    },
+    {
+      "name": "multi_factor_risk_parity",
+      "description": "Extend to risk parity across factors (e.g., equity, bonds, commodities) rather than individual assets, providing factor-level diversification",
+      "benefits": "Factor-level risk diversification"
+    }
+  ],
+  "references": [
+    {
+      "title": "The Properties of Equally Weighted Risk Contribution Portfolios",
+      "authors": "Maillard et al.",
+      "source": "Journal of Portfolio Management",
+      "url": "https://jpm.pm-research.com/content/36/4/60",
+      "year": 2010,
+      "relevance": "Establishes ERC framework"
+    },
+    {
+      "title": "Risk Parity Portfolios",
+      "authors": "Qian",
+      "source": "SSRN",
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2297383",
+      "year": 2005,
+      "relevance": "Introduces risk parity concept"
+    }
+  ],
+  "logging_metadata": {
+    "inputs_to_log": ["Sigma", "target_volatility", "leverage", "constraints", "timestamp"],
+    "outputs_to_log": ["weights", "risk_contributions", "portfolio_volatility", "leverage"],
+    "metrics_to_track": ["risk_contribution_variance", "portfolio_turnover", "optimization_time"],
+    "storage": "MLflow + TimescaleDB"
+  },
+  "integration_points": {
+    "risk_modules": "Use Sigma from GARCH, historical estimation, or factor models",
+    "regime_detection": "Use regime-specific covariance matrices",
+    "execution": "Feed optimal weights to execution layer",
+    "comparative_study": "Benchmark against Markowitz, CVaR optimization, quantum methods"
+  },
+  "computational_complexity": {
+    "time": "O(N^3) for covariance operations, O(N^2) for optimization iterations",
+    "space": "O(N^2) for covariance matrix storage",
+    "scalability": "Efficient for moderate N (< 1000); similar to Markowitz"
+  }
+}
+

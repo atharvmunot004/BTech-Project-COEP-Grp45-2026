@@ -1,0 +1,268 @@
+{
+  "tool_name": "pairs_trading",
+  "display_name": "Pairs Trading (Statistical Arbitrage)",
+  "category": "trading_strategy",
+  "subcategory": "market_neutral",
+  "description": "Market-neutral trading strategy that exploits temporary mispricings between two correlated assets. Identifies pairs with historically stable relationships, monitors price spread, and trades when spread deviates from historical mean. Can be enhanced with ML/quantum methods for pair selection and signal generation.",
+  "use_cases": [
+    "Market-neutral trading strategy for diversification",
+    "ML-enhanced pair selection using ML/quantum methods",
+    "Regime-aware trading with adaptive thresholds",
+    "Portfolio of pairs for diversification",
+    "Research comparing classical vs ML/quantum-enhanced variants"
+  ],
+  "inputs": {
+    "price_series_1": {
+      "type": "numpy.ndarray",
+      "shape": "(T,)",
+      "description": "Price series for first asset",
+      "unit": "price",
+      "required": true,
+      "source": "Market data ingestion"
+    },
+    "price_series_2": {
+      "type": "numpy.ndarray",
+      "shape": "(T,)",
+      "description": "Price series for second asset",
+      "unit": "price",
+      "required": true,
+      "source": "Market data ingestion"
+    },
+    "lookback_window": {
+      "type": "int",
+      "description": "Historical window for spread calculation",
+      "required": true,
+      "default": 120,
+      "typical_values": [60, 120, 252],
+      "source": "Hyperparameter"
+    },
+    "entry_threshold": {
+      "type": "float",
+      "description": "Z-score threshold for entry signal",
+      "required": true,
+      "default": 2.0,
+      "typical_values": [1.5, 2.0, 2.5, 3.0],
+      "unit": "standard deviations",
+      "source": "Hyperparameter"
+    },
+    "exit_threshold": {
+      "type": "float",
+      "description": "Z-score threshold for exit signal",
+      "required": true,
+      "default": 0.5,
+      "typical_values": [0.0, 0.5, 1.0],
+      "unit": "standard deviations",
+      "source": "Hyperparameter"
+    },
+    "hedge_ratio": {
+      "type": "float",
+      "description": "Optimal hedge ratio (beta)",
+      "required": false,
+      "default": "auto",
+      "estimation_method": "OLS regression or Kalman filter",
+      "source": "Estimated from historical data"
+    },
+    "cointegration_test": {
+      "type": "bool",
+      "description": "Whether to test for cointegration",
+      "required": false,
+      "default": true,
+      "test_methods": ["Engle-Granger", "Johansen"],
+      "source": "Statistical test"
+    }
+  },
+  "outputs": {
+    "signals": {
+      "type": "list",
+      "description": "Trading signals",
+      "values": ["long_spread", "short_spread", "exit", "hold"],
+      "interpretation": {
+        "long_spread": "Buy asset 1, short asset 2 (spread too low)",
+        "short_spread": "Short asset 1, buy asset 2 (spread too high)",
+        "exit": "Close position (spread reverted)",
+        "hold": "No action"
+      }
+    },
+    "positions": {
+      "type": "list",
+      "description": "Position details for each time step",
+      "components": {
+        "z_score": "Normalized spread z-score",
+        "spread": "Raw spread value",
+        "hedge_ratio": "Hedge ratio used"
+      }
+    },
+    "is_cointegrated": {
+      "type": "bool",
+      "description": "Whether pair is cointegrated",
+      "interpretation": "True if p-value < 0.05 in cointegration test"
+    },
+    "hedge_ratio": {
+      "type": "float",
+      "description": "Estimated hedge ratio",
+      "computation": "From OLS: spread = price_1 - beta * price_2"
+    },
+    "spread": {
+      "type": "numpy.ndarray",
+      "shape": "(T,)",
+      "description": "Time series of spread values",
+      "computation": "spread = price_1 - hedge_ratio * price_2"
+    }
+  },
+  "algorithm_steps": [
+    {
+      "step": 1,
+      "name": "pair_selection",
+      "description": "Identify candidate pairs and test for cointegration",
+      "tasks": [
+        "Identify candidate pairs (same sector, correlated assets)",
+        "Test for cointegration (Engle-Granger test) or high correlation",
+        "Select pairs with stable historical relationship"
+      ]
+    },
+    {
+      "step": 2,
+      "name": "hedge_ratio_estimation",
+      "description": "Estimate optimal hedge ratio",
+      "methods": [
+        "OLS regression: spread = price_1 - beta * price_2",
+        "Dynamic hedge ratio via Kalman filter"
+      ],
+      "computation": "spread_t = price_1_t - beta * price_2_t"
+    },
+    {
+      "step": 3,
+      "name": "spread_normalization",
+      "description": "Compute normalized spread (z-score)",
+      "process": [
+        "Compute rolling mean and standard deviation of spread",
+        "Calculate z-score: z_t = (spread_t - mean_t) / std_t"
+      ]
+    },
+    {
+      "step": 4,
+      "name": "signal_generation",
+      "description": "Generate entry/exit signals",
+      "rules": {
+        "entry_long_spread": "z_score < -entry_threshold (spread too low, expect reversion)",
+        "entry_short_spread": "z_score > entry_threshold (spread too high, expect reversion)",
+        "exit": "abs(z_score) < exit_threshold (spread reverted)"
+      }
+    },
+    {
+      "step": 5,
+      "name": "position_sizing_risk",
+      "description": "Size positions and manage risk",
+      "tasks": [
+        "Size positions based on volatility and risk budget",
+        "Set stop-loss levels",
+        "Monitor portfolio-level exposure"
+      ]
+    },
+    {
+      "step": 6,
+      "name": "backtesting_validation",
+      "description": "Validate strategy performance",
+      "metrics": [
+        "Walk-forward backtest",
+        "Compute performance metrics (Sharpe ratio, max drawdown, win rate)",
+        "Compare against buy-and-hold and other strategies"
+      ]
+    },
+    {
+      "step": 7,
+      "name": "pipeline_integration",
+      "description": "Integrate into hedge fund pipeline",
+      "tasks": [
+        "Run daily to identify trading opportunities",
+        "Generate signals and feed to execution layer",
+        "Log all pairs, signals, positions, performance to MLflow"
+      ]
+    }
+  ],
+  "pseudocode": {
+    "language": "python",
+    "function_signature": "def pairs_trading_signals(price_1: np.ndarray, price_2: np.ndarray, lookback_window: int = 120, entry_threshold: float = 2.0, exit_threshold: float = 0.5):",
+    "implementation": "# Test for cointegration\nscore, pvalue, _ = coint(price_1, price_2)\nis_cointegrated = pvalue < 0.05\n\n# Estimate hedge ratio\nmodel = OLS(price_1, price_2).fit()\nhedge_ratio = model.params[0]\n\n# Compute spread\nspread = price_1 - hedge_ratio * price_2\n\n# Compute rolling z-score and generate signals\nfor t in range(lookback_window, T):\n    spread_window = spread[t-lookback_window:t]\n    spread_mean = np.mean(spread_window)\n    spread_std = np.std(spread_window)\n    z_score = (spread[t] - spread_mean) / spread_std\n    \n    if z_score < -entry_threshold:\n        signal = 'long_spread'\n    elif z_score > entry_threshold:\n        signal = 'short_spread'\n    elif abs(z_score) < exit_threshold:\n        signal = 'exit'\n    else:\n        signal = 'hold'\n\nreturn {'signals': signals, 'is_cointegrated': is_cointegrated, 'hedge_ratio': hedge_ratio, 'spread': spread}"
+  },
+  "dependencies": {
+    "required_libraries": [
+      "numpy",
+      "pandas",
+      "statsmodels.tsa.stattools (for cointegration test)",
+      "statsmodels.regression.linear_model (for OLS)"
+    ],
+    "optional_libraries": [
+      "pykalman (for Kalman filter hedge ratio)",
+      "mlflow"
+    ]
+  },
+  "advantages": [
+    "Market-neutral (reduces market risk)",
+    "Exploits mean reversion",
+    "Can be profitable in sideways markets",
+    "Well-established strategy with proven track record"
+  ],
+  "limitations": [
+    "Requires cointegration/correlation to persist",
+    "Transaction costs can erode profits",
+    "Risk of permanent divergence (pair breaks down)",
+    "Requires careful risk management",
+    "May underperform in trending markets"
+  ],
+  "extensions_research_directions": [
+    {
+      "name": "ml_enhanced_pair_selection",
+      "description": "Use machine learning (LSTM, tree methods) or quantum methods to identify optimal pairs and predict spread movements, going beyond simple cointegration tests",
+      "benefits": "More sophisticated pair selection and signal generation"
+    },
+    {
+      "name": "regime_aware_pairs_trading",
+      "description": "Use regime detection (HMM, GMM) to adapt entry/exit thresholds or pause trading during regime shifts when relationships may break down",
+      "benefits": "Adapts to changing market conditions"
+    },
+    {
+      "name": "portfolio_of_pairs_optimization",
+      "description": "Use portfolio optimization (Markowitz, CVaR, quantum methods) to construct optimal portfolio of multiple pairs, balancing risk and return",
+      "benefits": "Diversified portfolio of pairs with optimal risk-return"
+    }
+  ],
+  "references": [
+    {
+      "title": "Pairs Trading: Performance of a Relative-Value Arbitrage Rule",
+      "authors": "Gatev et al.",
+      "source": "Review of Financial Studies",
+      "url": "https://academic.oup.com/rfs/article/19/3/797/1599809",
+      "year": 2006,
+      "relevance": "Foundational analysis of pairs trading performance"
+    },
+    {
+      "title": "Pairs Trading",
+      "authors": "Elliott et al.",
+      "source": "Quantitative Finance",
+      "url": "https://www.tandfonline.com/doi/abs/10.1080/14697680500149370",
+      "year": 2005,
+      "relevance": "Establishes theoretical framework"
+    }
+  ],
+  "logging_metadata": {
+    "inputs_to_log": ["pair_assets", "lookback_window", "entry_threshold", "exit_threshold", "timestamp"],
+    "outputs_to_log": ["signals", "positions", "is_cointegrated", "hedge_ratio", "spread"],
+    "metrics_to_track": ["sharpe_ratio", "max_drawdown", "win_rate", "total_return", "number_of_trades"],
+    "storage": "MLflow + TimescaleDB"
+  },
+  "integration_points": {
+    "data_ingestion": "Fetch price data for candidate pairs",
+    "pair_selection": "Use ML/quantum methods to identify optimal pairs",
+    "regime_detection": "Adapt thresholds or pause trading during regime shifts",
+    "execution": "Feed signals to execution layer",
+    "portfolio_optimizer": "Construct portfolio of multiple pairs",
+    "risk_modules": "Monitor portfolio-level exposure and risk"
+  },
+  "computational_complexity": {
+    "time": "O(T * lookback_window) for spread calculation and signal generation",
+    "space": "O(T) for storing spread and signals",
+    "scalability": "Efficient for moderate number of pairs; scales linearly with pairs"
+  }
+}
+

@@ -1,0 +1,261 @@
+{
+  "tool_name": "markowitz_mean_variance",
+  "display_name": "Markowitz Mean-Variance Optimization",
+  "category": "portfolio_optimization",
+  "subcategory": "classical",
+  "description": "Foundational portfolio optimization framework that maximizes expected return for a given level of risk (variance), or minimizes risk for a given level of return. Provides efficient frontier of optimal portfolios and serves as classical baseline optimizer against which quantum and advanced methods are compared.",
+  "use_cases": [
+    "Baseline portfolio optimizer for comparative studies",
+    "Efficient frontier analysis and risk-return tradeoffs",
+    "Constraint testing (sector limits, turnover)",
+    "Regime-adaptive optimization with regime-specific inputs",
+    "Benchmark for quantum optimization (QMV, QAOA)"
+  ],
+  "inputs": {
+    "mu": {
+      "type": "numpy.ndarray",
+      "shape": "(N,)",
+      "description": "Expected returns per asset",
+      "unit": "returns (decimal)",
+      "required": true,
+      "source": "From forecasting tools (ARIMA, LSTM) or historical averages"
+    },
+    "Sigma": {
+      "type": "numpy.ndarray",
+      "shape": "(N, N)",
+      "description": "Covariance matrix of asset returns",
+      "unit": "variance units",
+      "required": true,
+      "source": "From historical returns, GARCH, or factor models",
+      "enhancements": [
+        "Shrinkage estimators (Ledoit-Wolf)",
+        "Factor models (Fama-French, PCA)",
+        "Robust covariance estimation"
+      ]
+    },
+    "risk_aversion": {
+      "type": "float",
+      "description": "Risk aversion parameter (lambda)",
+      "required": false,
+      "default": 1.0,
+      "interpretation": "Higher = more risk averse",
+      "source": "Risk policy or investor preference"
+    },
+    "target_return": {
+      "type": "float",
+      "description": "Target expected return (alternative to risk_aversion)",
+      "required": false,
+      "source": "Investment objective"
+    },
+    "risk_free_rate": {
+      "type": "float",
+      "description": "Risk-free rate for Sharpe ratio calculation",
+      "required": false,
+      "default": 0.0,
+      "source": "From macro data (FRED, RBI)"
+    },
+    "constraints": {
+      "type": "dict",
+      "description": "Portfolio constraints",
+      "required": false,
+      "default": {"long_only": true, "budget": true},
+      "options": {
+        "long_only": "weights >= 0",
+        "budget": "sum(weights) = 1",
+        "sector_limits": "dict of sector -> limit",
+        "turnover_limit": "max ||w_new - w_old||",
+        "position_limits": "min/max per asset"
+      }
+    }
+  },
+  "outputs": {
+    "weights": {
+      "type": "numpy.ndarray",
+      "shape": "(N,)",
+      "description": "Optimal portfolio weights",
+      "unit": "decimal proportion",
+      "constraints": "sum(weights) = 1, weights >= 0 (if long_only)"
+    },
+    "expected_return": {
+      "type": "float",
+      "description": "Expected portfolio return",
+      "unit": "returns",
+      "computation": "mu^T @ weights"
+    },
+    "volatility": {
+      "type": "float",
+      "description": "Portfolio volatility (standard deviation)",
+      "unit": "returns",
+      "computation": "sqrt(weights^T @ Sigma @ weights)"
+    },
+    "sharpe_ratio": {
+      "type": "float",
+      "description": "Sharpe ratio (risk-adjusted return)",
+      "computation": "(expected_return - risk_free_rate) / volatility"
+    },
+    "status": {
+      "type": "str",
+      "description": "Optimization status",
+      "values": ["optimal", "infeasible", "unbounded", "optimal_inaccurate"]
+    }
+  },
+  "optimization_formulations": {
+    "maximize_sharpe": {
+      "formula": "max_w (w^T mu - r_f) / sqrt(w^T Sigma w)",
+      "constraints": "sum(w) = 1, w >= 0"
+    },
+    "minimize_variance": {
+      "formula": "min_w w^T Sigma w",
+      "constraints": "w^T mu = mu_target, sum(w) = 1, w >= 0"
+    },
+    "maximize_utility": {
+      "formula": "max_w w^T mu - lambda * w^T Sigma w",
+      "constraints": "sum(w) = 1, w >= 0"
+    }
+  },
+  "algorithm_steps": [
+    {
+      "step": 1,
+      "name": "estimate_inputs",
+      "description": "Compute expected returns and covariance",
+      "tasks": [
+        "Compute expected returns mu from forecasting models or historical averages",
+        "Estimate covariance matrix Sigma from historical returns (with optional shrinkage)",
+        "Set risk aversion parameter or target return"
+      ]
+    },
+    {
+      "step": 2,
+      "name": "formulate_optimization",
+      "description": "Set up quadratic programming problem",
+      "formulations": [
+        "Maximize Sharpe ratio",
+        "Minimize variance for given return",
+        "Maximize utility function"
+      ]
+    },
+    {
+      "step": 3,
+      "name": "solve_quadratic_program",
+      "description": "Solve optimization problem",
+      "methods": [
+        "cvxpy (convex optimization)",
+        "scipy.optimize (general optimization)",
+        "quadprog (quadratic programming)"
+      ],
+      "constraints": "Handle equality, inequality, and bound constraints"
+    },
+    {
+      "step": 4,
+      "name": "post_processing",
+      "description": "Validate and compute portfolio statistics",
+      "tasks": [
+        "Validate constraints are satisfied",
+        "Compute portfolio statistics (expected return, volatility, Sharpe ratio)",
+        "Generate efficient frontier (optional)"
+      ]
+    },
+    {
+      "step": 5,
+      "name": "pipeline_integration",
+      "description": "Integrate into hedge fund pipeline",
+      "tasks": [
+        "Run daily/weekly with updated mu and Sigma",
+        "Feed optimal weights to execution layer",
+        "Log all inputs, outputs, constraints to MLflow"
+      ]
+    }
+  ],
+  "pseudocode": {
+    "language": "python",
+    "function_signature": "def markowitz_optimize(mu: np.ndarray, Sigma: np.ndarray, risk_aversion: float = 1.0, risk_free_rate: float = 0.0, constraints: dict = None):",
+    "implementation": "N = len(mu)\nw = cp.Variable(N)\n\n# Objective: maximize utility = mu^T w - lambda * w^T Sigma w\nobjective = cp.Maximize(mu @ w - risk_aversion * cp.quad_form(w, Sigma))\n\n# Constraints\nconstraint_list = [cp.sum(w) == 1]  # Budget constraint\n\nif constraints.get('long_only', True):\n    constraint_list.append(w >= 0)\n\n# Solve\nproblem = cp.Problem(objective, constraint_list)\nproblem.solve()\n\nw_opt = w.value\nportfolio_return = mu @ w_opt\nportfolio_vol = np.sqrt(w_opt @ Sigma @ w_opt)\nsharpe_ratio = (portfolio_return - risk_free_rate) / portfolio_vol if portfolio_vol > 0 else 0\n\nreturn {'weights': w_opt, 'expected_return': portfolio_return, 'volatility': portfolio_vol, 'sharpe_ratio': sharpe_ratio}"
+  },
+  "dependencies": {
+    "required_libraries": [
+      "numpy",
+      "cvxpy"
+    ],
+    "optional_libraries": [
+      "scipy.optimize",
+      "quadprog",
+      "mlflow"
+    ]
+  },
+  "advantages": [
+    "Theoretically sound and interpretable framework",
+    "Fast computation (quadratic programming)",
+    "Foundation for modern portfolio theory",
+    "Provides efficient frontier analysis",
+    "Baseline benchmark for advanced methods"
+  ],
+  "limitations": [
+    "Estimation error in mu and Sigma can severely degrade performance",
+    "Assumes quadratic utility (may not capture tail risk preferences)",
+    "Sensitivity to inputs: small changes in mu lead to large weight changes",
+    "No consideration of tail risk (CVaR optimization addresses this)",
+    "May produce extreme weights in high dimensions"
+  ],
+  "extensions_research_directions": [
+    {
+      "name": "robust_markowitz",
+      "description": "Use robust optimization techniques (worst-case mu, Sigma) or shrinkage estimators (Ledoit-Wolf) to handle estimation error",
+      "benefits": "More stable portfolios under estimation uncertainty"
+    },
+    {
+      "name": "factor_based_markowitz",
+      "description": "Replace full covariance Sigma with factor model (Fama-French, PCA) to reduce dimensionality and improve stability",
+      "benefits": "Better scalability and stability for large asset universes"
+    },
+    {
+      "name": "quantum_mean_variance_comparison",
+      "description": "Compare classical Markowitz against quantum optimization (QMV, QAOA), exploring when quantum methods provide advantage for large-scale problems",
+      "benefits": "Research into quantum advantage for portfolio optimization"
+    }
+  ],
+  "references": [
+    {
+      "title": "Portfolio Selection",
+      "authors": "Markowitz",
+      "source": "Journal of Finance",
+      "url": "https://www.jstor.org/stable/2327556",
+      "year": 1952,
+      "relevance": "Establishes mean-variance framework, foundational to modern portfolio theory"
+    },
+    {
+      "title": "The Markowitz Optimization Enigma: Is 'Optimized' Optimal?",
+      "authors": "Michaud",
+      "source": "Financial Analysts Journal",
+      "url": "https://www.jstor.org/stable/4479057",
+      "year": 1989,
+      "relevance": "Discusses estimation error challenges in Markowitz optimization"
+    },
+    {
+      "title": "Honey, I Shrunk the Sample Covariance Matrix",
+      "authors": "Ledoit & Wolf",
+      "source": "Journal of Portfolio Management",
+      "url": "https://www.jstor.org/stable/4485060",
+      "year": 2004,
+      "relevance": "Addresses estimation error via shrinkage estimators"
+    }
+  ],
+  "logging_metadata": {
+    "inputs_to_log": ["mu", "Sigma", "risk_aversion", "target_return", "constraints", "timestamp"],
+    "outputs_to_log": ["weights", "expected_return", "volatility", "sharpe_ratio", "status"],
+    "metrics_to_track": ["optimization_time", "constraint_violations", "portfolio_turnover"],
+    "storage": "MLflow + TimescaleDB"
+  },
+  "integration_points": {
+    "forecasting": "Use mu from ARIMA, LSTM, or other forecasting tools",
+    "risk_modules": "Use Sigma from GARCH, historical estimation, or factor models",
+    "regime_detection": "Use regime-specific mu and Sigma",
+    "execution": "Feed optimal weights to execution layer",
+    "comparative_study": "Benchmark against Black-Litterman, CVaR optimization, QMV, QAOA"
+  },
+  "computational_complexity": {
+    "time": "O(N^3) for covariance matrix operations, O(N^2) for optimization",
+    "space": "O(N^2) for covariance matrix storage",
+    "scalability": "Efficient for N < 1000; use factor models for larger N"
+  }
+}
+

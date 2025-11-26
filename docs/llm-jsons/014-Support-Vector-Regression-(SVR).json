@@ -1,0 +1,244 @@
+{
+  "tool_name": "svr_forecast",
+  "display_name": "Support Vector Regression (SVR)",
+  "category": "forecasting",
+  "subcategory": "machine_learning",
+  "description": "Machine learning method using support vector machines for regression. Finds function that deviates from training data by at most specified margin (epsilon) while being as flat as possible. Handles nonlinear relationships via kernel functions, providing alternative to tree methods and neural networks.",
+  "use_cases": [
+    "Nonlinear return and volatility forecasting",
+    "Small dataset scenarios where SVR is effective",
+    "Outlier-robust forecasting",
+    "Comparative study against ARIMA, LSTM, tree methods, quantum methods",
+    "Kernel selection research for financial data"
+  ],
+  "inputs": {
+    "features": {
+      "type": "numpy.ndarray",
+      "shape": "(T, F)",
+      "description": "Feature matrix",
+      "required": true,
+      "source": "Feature engineering layer"
+    },
+    "target": {
+      "type": "numpy.ndarray",
+      "shape": "(T,)",
+      "description": "Target variable (returns, volatility)",
+      "required": true,
+      "source": "Market data"
+    },
+    "kernel": {
+      "type": "str",
+      "description": "Kernel function type",
+      "required": true,
+      "default": "rbf",
+      "values": ["rbf", "poly", "linear", "sigmoid"],
+      "source": "Hyperparameter",
+      "note": "RBF is most common for nonlinear problems"
+    },
+    "C": {
+      "type": "float",
+      "description": "Regularization parameter",
+      "required": true,
+      "default": 1.0,
+      "typical_values": [0.1, 1.0, 10.0, 100.0],
+      "source": "Hyperparameter",
+      "interpretation": "Higher = less regularization, more complex model"
+    },
+    "epsilon": {
+      "type": "float",
+      "description": "Margin of tolerance",
+      "required": true,
+      "default": 0.1,
+      "typical_values": [0.01, 0.1, 0.5],
+      "source": "Hyperparameter",
+      "interpretation": "Larger = more tolerance for errors"
+    },
+    "gamma": {
+      "type": "float or str",
+      "description": "Kernel coefficient (for RBF/poly)",
+      "required": true,
+      "default": "scale",
+      "typical_values": ["scale", "auto", 0.001, 0.01, 0.1],
+      "source": "Hyperparameter"
+    },
+    "degree": {
+      "type": "int",
+      "description": "Polynomial degree (for poly kernel)",
+      "required": false,
+      "default": 3,
+      "typical_values": [2, 3, 4],
+      "source": "Hyperparameter",
+      "note": "Only for polynomial kernel"
+    },
+    "forecast_horizon": {
+      "type": "int",
+      "description": "Steps ahead to forecast",
+      "required": true,
+      "default": 1,
+      "typical_values": [1, 5, 10],
+      "source": "Policy"
+    }
+  },
+  "outputs": {
+    "forecast": {
+      "type": "numpy.ndarray",
+      "shape": "(forecast_horizon,)",
+      "description": "Point forecasts",
+      "unit": "target units"
+    },
+    "model": {
+      "type": "sklearn.svm.SVR",
+      "description": "Trained SVR model",
+      "use": "For future predictions"
+    },
+    "n_support_vectors": {
+      "type": "int",
+      "description": "Number of support vectors used",
+      "interpretation": "Subset of training data that defines the model",
+      "use": "Memory efficiency metric"
+    },
+    "test_mae": {
+      "type": "float",
+      "description": "Mean absolute error on test set",
+      "unit": "target units"
+    },
+    "test_rmse": {
+      "type": "float",
+      "description": "Root mean squared error on test set",
+      "unit": "target units"
+    }
+  },
+  "algorithm_steps": [
+    {
+      "step": 1,
+      "name": "data_preparation",
+      "description": "Prepare and scale features",
+      "tasks": [
+        "Fetch historical features and target",
+        "Scale features (SVR is sensitive to feature scaling)",
+        "Create train/validation/test splits"
+      ]
+    },
+    {
+      "step": 2,
+      "name": "model_training",
+      "description": "Train SVR model",
+      "process": [
+        "Train SVR with selected kernel and hyperparameters",
+        "Use cross-validation for hyperparameter tuning",
+        "Identify support vectors (subset of training data used)"
+      ]
+    },
+    {
+      "step": 3,
+      "name": "forecasting",
+      "description": "Generate forecasts",
+      "methods": [
+        "Generate point forecasts",
+        "Optionally compute prediction intervals via bootstrap or quantile methods"
+      ]
+    },
+    {
+      "step": 4,
+      "name": "validation_backtesting",
+      "description": "Validate model performance",
+      "metrics": [
+        "Evaluate on test set",
+        "Compute forecast errors (MAE, RMSE, MAPE)",
+        "Compare against other methods"
+      ]
+    },
+    {
+      "step": 5,
+      "name": "pipeline_integration",
+      "description": "Integrate into hedge fund pipeline",
+      "tasks": [
+        "Retrain periodically",
+        "Feed forecasts into portfolio optimizer",
+        "Log hyperparameters, forecasts, support vectors to MLflow"
+      ]
+    }
+  ],
+  "pseudocode": {
+    "language": "python",
+    "function_signature": "def svr_forecast(features: np.ndarray, target: np.ndarray, kernel: str = 'rbf', C: float = 1.0, epsilon: float = 0.1, gamma: str = 'scale', forecast_horizon: int = 1):",
+    "implementation": "# Scale features\nscaler = StandardScaler()\nfeatures_scaled = scaler.fit_transform(features)\n\n# Split data\nn_train = int(0.7 * len(features_scaled))\nn_val = int(0.15 * len(features_scaled))\nX_train, y_train = features_scaled[:n_train], target[:n_train]\nX_val, y_val = features_scaled[n_train:n_train+n_val], target[n_train:n_train+n_val]\nX_test, y_test = features_scaled[n_train+n_val:], target[n_train+n_val:]\n\n# Train\nmodel = SVR(kernel=kernel, C=C, epsilon=epsilon, gamma=gamma)\nmodel.fit(X_train, y_train)\n\n# Forecast\nforecast = model.predict(X_test[-forecast_horizon:])\nn_support_vectors = len(model.support_vectors_)\n\nreturn {'forecast': forecast, 'model': model, 'n_support_vectors': n_support_vectors}"
+  },
+  "dependencies": {
+    "required_libraries": [
+      "numpy",
+      "scikit-learn"
+    ],
+    "optional_libraries": [
+      "pandas",
+      "mlflow"
+    ]
+  },
+  "advantages": [
+    "Handles nonlinear relationships via kernel trick",
+    "Robust to outliers (epsilon-insensitive loss)",
+    "Memory efficient (uses subset of training data - support vectors)",
+    "Works well with small to medium datasets",
+    "Multiple kernel options (RBF, polynomial, linear)"
+  ],
+  "limitations": [
+    "Requires careful hyperparameter tuning",
+    "Scaling is important",
+    "Less interpretable than linear models",
+    "Can be slow for large datasets",
+    "Memory usage grows with number of support vectors"
+  ],
+  "extensions_research_directions": [
+    {
+      "name": "quantum_svm_comparison",
+      "description": "Compare classical SVR against quantum SVM variants (QSVM), exploring when quantum kernels provide advantage for financial forecasting",
+      "benefits": "Research into quantum advantage for kernel methods"
+    },
+    {
+      "name": "ensemble_svr",
+      "description": "Combine multiple SVR models with different kernels or hyperparameters, potentially improving robustness and performance",
+      "benefits": "Improved robustness and performance"
+    },
+    {
+      "name": "regime_adaptive_svr",
+      "description": "Use regime detection to train separate SVR models per regime or use regime as feature, adapting to market conditions",
+      "benefits": "Adapts to changing market regimes"
+    }
+  ],
+  "references": [
+    {
+      "title": "The Nature of Statistical Learning Theory",
+      "authors": "Vapnik",
+      "source": "Springer",
+      "url": "https://link.springer.com/book/10.1007/978-1-4757-2440-0",
+      "year": 1995,
+      "relevance": "Establishes SVM/SVR framework"
+    },
+    {
+      "title": "Application of support vector machines in financial time series forecasting",
+      "authors": "Tay & Cao",
+      "source": "Expert Systems",
+      "url": "https://www.sciencedirect.com/science/article/pii/S0957417401000841",
+      "year": 2001,
+      "relevance": "Demonstrates SVR for financial forecasting"
+    }
+  ],
+  "logging_metadata": {
+    "inputs_to_log": ["features_shape", "kernel", "C", "epsilon", "gamma", "forecast_horizon", "timestamp"],
+    "outputs_to_log": ["forecast", "n_support_vectors", "test_mae", "test_rmse"],
+    "metrics_to_track": ["mae", "rmse", "mape", "support_vector_ratio", "training_time"],
+    "storage": "MLflow + TimescaleDB"
+  },
+  "integration_points": {
+    "feature_layer": "Use engineered features as input",
+    "forecasting": "Generate return/volatility forecasts",
+    "portfolio_optimizer": "Feed forecasts as expected returns",
+    "comparative_study": "Benchmark against ARIMA, LSTM, tree methods, quantum methods (QSVM)"
+  },
+  "computational_complexity": {
+    "time": "O(T^2 * F) for training with RBF kernel",
+    "space": "O(n_support_vectors * F) for model storage",
+    "scalability": "Efficient for small-medium datasets; can be slow for large T"
+  }
+}
+

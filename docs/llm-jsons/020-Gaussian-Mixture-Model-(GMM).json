@@ -1,0 +1,231 @@
+{
+  "tool_name": "gmm_regime_detection",
+  "display_name": "Gaussian Mixture Model (GMM)",
+  "category": "regime_detection",
+  "subcategory": "classical",
+  "description": "Probabilistic model representing population as mixture of multiple Gaussian distributions. Used for regime detection and clustering - identifying different market regimes without assuming Markov structure (unlike HMM). Provides regime probabilities that can condition other tools.",
+  "use_cases": [
+    "Regime detection alternative to HMM without Markov assumption",
+    "Clustering to identify groups of similar market conditions",
+    "Regime-conditional modeling for other tools",
+    "Comparative study vs HMM, Regime-Switching GARCH, quantum methods",
+    "Research into regime characteristics and persistence"
+  ],
+  "inputs": {
+    "returns": {
+      "type": "numpy.ndarray",
+      "shape": "(T,) or (T, F)",
+      "description": "Time series of returns or features",
+      "unit": "returns or features",
+      "required": true,
+      "source": "Market data ingestion or feature engineering"
+    },
+    "n_components": {
+      "type": "int",
+      "description": "Number of Gaussian components (regimes)",
+      "required": true,
+      "default": 3,
+      "typical_range": [2, 5],
+      "source": "Hyperparameter"
+    },
+    "covariance_type": {
+      "type": "str",
+      "description": "Type of covariance matrix",
+      "required": true,
+      "default": "full",
+      "values": ["full", "tied", "diag", "spherical"],
+      "source": "Hyperparameter"
+    },
+    "n_init": {
+      "type": "int",
+      "description": "Number of initializations",
+      "required": true,
+      "default": 10,
+      "typical_values": [5, 10, 20],
+      "source": "Hyperparameter"
+    },
+    "max_iter": {
+      "type": "int",
+      "description": "Maximum iterations for EM algorithm",
+      "required": true,
+      "default": 100,
+      "typical_values": [50, 100, 200],
+      "source": "Hyperparameter"
+    }
+  },
+  "outputs": {
+    "components": {
+      "type": "numpy.ndarray",
+      "shape": "(T,)",
+      "description": "Component assignments (most likely component for each observation)",
+      "values": "integers 0 to n_components-1"
+    },
+    "component_probs": {
+      "type": "numpy.ndarray",
+      "shape": "(T, n_components)",
+      "description": "Component membership probabilities",
+      "unit": "probability",
+      "interpretation": "Probability of each observation belonging to each component"
+    },
+    "component_means": {
+      "type": "numpy.ndarray",
+      "shape": "(n_components, F)",
+      "description": "Mean of each Gaussian component",
+      "unit": "returns or features"
+    },
+    "component_covariances": {
+      "type": "numpy.ndarray",
+      "shape": "varies by covariance_type",
+      "description": "Covariance matrix of each component",
+      "unit": "variance units"
+    },
+    "component_weights": {
+      "type": "numpy.ndarray",
+      "shape": "(n_components,)",
+      "description": "Mixing weights (prior probabilities of components)",
+      "unit": "probability",
+      "constraint": "sum(component_weights) = 1"
+    },
+    "current_component": {
+      "type": "int",
+      "description": "Most likely current component",
+      "use": "For regime-conditional strategies"
+    },
+    "current_component_probs": {
+      "type": "numpy.ndarray",
+      "shape": "(n_components,)",
+      "description": "Current component probabilities",
+      "use": "For uncertainty-aware strategies"
+    }
+  },
+  "algorithm_steps": [
+    {
+      "step": 1,
+      "name": "model_specification",
+      "description": "Define GMM structure",
+      "components": [
+        "Number of components (regimes)",
+        "Covariance type",
+        "Initialize parameters (means, covariances, mixing weights)"
+      ]
+    },
+    {
+      "step": 2,
+      "name": "parameter_estimation",
+      "description": "Estimate parameters via EM algorithm",
+      "process": [
+        "E-step: Compute posterior probabilities of component membership",
+        "M-step: Update parameters to maximize likelihood",
+        "Iterate until convergence"
+      ]
+    },
+    {
+      "step": 3,
+      "name": "regime_assignment",
+      "description": "Assign observations to components",
+      "process": [
+        "Assign each observation to most likely component",
+        "Compute component membership probabilities"
+      ]
+    },
+    {
+      "step": 4,
+      "name": "regime_interpretation",
+      "description": "Interpret and analyze regimes",
+      "tasks": [
+        "Analyze component characteristics (means, covariances)",
+        "Label regimes (e.g., high return/low vol, low return/high vol)"
+      ]
+    },
+    {
+      "step": 5,
+      "name": "prediction",
+      "description": "Predict component probabilities for new observations",
+      "use": "For regime-conditional strategies"
+    },
+    {
+      "step": 6,
+      "name": "pipeline_integration",
+      "description": "Integrate into hedge fund pipeline",
+      "tasks": [
+        "Run daily/weekly to detect current regime",
+        "Feed regime probabilities to other tools",
+        "Log all parameters, assignments, probabilities to MLflow"
+      ]
+    }
+  ],
+  "pseudocode": {
+    "language": "python",
+    "function_signature": "def gmm_regime_detection(returns: np.ndarray, n_components: int = 3, covariance_type: str = 'full', n_init: int = 10, max_iter: int = 100):",
+    "implementation": "# Fit GMM\nmodel = GaussianMixture(n_components=n_components, covariance_type=covariance_type, n_init=n_init, max_iter=max_iter)\nmodel.fit(returns_2d)\n\n# Predict component assignments\ncomponents = model.predict(returns_2d)\ncomponent_probs = model.predict_proba(returns_2d)\n\n# Component characteristics\ncomponent_means = model.means_\ncomponent_covariances = model.covariances_\ncomponent_weights = model.weights_\n\nreturn {'model': model, 'components': components, 'component_probs': component_probs, 'component_means': component_means, 'component_covariances': component_covariances, 'component_weights': component_weights, 'current_component': components[-1]}"
+  },
+  "dependencies": {
+    "required_libraries": [
+      "numpy",
+      "sklearn.mixture"
+    ],
+    "optional_libraries": [
+      "pandas",
+      "mlflow"
+    ]
+  },
+  "advantages": [
+    "No Markov assumption (more flexible than HMM)",
+    "Can model complex distributions",
+    "Interpretable components",
+    "Works well for clustering",
+    "Can handle multivariate observations"
+  ],
+  "limitations": [
+    "No temporal structure (unlike HMM)",
+    "Number of components must be specified",
+    "Can be sensitive to initialization",
+    "Assumes Gaussian components"
+  ],
+  "extensions_research_directions": [
+    {
+      "name": "quantum_gmm_comparison",
+      "description": "Compare classical GMM against quantum clustering methods (Quantum k-Means), exploring when quantum advantage emerges for high-dimensional regime detection",
+      "benefits": "Research into quantum advantage for clustering"
+    },
+    {
+      "name": "deep_gmm",
+      "description": "Extend to deep GMM variants that can capture more complex component structures and dependencies",
+      "benefits": "More sophisticated regime modeling"
+    },
+    {
+      "name": "temporal_gmm",
+      "description": "Combine GMM with temporal structure (e.g., GMM-HMM hybrid) to capture both clustering and temporal dependencies",
+      "benefits": "Captures both clustering and temporal patterns"
+    }
+  ],
+  "references": [
+    {
+      "title": "Finite Mixture Models",
+      "authors": "McLachlan & Peel",
+      "source": "Wiley",
+      "url": "https://www.wiley.com/en-us/Finite+Mixture+Models-p-9780471006268",
+      "year": 2000,
+      "relevance": "Comprehensive treatment of mixture models"
+    }
+  ],
+  "logging_metadata": {
+    "inputs_to_log": ["returns_shape", "n_components", "covariance_type", "n_init", "max_iter", "timestamp"],
+    "outputs_to_log": ["components", "component_probs", "component_means", "component_covariances", "component_weights", "current_component"],
+    "metrics_to_track": ["component_separation", "component_weights", "regime_characteristics"],
+    "storage": "MLflow + TimescaleDB"
+  },
+  "integration_points": {
+    "data_ingestion": "Fetch historical returns or features",
+    "regime_detection": "Alternative to HMM for regime detection",
+    "forecasting": "Use regime probabilities to condition ARIMA, LSTM",
+    "portfolio_optimizer": "Use regime-specific parameters",
+    "comparative_study": "Benchmark against HMM, Regime-Switching GARCH, quantum methods"
+  },
+  "computational_complexity": {
+    "time": "O(T * n_components * F^2 * max_iter) for EM algorithm",
+    "space": "O(T * n_components) for component probabilities",
+    "scalability": "Efficient for moderate T, n_components, and F; scales with dimensions"
+  }
+}
+

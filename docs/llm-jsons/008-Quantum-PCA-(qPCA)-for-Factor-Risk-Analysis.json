@@ -1,0 +1,348 @@
+{
+  "tool_name": "qpca_factor_risk_analysis",
+  "display_name": "Quantum PCA (qPCA) for Factor Risk Analysis",
+  "category": "risk_assessment",
+  "subcategory": "quantum",
+  "description": "Quantum algorithm version of classical PCA to identify dominant factors or principal components of covariance/correlation matrices more efficiently. Extracts major risk-factor exposures or latent dimensions from large asset/factor universes for dimensionality reduction and factor risk analysis.",
+  "use_cases": [
+    "Dimensionality reduction of large asset/factor universe",
+    "Identification of latent risk-factors changing over time",
+    "Hybrid quantum/classical benchmark for factor extraction",
+    "Feed extracted components into risk, optimization, and regime modules",
+    "Research into quantum advantage for high-dimensional factor analysis"
+  ],
+  "quantum_advantage": {
+    "theoretical_speedup": "Exponential speed-up for low-rank density matrices (Lloyd et al. 2014)",
+    "scalability": "Potential improvement for very large N (hundreds/thousands of assets)",
+    "caveats": [
+      "Speed-up holds for certain low-rank or well-structured matrices",
+      "Real market covariance matrices may not satisfy ideal conditions",
+      "Encoding and evolution require significant quantum resources",
+      "NISQ devices have depth and qubit constraints"
+    ]
+  },
+  "inputs": {
+    "X": {
+      "type": "numpy.ndarray",
+      "shape": "(T, N)",
+      "description": "Asset or factor return time series, T time points, N variables",
+      "unit": "returns (log or simple)",
+      "required": true,
+      "source": "Market data ingestion service (OHLC → returns; or factor series)"
+    },
+    "mu": {
+      "type": "numpy.ndarray",
+      "shape": "(N,)",
+      "description": "Sample mean of each variable (for centering)",
+      "unit": "returns",
+      "required": false,
+      "computation": "Compute from X",
+      "default": "numpy.mean(X, axis=0)"
+    },
+    "Sigma": {
+      "type": "numpy.ndarray",
+      "shape": "(N, N)",
+      "description": "Covariance or correlation matrix of N variables over window",
+      "unit": "variance units",
+      "required": true,
+      "computation": "Sigma = (1/(T-1)) * (X - mu).T @ (X - mu) or robust estimators",
+      "enhancements": [
+        "Shrinkage estimators (Ledoit-Wolf) for high dimensions",
+        "Factor models for N >> T",
+        "Robust M-estimators"
+      ]
+    },
+    "k": {
+      "type": "int",
+      "description": "Number of top principal components to extract",
+      "required": true,
+      "source": "Business decision or cumulative explained variance threshold",
+      "typical_range": [1, 20],
+      "selection_criteria": "Cumulative explained variance > 80% or eigenvalue threshold"
+    },
+    "n_q": {
+      "type": "int",
+      "description": "Number of qubits / register dimension for qPCA",
+      "required": true,
+      "constraint": "n_q >= log2(N) or encoding size",
+      "source": "Design choice based on N and encoding method",
+      "typical_range": [8, 20],
+      "note": "Depends on encoding method (amplitude, block-encoding)"
+    },
+    "eigenvalue_threshold": {
+      "type": "float",
+      "description": "Threshold for principal components or eigenvalue cut-off",
+      "required": false,
+      "default": 0.01,
+      "source": "Policy / system config"
+    },
+    "window_length": {
+      "type": "int",
+      "description": "Time-window length T for data used in PCA",
+      "required": true,
+      "default": 250,
+      "source": "Policy / system config (e.g., 250 trading days)"
+    },
+    "preprocessing": {
+      "type": "dict",
+      "description": "Data preprocessing options",
+      "required": false,
+      "options": {
+        "center": "Subtract mean (mu)",
+        "scale": "Unit variance scaling",
+        "normalize": "Full normalization"
+      },
+      "default": {"center": true, "scale": false}
+    }
+  },
+  "outputs": {
+    "eigenvalues": {
+      "type": "numpy.ndarray",
+      "shape": "(k,)",
+      "description": "Top k eigenvalues in descending order",
+      "unit": "variance units",
+      "interpretation": "Variance explained by each principal component"
+    },
+    "eigenvectors": {
+      "type": "numpy.ndarray",
+      "shape": "(N, k)",
+      "description": "Top k eigenvectors (principal components)",
+      "unit": "dimensionless",
+      "interpretation": "Direction of maximum variance in data"
+    },
+    "explained_variance": {
+      "type": "numpy.ndarray",
+      "shape": "(k,)",
+      "description": "Variance explained by each component",
+      "unit": "proportion (0-1)",
+      "computation": "eigenvalues / sum(all_eigenvalues)"
+    },
+    "cumulative_explained_variance": {
+      "type": "numpy.ndarray",
+      "shape": "(k,)",
+      "description": "Cumulative variance explained by top k components",
+      "unit": "proportion (0-1)"
+    },
+    "reduced_data": {
+      "type": "numpy.ndarray",
+      "shape": "(T, k)",
+      "description": "Projection of original data onto top k components",
+      "computation": "Y = X @ eigenvectors",
+      "use": "Reduced-dimension input for risk/portfolio modules"
+    },
+    "residual_variance": {
+      "type": "float",
+      "description": "Unexplained variance (1 - cumulative_explained_variance[-1])",
+      "unit": "proportion"
+    },
+    "circuit_depth": {
+      "type": "int",
+      "description": "Depth of quantum circuit executed",
+      "use": "Track resource requirements"
+    },
+    "runtime": {
+      "type": "float",
+      "description": "Quantum circuit execution time",
+      "unit": "seconds",
+      "use": "Compare classical vs quantum performance"
+    }
+  },
+  "algorithm_steps": [
+    {
+      "step": 1,
+      "name": "classical_baseline",
+      "description": "Compute classical PCA as baseline",
+      "tasks": [
+        "Compute eigen-decomposition of Sigma",
+        "Extract eigenvalues lambda_1 >= lambda_2 >= ...",
+        "Extract eigenvectors v_1, v_2, ...",
+        "Decide k based on cumulative explained variance > 80%",
+        "Project original returns: Y = X @ V_k"
+      ]
+    },
+    {
+      "step": 2,
+      "name": "state_preparation",
+      "description": "Map covariance matrix to quantum state",
+      "quantum_operation": "Prepare quantum state rho = (1/T) * sum_t |x_t><x_t|",
+      "encoding_methods": [
+        "Amplitude encoding",
+        "Block-encoding",
+        "Density matrix encoding"
+      ],
+      "challenges": [
+        "Encoding complex covariance matrices",
+        "Managing qubit requirements",
+        "Handling high-dimensional data"
+      ]
+    },
+    {
+      "step": 3,
+      "name": "unitary_evolution",
+      "description": "Construct unitary and perform phase estimation",
+      "quantum_operation": "Construct unitary e^(-i*rho*t) and perform phase estimation",
+      "process": "Extract dominant eigenvectors/eigenvalues via eigenvalue read-out",
+      "variants": [
+        "Standard phase estimation",
+        "Iterative phase estimation",
+        "Variational quantum eigensolver (VQE) for eigenpairs"
+      ]
+    },
+    {
+      "step": 4,
+      "name": "measurement_readout",
+      "description": "Measure quantum registers to obtain principal components",
+      "process": "Extract top k eigenpairs from quantum measurements",
+      "output": "Approximate classical representation of eigenvectors/eigenvalues"
+    },
+    {
+      "step": 5,
+      "name": "classical_postprocessing",
+      "description": "Convert quantum output to classical vectors",
+      "tasks": [
+        "Convert quantum measurements to classical eigenvectors",
+        "Normalize and validate components",
+        "Compute explained variance metrics",
+        "Project data onto components"
+      ]
+    },
+    {
+      "step": 6,
+      "name": "integration_validation",
+      "description": "Integrate into risk stack and validate",
+      "tasks": [
+        "Schedule regular runs (daily/weekly) or on regime change",
+        "Feed top k components to risk/portfolio modules",
+        "Log eigenvalues, explained variance, residual variance",
+        "Track component changes over time (factor drift)",
+        "Compare classical PCA vs qPCA outputs"
+      ]
+    }
+  ],
+  "pseudocode": {
+    "language": "python",
+    "function_signature": "def qpca_factor_analysis(X, k, n_q, window_length=250, eigenvalue_threshold=0.01):",
+    "implementation": "# 1. Preprocess data\nmu = np.mean(X, axis=0)\nX_centered = X - mu\nSigma = np.cov(X_centered.T)\n\n# 2. Classical baseline\nclassical_eigenvals, classical_eigenvecs = np.linalg.eigh(Sigma)\nidx = np.argsort(classical_eigenvals)[::-1]\nclassical_eigenvals = classical_eigenvals[idx]\nclassical_eigenvecs = classical_eigenvecs[:, idx]\n\n# 3. Quantum state preparation\nrho = prepare_density_matrix(Sigma)  # Map to quantum state\n\n# 4. Quantum phase estimation\nquantum_eigenvals, quantum_eigenvecs = quantum_phase_estimation(rho, n_q, k)\n\n# 5. Post-process and compare\nreduced_data = X_centered @ quantum_eigenvecs[:, :k]\nexplained_var = quantum_eigenvals / np.sum(quantum_eigenvals)\n\nreturn {\n    'eigenvalues': quantum_eigenvals[:k],\n    'eigenvectors': quantum_eigenvecs[:, :k],\n    'explained_variance': explained_var[:k],\n    'reduced_data': reduced_data,\n    'classical_baseline': {'eigenvals': classical_eigenvals, 'eigenvecs': classical_eigenvecs}\n}"
+  },
+  "dependencies": {
+    "required_libraries": [
+      "numpy",
+      "qiskit",
+      "qiskit.algorithms",
+      "qiskit.circuit.library"
+    ],
+    "optional_libraries": [
+      "qiskit-finance",
+      "scipy.linalg",
+      "sklearn.decomposition (for classical PCA comparison)",
+      "mlflow"
+    ]
+  },
+  "advantages": [
+    "Theoretical exponential speed-up for low-rank matrices",
+    "Potential scaling improvement for very large N",
+    "Extracts latent components quickly for risk adaptation",
+    "Research edge in quantum-classical hybrid systems",
+    "Baseline for downstream risk and optimization tools"
+  ],
+  "limitations": [
+    "Theoretical speed-up requires low-rank or well-structured matrices",
+    "Real market covariance may not satisfy ideal conditions",
+    "Encoding and evolution require significant quantum resources",
+    "NISQ devices have depth and qubit constraints",
+    "Classical PCA is fast and reliable for most cases",
+    "Validation needed for stability and out-of-sample performance"
+  ],
+  "challenges": {
+    "state_preparation": "Encoding covariance matrices as quantum states is non-trivial",
+    "resource_requirements": "Circuit depth and qubit count may be expensive on NISQ",
+    "data_dimension": "N should be moderate (64-256) to manage encoding",
+    "covariance_quality": "Garbage in → garbage out: estimation quality matters",
+    "error_mitigation": "Noise modeling affects accuracy of component extraction"
+  },
+  "extensions_research_directions": [
+    {
+      "name": "hybrid_quantum_classical",
+      "description": "Combine qPCA with classical PCA or other dimension-reduction methods, test which works better for different regimes (calm vs crisis)",
+      "benefits": "Minimize quantum burden while leveraging quantum advantage where applicable"
+    },
+    {
+      "name": "regime_adaptive_qpca",
+      "description": "Track how components change pre/post regime shifts, test if qPCA extracts latent changes faster than classical",
+      "integration": "Embed in regime detection module"
+    },
+    {
+      "name": "low_complexity_variants",
+      "description": "Explore low-complexity qPCA algorithms (He et al. 2020) for near-term applicability",
+      "references": ["A Low Complexity Quantum Principal Component Analysis Algorithm, arXiv:2010.00831"]
+    },
+    {
+      "name": "quantum_kernel_pca",
+      "description": "Investigate quantum kernel PCA variants (Wang et al. 2025) for higher dimensions",
+      "references": ["Self-Adaptive Quantum Kernel Principal Component Analysis, Advanced Science 2025"]
+    }
+  ],
+  "references": [
+    {
+      "title": "Quantum principal component analysis",
+      "authors": "Lloyd, Mohseni & Rebentrost",
+      "source": "Nature Physics",
+      "url": "https://www.nature.com/articles/nphys3029",
+      "year": 2014,
+      "relevance": "Foundational qPCA algorithm; shows exponential speed-up for low-rank density matrices"
+    },
+    {
+      "title": "Toward pricing financial derivatives with an IBM quantum computer",
+      "authors": "Martin, Candelas et al.",
+      "source": "Physical Review Research",
+      "url": "https://link.aps.org/doi/10.1103/PhysRevResearch.3.013167",
+      "year": 2021,
+      "relevance": "Demonstrates qPCA in financial application (interest-rate derivative modeling) as factor-reduction method"
+    },
+    {
+      "title": "Self-Adaptive Quantum Kernel Principal Component Analysis",
+      "authors": "Wang et al.",
+      "source": "Advanced Science",
+      "url": "https://advanced.onlinelibrary.wiley.com/doi/10.1002/advs.202411573",
+      "year": 2025,
+      "relevance": "Recent simulation work applying qPCA/kPCA hybrid for real data, showing feasibility for higher dimensions"
+    },
+    {
+      "title": "A Low Complexity Quantum Principal Component Analysis Algorithm",
+      "authors": "He et al.",
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/2010.00831",
+      "year": 2020,
+      "relevance": "Improves on resource requirements; relevant for near-term applicability in funds"
+    }
+  ],
+  "logging_metadata": {
+    "inputs_to_log": ["X_shape", "k", "n_q", "window_length", "eigenvalue_threshold", "timestamp"],
+    "outputs_to_log": ["eigenvalues", "explained_variance", "cumulative_explained_variance", "residual_variance", "circuit_depth", "runtime"],
+    "metrics_to_track": [
+      "classical_vs_quantum_eigenvalue_deviation",
+      "explained_variance_difference",
+      "component_stability_over_time",
+      "factor_drift_metrics",
+      "computational_time_comparison"
+    ],
+    "storage": "MLflow + TimescaleDB"
+  },
+  "integration_points": {
+    "data_ingestion": "Fetch OHLCV data → compute returns → prepare X matrix",
+    "feature_layer": "Use qPCA components as risk-factor exposures",
+    "risk_modules": "Feed reduced-dimension data to VaR, CVaR, GARCH modules",
+    "portfolio_optimizer": "Use components as constraints or factor exposures",
+    "regime_detection": "Track component changes as regime indicators",
+    "comparative_study": "Benchmark classical PCA vs qPCA for factor extraction"
+  },
+  "computational_resources": {
+    "simulator_mode": "Run on quantum simulators (Qiskit Aer, statevector) for prototyping",
+    "nisq_hardware": "IBM Quantum, IonQ (with error mitigation)",
+    "qubits_required": "Typically 8-20 qubits depending on N and encoding",
+    "circuit_depth": "Varies with encoding method and precision target",
+    "data_dimension": "Moderate N (64-256) recommended for encoding feasibility"
+  },
+  "comparative_study_role": "Serves as quantum-enhanced alternative to classical PCA for factor extraction. Key research question: under what conditions (regime, portfolio size, matrix structure) does qPCA provide practical advantage over classical PCA?"
+}
+
