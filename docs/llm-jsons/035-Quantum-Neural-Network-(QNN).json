@@ -1,0 +1,107 @@
+{
+  "tool_name": "quantum_neural_network",
+  "display_name": "Quantum Neural Network (QNN)",
+  "category": "quantum_ml",
+  "subcategory": "variational_models",
+  "description": "Parameterized quantum circuit acting as neural network layer or full model for regression/classification tasks on financial data.",
+  "use_cases": [
+    "Return direction classification",
+    "Regime labeling",
+    "Hybrid quantum-classical feature transformation"
+  ],
+  "inputs": {
+    "features": {
+      "type": "array",
+      "shape": "(T, F)",
+      "description": "Normalized feature vectors reduced to match qubit count"
+    },
+    "labels": {
+      "type": "array",
+      "description": "Targets for supervised learning"
+    },
+    "pqc_config": {
+      "type": "dict",
+      "description": "Ansatz type, depth, entanglement pattern"
+    },
+    "backend": {
+      "type": "config",
+      "description": "Quantum simulator/hardware, shots"
+    },
+    "training_params": {
+      "type": "dict",
+      "description": "Optimizer, learning rate, epochs, batch size"
+    }
+  },
+  "outputs": {
+    "model": {
+      "type": "object",
+      "description": "Trainable QNN module (TorchLayer/Connector)"
+    },
+    "predictions": {
+      "type": "array",
+      "description": "Model outputs on validation/test sets"
+    },
+    "metrics": {
+      "type": "dict",
+      "description": "Accuracy, F1, MAE, etc."
+    }
+  },
+  "algorithm_steps": [
+    "Preprocess and scale features, reduce dimension",
+    "Define PQC (feature map + variational ansatz)",
+    "Wrap PQC into differentiable module and add classical readout",
+    "Train using gradient-based optimization",
+    "Evaluate vs classical neural nets and deploy"
+  ],
+  "pseudocode": {
+    "language": "python",
+    "snippet": "qnn = TwoLayerQNN(num_qubits, feature_map, ansatz)\nmodel = nn.Sequential(TorchConnector(qnn), nn.Linear(1, 1))"
+  },
+  "dependencies": {
+    "required": [
+      "qiskit-machine-learning or pennylane",
+      "torch",
+      "numpy"
+    ],
+    "optional": [
+      "scikit-learn",
+      "mlflow"
+    ]
+  },
+  "advantages": [
+    "Flexible quantum layer usable across tasks",
+    "Integrates with PyTorch for hybrid models",
+    "Benchmark for quantum function approximation"
+  ],
+  "limitations": [
+    "Limited by qubit counts and noise",
+    "Shot noise affects gradient quality",
+    "Training can be slower than classical networks"
+  ],
+  "references": [
+    {
+      "title": "Classification with Quantum Neural Networks on Near Term Processors",
+      "authors": "Farhi & Neven",
+      "year": 2018,
+      "url": "https://arxiv.org/abs/1802.06002"
+    }
+  ],
+  "logging_metadata": {
+    "inputs_to_log": [
+      "pqc_config",
+      "backend",
+      "training_params"
+    ],
+    "outputs_to_log": [
+      "training_loss",
+      "validation_metrics",
+      "circuit_depth"
+    ]
+  },
+  "integration_points": {
+    "forecasting_service": "Uses QNN outputs alongside classical models",
+    "experiment_tracker": "Stores benchmarks vs classical neural nets",
+    "tool_selector": "Chooses QNN when it outperforms baseline"
+  }
+}
+

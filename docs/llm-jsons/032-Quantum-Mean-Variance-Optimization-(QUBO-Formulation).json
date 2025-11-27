@@ -1,0 +1,110 @@
+{
+  "tool_name": "quantum_mvo_qubo",
+  "display_name": "Quantum Mean-Variance Optimization (QUBO Formulation)",
+  "category": "quantum_optimization",
+  "subcategory": "qubo",
+  "description": "Discretizes the Markowitz problem into a QUBO/Ising model solvable by quantum annealers or QAOA, supporting binary inclusion or multi-bit weight encodings.",
+  "use_cases": [
+    "Portfolio selection with discrete weight levels",
+    "Cardinality-constrained optimization",
+    "Benchmark on D-Wave/annealing hardware"
+  ],
+  "inputs": {
+    "expected_returns": {
+      "type": "array",
+      "shape": "(N,)",
+      "description": "μ vector"
+    },
+    "covariance_matrix": {
+      "type": "array",
+      "shape": "(N, N)",
+      "description": "Σ matrix"
+    },
+    "risk_aversion": {
+      "type": "float",
+      "description": "λ parameter"
+    },
+    "encoding": {
+      "type": "dict",
+      "description": "Binary representation details (bits per asset, inclusion indicators)"
+    },
+    "penalties": {
+      "type": "dict",
+      "description": "Penalty strengths for budget/cardinality constraints"
+    }
+  },
+  "outputs": {
+    "binary_solution": {
+      "type": "dict",
+      "description": "Measured bitstring representing selected weights"
+    },
+    "decoded_weights": {
+      "type": "array",
+      "description": "Portfolio weights reconstructed from binary solution"
+    },
+    "objective_value": {
+      "type": "float",
+      "description": "Mean-variance objective evaluated on decoded weights"
+    },
+    "solver_info": {
+      "type": "dict",
+      "description": "Anneal parameters, QAOA angles, success probabilities"
+    }
+  },
+  "algorithm_steps": [
+    "Map mean-variance objective and constraints to QUBO matrix",
+    "Scale coefficients to hardware ranges",
+    "Submit to quantum annealer or QAOA solver",
+    "Decode sampled bitstrings into portfolio weights",
+    "Evaluate and select best feasible solution"
+  ],
+  "pseudocode": {
+    "language": "python",
+    "snippet": "bqm = BinaryQuadraticModel(linear, quadratic, offset, vartype='BINARY')\nsampleset = sampler.sample(bqm, num_reads=1000)\nweights = decode(sampleset.first.sample)"
+  },
+  "dependencies": {
+    "required": [
+      "dwave-ocean-sdk or qiskit-optimization",
+      "numpy"
+    ],
+    "optional": [
+      "mlflow"
+    ]
+  },
+  "advantages": [
+    "Direct compatibility with annealing hardware",
+    "Handles discrete/cardinality constraints naturally",
+    "Provides empirical benchmark for quantum optimization"
+  ],
+  "limitations": [
+    "Requires discretization (approximation error)",
+    "Qubit count grows with bit precision",
+    "Performance sensitive to penalty tuning"
+  ],
+  "references": [
+    {
+      "title": "Portfolio Rebalancing Using Quantum Annealing",
+      "authors": "Rosenberg et al.",
+      "year": 2016,
+      "url": "https://arxiv.org/abs/1604.05718"
+    }
+  ],
+  "logging_metadata": {
+    "inputs_to_log": [
+      "encoding_scheme",
+      "penalty_values",
+      "backend_settings"
+    ],
+    "outputs_to_log": [
+      "best_bitstring",
+      "decoded_weights",
+      "objective_value"
+    ]
+  },
+  "integration_points": {
+    "optimizer_service": "Offers discrete quantum solver option",
+    "execution_pipeline": "Consumes decoded weights",
+    "experiment_tracker": "Stores solver stats vs classical MIQP"
+  }
+}
+

@@ -2,7 +2,7 @@
   "orange_tools": [
     {
       "id": "U5_27_Krk8EjufHEsgoqT",
-      "name": "Variance–Covariance Value-at- Risk (Parametric VaR)",
+      "name": "Variance-Covariance Value-at- Risk (Parametric VaR)",
       "type": "text"
     },
     {
@@ -17,7 +17,7 @@
     },
     {
       "id": "IZvSm0qCU4uYNGWeUVqvy",
-      "name": "Extreme Value Theory (EVT) – Peaks Over Threshold",
+      "name": "Extreme Value Theory (EVT) - Peaks Over Threshold",
       "type": "text"
     },
     {
@@ -42,7 +42,7 @@
     },
     {
       "id": "Niny0BYdYg_kPXMtulyFC",
-      "name": "Markowitz Mean–Variance",
+      "name": "Markowitz Mean-Variance",
       "type": "text"
     },
     {
@@ -62,7 +62,7 @@
     },
     {
       "id": "WCaQBKfwS2hYnZIg_Zo6Z",
-      "name": "Black–Litterman",
+      "name": "Black-Litterman",
       "type": "text"
     },
     {
@@ -144,7 +144,7 @@
     },
     {
       "id": "lZK0Bd2btCISggZ7aoRv-",
-      "name": "Quantum Mean–Variance Optimization (QMV)",
+      "name": "Quantum Mean-Variance Optimization (QMV)",
       "type": "text"
     },
     {
@@ -159,7 +159,7 @@
     },
     {
       "id": "z1JoBfS8BUfR9wFPkbOQE",
-      "name": "Quantum Mean–Variance Optimization (QMV / QUBO Formulation)",
+      "name": "Quantum Mean-Variance Optimization (QMV / QUBO Formulation)",
       "type": "text"
     },
     {

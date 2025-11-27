@@ -1,0 +1,112 @@
+{
+  "tool_name": "quantum_mean_variance",
+  "display_name": "Quantum Mean-Variance Optimization (QMV)",
+  "category": "quantum_optimization",
+  "subcategory": "portfolio",
+  "description": "Quantum formulation of the Markowitz mean-variance problem using QAOA/VQE or amplitude estimation to optimize portfolio weights under quadratic objective.",
+  "use_cases": [
+    "Quantum alternative to Markowitz optimizer",
+    "Benchmark for QAOA-based portfolio allocation",
+    "Research into quantum advantage for convex optimization"
+  ],
+  "inputs": {
+    "expected_returns": {
+      "type": "array",
+      "shape": "(N,)",
+      "description": "Vector μ of expected returns"
+    },
+    "covariance_matrix": {
+      "type": "array",
+      "shape": "(N, N)",
+      "description": "Covariance matrix Σ"
+    },
+    "risk_aversion": {
+      "type": "float",
+      "description": "λ parameter controlling return vs risk trade-off"
+    },
+    "constraints": {
+      "type": "dict",
+      "description": "Budget, long-only, cardinality, or discrete weight constraints"
+    },
+    "encoding_params": {
+      "type": "dict",
+      "description": "Binary discretization granularity, qubit mapping"
+    }
+  },
+  "outputs": {
+    "weights": {
+      "type": "array",
+      "shape": "(N,)",
+      "description": "Decoded portfolio weights from quantum solution"
+    },
+    "objective_value": {
+      "type": "float",
+      "description": "Value of wᵀ μ - λ wᵀ Σ w for returned solution"
+    },
+    "solver_metadata": {
+      "type": "dict",
+      "description": "QAOA reps, optimizer iterations, convergence info"
+    }
+  },
+  "algorithm_steps": [
+    "Convert mean-variance problem to QUBO/Ising form or variational expectation",
+    "Instantiate quantum solver (QAOA/VQE) with chosen ansatz",
+    "Optimize circuit parameters via classical optimizer",
+    "Measure bitstrings, decode to weights, evaluate objective",
+    "Select best feasible portfolio"
+  ],
+  "pseudocode": {
+    "language": "python",
+    "snippet": "qp = build_quadratic_program(mu, Sigma, lambda)\nqaoa = QAOA(reps=2)\noptimizer = MinimumEigenOptimizer(qaoa)\nresult = optimizer.solve(qp)\nweights = decode(result.x)"
+  },
+  "dependencies": {
+    "required": [
+      "qiskit",
+      "qiskit-optimization",
+      "numpy"
+    ],
+    "optional": [
+      "qiskit-aer",
+      "mlflow"
+    ]
+  },
+  "advantages": [
+    "Direct quantum analogue of Markowitz",
+    "Leverages existing QAOA/VQE tooling",
+    "Supports comparative studies with classical optimizers"
+  ],
+  "limitations": [
+    "Requires discretization or complex encodings",
+    "Scalability limited by qubit count",
+    "Sensitive to noise and parameter optimization"
+  ],
+  "references": [
+    {
+      "title": "Quantum Algorithms for Portfolio Optimization",
+      "authors": "Rebentrost et al.",
+      "year": 2018,
+      "url": "https://journals.aps.org/pra/abstract/10.1103/PhysRevA.98.022321"
+    }
+  ],
+  "logging_metadata": {
+    "inputs_to_log": [
+      "mu",
+      "Sigma",
+      "risk_aversion",
+      "encoding_params",
+      "backend"
+    ],
+    "outputs_to_log": [
+      "weights",
+      "objective_value",
+      "qaoa_angles",
+      "shots"
+    ]
+  },
+  "integration_points": {
+    "optimizer_service": "Provides alternative solver next to Markowitz/CVaR",
+    "tool_selector": "Chooses quantum vs classical based on asset universe size",
+    "experiment_tracker": "Logs performance vs classical baselines"
+  }
+}
+

@@ -1,0 +1,113 @@
+{
+  "tool_name": "qbm_regime_detection",
+  "display_name": "Quantum Boltzmann Machine for Market Regime Detection",
+  "category": "quantum_ml",
+  "subcategory": "generative_models",
+  "description": "QBM tailored to infer latent market regimes by learning joint distribution of financial features and hidden states, producing regime probabilities for downstream modules.",
+  "use_cases": [
+    "Identify bull/bear/stress regimes",
+    "Provide regime priors to risk and optimization modules",
+    "Benchmark vs classical HMM/GMM for regime detection"
+  ],
+  "inputs": {
+    "features": {
+      "type": "array",
+      "shape": "(T, F)",
+      "description": "Normalized feature matrix (returns, vol, spreads)"
+    },
+    "n_visible": {
+      "type": "int",
+      "description": "Number of visible qubits (feature dimension)"
+    },
+    "n_hidden": {
+      "type": "int",
+      "description": "Latent regime qubits (e.g., 2-3 for regimes)"
+    },
+    "backend": {
+      "type": "config",
+      "description": "Quantum simulator/hardware details"
+    },
+    "training_params": {
+      "type": "dict",
+      "description": "Epochs, batch size, optimizer, learning rate"
+    }
+  },
+  "outputs": {
+    "regime_probabilities": {
+      "type": "array",
+      "shape": "(T, n_hidden_states)",
+      "description": "Posterior probabilities for each regime"
+    },
+    "current_regime": {
+      "type": "int",
+      "description": "Most probable regime for latest observation"
+    },
+    "generated_samples": {
+      "type": "array",
+      "description": "Optional synthetic samples per regime"
+    },
+    "model_parameters": {
+      "type": "dict",
+      "description": "Learned coupling weights and biases"
+    }
+  },
+  "algorithm_steps": [
+    "Preprocess features (scaling, dimensionality reduction)",
+    "Initialize QBM parameters and quantum circuit ansatz",
+    "Train using variational contrastive divergence",
+    "Infer regime probabilities for new data",
+    "Feed regime signals to downstream modules"
+  ],
+  "pseudocode": {
+    "language": "python",
+    "snippet": "qbm = QuantumBoltzmannModel(n_visible, n_hidden)\nqbm.train(features)\nregime_probs = qbm.infer(new_features)"
+  },
+  "dependencies": {
+    "required": [
+      "pennylane or qiskit-machine-learning",
+      "numpy",
+      "torch"
+    ],
+    "optional": [
+      "scikit-learn",
+      "mlflow"
+    ]
+  },
+  "advantages": [
+    "Captures nonlinear feature-regime dependencies",
+    "Generative model can supply scenarios as well as regimes",
+    "Directly addresses architecture requirement for QBM regimes"
+  ],
+  "limitations": [
+    "Training cost high for many qubits",
+    "Noise impacts regime inference accuracy",
+    "Requires careful feature reduction"
+  ],
+  "references": [
+    {
+      "title": "Quantum Boltzmann machines learn to detect market regimes",
+      "authors": "Herr et al.",
+      "year": 2021,
+      "url": "https://arxiv.org/abs/2103.10953"
+    }
+  ],
+  "logging_metadata": {
+    "inputs_to_log": [
+      "feature_set",
+      "n_visible",
+      "n_hidden",
+      "backend"
+    ],
+    "outputs_to_log": [
+      "regime_probabilities",
+      "model_params",
+      "validation_metrics"
+    ]
+  },
+  "integration_points": {
+    "regime_service": "Provides regime probabilities",
+    "risk_module": "Adjusts limits based on QBM regime",
+    "optimizer": "Switches covariance/strategy per regime"
+  }
+}
+

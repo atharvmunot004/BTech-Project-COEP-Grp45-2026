@@ -1,0 +1,117 @@
+{
+  "tool_name": "quantum_svm",
+  "display_name": "Quantum Support Vector Machine (QSVM)",
+  "category": "quantum_ml",
+  "subcategory": "kernel_methods",
+  "description": "Quantum analogue of SVMs using quantum feature maps and kernel estimation to perform classification or regression in high-dimensional Hilbert spaces. Provides benchmark for quantum kernel methods on financial datasets.",
+  "use_cases": [
+    "Regime classification (bull vs bear)",
+    "Return / risk labeling via regression",
+    "Feature selection benchmark vs classical SVR",
+    "Research into quantum kernel advantage"
+  ],
+  "inputs": {
+    "training_data": {
+      "type": "array",
+      "shape": "(n_samples, n_features)",
+      "description": "Feature matrix (returns, factors, indicators) scaled to fit qubit budget"
+    },
+    "labels": {
+      "type": "array",
+      "shape": "(n_samples,)",
+      "description": "Classification labels or regression targets"
+    },
+    "feature_map": {
+      "type": "config",
+      "description": "Quantum feature map (depth, entanglement, rotation gates)",
+      "examples": ["ZZFeatureMap", "PauliFeatureMap"]
+    },
+    "backend": {
+      "type": "config",
+      "description": "Quantum simulator or hardware configuration (shots, noise model)"
+    },
+    "svm_params": {
+      "type": "dict",
+      "description": "Regularization parameter C, tolerance, solver options"
+    }
+  },
+  "outputs": {
+    "kernel_matrix": {
+      "type": "array",
+      "shape": "(n_samples, n_samples)",
+      "description": "Quantum kernel evaluations used by SVM solver"
+    },
+    "trained_model": {
+      "type": "object",
+      "description": "SVM model fitted with quantum kernel"
+    },
+    "predictions": {
+      "type": "array",
+      "description": "Predicted labels/values on validation or test set"
+    },
+    "metrics": {
+      "type": "dict",
+      "description": "Accuracy, F1, regression error, comparison vs classical baseline"
+    }
+  },
+  "algorithm_steps": [
+    "Preprocess and scale data, optionally apply PCA to limit qubits",
+    "Instantiate quantum feature map and quantum kernel",
+    "Evaluate kernel matrix on training data via quantum backend",
+    "Train SVM with precomputed kernel",
+    "Evaluate on validation/test data; compare to classical SVR"
+  ],
+  "pseudocode": {
+    "language": "python",
+    "snippet": "kernel_train = quantum_kernel.evaluate(x_vec=train_X)\nclf = SVC(kernel='precomputed', C=1.0)\nclf.fit(kernel_train, train_y)"
+  },
+  "dependencies": {
+    "required": [
+      "qiskit",
+      "qiskit-machine-learning",
+      "scikit-learn",
+      "numpy"
+    ],
+    "optional": [
+      "qiskit-aer",
+      "mlflow"
+    ]
+  },
+  "advantages": [
+    "Explores expressive quantum feature spaces",
+    "Provides rigorous benchmark vs classical kernels",
+    "Integrates with existing Qiskit stack"
+  ],
+  "limitations": [
+    "Limited by qubit count and noise",
+    "Kernel evaluation cost scales quadratically with samples",
+    "Only advantageous for carefully chosen feature maps/datasets"
+  ],
+  "references": [
+    {
+      "title": "Supervised learning with quantum-enhanced feature spaces",
+      "authors": "Havlíček et al.",
+      "source": "Nature",
+      "year": 2019,
+      "url": "https://www.nature.com/articles/s41586-019-0980-2"
+    }
+  ],
+  "logging_metadata": {
+    "inputs_to_log": [
+      "feature_map_config",
+      "backend_settings",
+      "svm_params"
+    ],
+    "outputs_to_log": [
+      "kernel_evals",
+      "model_accuracy",
+      "hardware_noise_stats"
+    ]
+  },
+  "integration_points": {
+    "feature_pipeline": "Supplies scaled feature vectors",
+    "experiment_tracker": "Logs backend/feature map choices",
+    "tool_selection_agent": "Decides when to call QSVM vs classical SVR"
+  }
+}
+

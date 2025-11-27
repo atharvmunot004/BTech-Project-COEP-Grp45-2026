@@ -1,0 +1,111 @@
+{
+  "tool_name": "quantum_lstm",
+  "display_name": "Quantum LSTM (Q-LSTM)",
+  "category": "quantum_ml",
+  "subcategory": "sequence_models",
+  "description": "Hybrid recurrent architecture combining classical LSTM components with parameterized quantum circuits to process sequential financial data, providing quantum-enhanced forecasts for returns or volatility.",
+  "use_cases": [
+    "Short-term return forecasting",
+    "Volatility prediction",
+    "Regime-aware feature extraction",
+    "Benchmark vs classical LSTM"
+  ],
+  "inputs": {
+    "time_series": {
+      "type": "array",
+      "shape": "(T, F)",
+      "description": "Normalized sequential features"
+    },
+    "sequence_length": {
+      "type": "int",
+      "description": "Window size fed into Q-LSTM",
+      "default": 32
+    },
+    "n_qubits": {
+      "type": "int",
+      "description": "Number of qubits in quantum layer",
+      "default": 6
+    },
+    "pqc_ansatz": {
+      "type": "config",
+      "description": "Quantum circuit template (e.g., StronglyEntanglingLayers)"
+    },
+    "training_params": {
+      "type": "dict",
+      "description": "Optimizer, learning rate, epochs, batch size"
+    }
+  },
+  "outputs": {
+    "forecast": {
+      "type": "array",
+      "description": "Predicted returns/volatility for forecast horizon"
+    },
+    "model_weights": {
+      "type": "dict",
+      "description": "Classical and quantum parameters"
+    },
+    "metrics": {
+      "type": "dict",
+      "description": "MAE, RMSE, Sharpe improvement vs baseline"
+    }
+  },
+  "algorithm_steps": [
+    "Preprocess and normalize time-series, create rolling windows",
+    "Define hybrid Q-LSTM cell with quantum gate blocks",
+    "Train using gradient-based optimizer with finite shots",
+    "Evaluate forecasts vs classical LSTM baseline",
+    "Deploy as service for inference"
+  ],
+  "pseudocode": {
+    "language": "python",
+    "snippet": "qlayer = qml.qnn.TorchLayer(quantum_gate, weight_shapes)\noutput = classical_layer(qlayer(x))"
+  },
+  "dependencies": {
+    "required": [
+      "pennylane or qiskit-machine-learning",
+      "torch",
+      "numpy"
+    ],
+    "optional": [
+      "pandas",
+      "mlflow"
+    ]
+  },
+  "advantages": [
+    "Potentially captures nonlinear dependencies with fewer parameters",
+    "Benchmark for quantum sequence modeling",
+    "Integrates with existing PyTorch pipeline"
+  ],
+  "limitations": [
+    "Limited by qubit count and circuit depth",
+    "Shot noise adds variance to gradients",
+    "Training cost higher than classical LSTM"
+  ],
+  "references": [
+    {
+      "title": "Hybrid quantum-classical LSTM networks",
+      "authors": "Chen et al.",
+      "year": 2020,
+      "url": "https://arxiv.org/abs/2009.01783"
+    }
+  ],
+  "logging_metadata": {
+    "inputs_to_log": [
+      "sequence_length",
+      "n_qubits",
+      "pqc_ansatz",
+      "training_params"
+    ],
+    "outputs_to_log": [
+      "validation_loss",
+      "test_metrics",
+      "circuit_depth"
+    ]
+  },
+  "integration_points": {
+    "forecasting_pipeline": "Provides quantum forecasts alongside classical models",
+    "tool_selector": "Chooses between LSTM and Q-LSTM based on performance",
+    "experiment_tracker": "Logs backend, qubit counts, training metrics"
+  }
+}
+

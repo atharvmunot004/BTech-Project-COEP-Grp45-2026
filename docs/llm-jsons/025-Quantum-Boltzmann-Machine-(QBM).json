@@ -1,0 +1,115 @@
+{
+  "tool_name": "quantum_boltzmann_machine",
+  "display_name": "Quantum Boltzmann Machine (QBM)",
+  "category": "quantum_ml",
+  "subcategory": "generative_models",
+  "description": "Variational quantum model that learns probability distributions over financial features for regime detection and scenario generation. Uses quantum circuits to represent Boltzmann energy landscape, enabling expressive latent representations.",
+  "use_cases": [
+    "Market regime detection (latent states)",
+    "Scenario generation for VaR/CVaR stress testing",
+    "Data augmentation for RL training",
+    "Quantum-classical benchmark vs RBM"
+  ],
+  "inputs": {
+    "training_samples": {
+      "type": "array",
+      "shape": "(n_samples, n_features)",
+      "description": "Normalized feature vectors (returns, vol, spreads)"
+    },
+    "visible_units": {
+      "type": "int",
+      "description": "Number of observable qubits (feature dimension)"
+    },
+    "hidden_units": {
+      "type": "int",
+      "description": "Latent qubits controlling expressivity"
+    },
+    "backend_config": {
+      "type": "dict",
+      "description": "Simulator or hardware details (shots, noise model)"
+    },
+    "training_params": {
+      "type": "dict",
+      "description": "Learning rate, epochs, batch size, optimizer"
+    }
+  },
+  "outputs": {
+    "trained_parameters": {
+      "type": "array",
+      "description": "Variational parameters of QBM circuit"
+    },
+    "regime_probabilities": {
+      "type": "array",
+      "description": "Posterior probabilities for latent regimes"
+    },
+    "generated_samples": {
+      "type": "array",
+      "description": "Synthetic feature samples drawn from QBM"
+    },
+    "metrics": {
+      "type": "dict",
+      "description": "Log-likelihood, KL divergence vs historical data"
+    }
+  },
+  "algorithm_steps": [
+    "Preprocess and normalize data; reduce dimension to qubit budget",
+    "Define QBM Hamiltonian and variational circuit",
+    "Train parameters via gradient descent using estimator measurements",
+    "Validate likelihood/regime classification accuracy",
+    "Generate samples or regime probabilities for downstream modules"
+  ],
+  "pseudocode": {
+    "language": "python",
+    "snippet": "energy = estimator.run(qc, observable=ising_hamiltonian).result().values[0]\nparams = params - lr * grad_energy"
+  },
+  "dependencies": {
+    "required": [
+      "qiskit",
+      "qiskit-machine-learning",
+      "numpy"
+    ],
+    "optional": [
+      "pennylane",
+      "torch",
+      "mlflow"
+    ]
+  },
+  "advantages": [
+    "Expressive latent modeling via quantum correlations",
+    "Natural fit for regime detection and scenario generation",
+    "Benchmark for quantum generative advantage"
+  ],
+  "limitations": [
+    "Limited by qubit counts and noise",
+    "Training requires many circuit evaluations",
+    "Difficult to scale beyond small feature sets today"
+  ],
+  "references": [
+    {
+      "title": "Quantum Boltzmann machine learning",
+      "authors": "Amin et al.",
+      "source": "Physical Review X",
+      "year": 2018,
+      "url": "https://journals.aps.org/prx/abstract/10.1103/PhysRevX.8.021050"
+    }
+  ],
+  "logging_metadata": {
+    "inputs_to_log": [
+      "feature_set",
+      "qubit_count",
+      "backend",
+      "training_params"
+    ],
+    "outputs_to_log": [
+      "trained_params",
+      "log_likelihood",
+      "sample_statistics"
+    ]
+  },
+  "integration_points": {
+    "regime_module": "Provides regime probabilities",
+    "risk_module": "Supplies generated scenarios",
+    "rl_sandbox": "Augments training data with QBM samples"
+  }
+}
+

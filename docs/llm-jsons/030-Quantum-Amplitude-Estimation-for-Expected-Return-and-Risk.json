@@ -1,0 +1,116 @@
+{
+  "tool_name": "qae_expected_return_risk",
+  "display_name": "Quantum Amplitude Estimation for Expected Return and Risk",
+  "category": "quantum_algorithms",
+  "subcategory": "amplitude_estimation",
+  "description": "Extends QAE to jointly estimate expected return and risk metrics (variance, tail loss, CVaR component) using shared quantum state preparation.",
+  "use_cases": [
+    "Supply both μ and σ (or CVaR) to optimizers",
+    "Fast tail estimation for risk gating",
+    "Benchmark for multi-metric quantum estimation"
+  ],
+  "inputs": {
+    "scenario_distribution": {
+      "type": "quantum_state",
+      "description": "Probability distribution over scenarios encoded via state preparation"
+    },
+    "payoff_functions": {
+      "type": "list",
+      "description": "Functions for mean, squared return, tail indicator etc."
+    },
+    "n_qubits": {
+      "type": "int",
+      "description": "Scenario register + ancilla qubits",
+      "typical_range": [8, 20]
+    },
+    "precision_targets": {
+      "type": "dict",
+      "description": "ε for mean and risk estimates",
+      "default": {
+        "mean": 0.01,
+        "risk": 0.01
+      }
+    },
+    "backend": {
+      "type": "config",
+      "description": "Quantum simulator or hardware"
+    }
+  },
+  "outputs": {
+    "expected_return": {
+      "type": "float",
+      "description": "Estimated mean return"
+    },
+    "risk_metric": {
+      "type": "float",
+      "description": "Estimated variance or CVaR component"
+    },
+    "confidence_intervals": {
+      "type": "dict",
+      "description": "Confidence intervals for each metric"
+    },
+    "runtime_stats": {
+      "type": "dict",
+      "description": "Oracle calls, circuit depth, execution time"
+    }
+  },
+  "algorithm_steps": [
+    "Prepare scenario distribution once",
+    "Apply controlled rotations for mean and risk payoffs",
+    "Execute QAE (iterative or MLE) for each ancilla",
+    "Convert amplitudes to statistical metrics",
+    "Compare vs classical Monte Carlo"
+  ],
+  "pseudocode": {
+    "language": "python",
+    "snippet": "expected_return = run_qae(state_prep, mean_oracle)\nrisk_metric = run_qae(state_prep, tail_oracle)"
+  },
+  "dependencies": {
+    "required": [
+      "qiskit",
+      "numpy"
+    ],
+    "optional": [
+      "qiskit-finance",
+      "mlflow"
+    ]
+  },
+  "advantages": [
+    "Shared state preparation reduces overhead",
+    "Quadratic speedup for multiple metrics",
+    "Feeds directly into portfolio and risk modules"
+  ],
+  "limitations": [
+    "Requires multiple ancillae or sequential runs",
+    "Noise affects accuracy, especially for tail metrics",
+    "Precision still bounded by hardware coherence"
+  ],
+  "references": [
+    {
+      "title": "Quantum algorithms for Monte Carlo finance",
+      "authors": "Stamatopoulos et al.",
+      "year": 2020,
+      "url": "https://arxiv.org/abs/2009.03842"
+    }
+  ],
+  "logging_metadata": {
+    "inputs_to_log": [
+      "state_prep_params",
+      "payoff_types",
+      "backend",
+      "precision_targets"
+    ],
+    "outputs_to_log": [
+      "mean_estimate",
+      "risk_estimate",
+      "confidence_intervals",
+      "oracle_calls"
+    ]
+  },
+  "integration_points": {
+    "portfolio_optimizer": "Consumes μ and σ from quantum estimator",
+    "risk_module": "Uses tail probability/CVaR outputs",
+    "experiment_tracker": "Logs comparative metrics vs classical estimation"
+  }
+}
+

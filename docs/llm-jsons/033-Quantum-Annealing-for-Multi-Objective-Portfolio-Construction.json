@@ -1,0 +1,117 @@
+{
+  "tool_name": "qa_multi_objective_portfolio",
+  "display_name": "Quantum Annealing for Multi-Objective Portfolio Construction",
+  "category": "quantum_optimization",
+  "subcategory": "annealing",
+  "description": "Uses quantum annealers (e.g., D-Wave) to solve multi-objective portfolio problems formulated as QUBOs combining return, risk, ESG, and cost objectives with constraints.",
+  "use_cases": [
+    "Combinatorial portfolio selection with multiple objectives",
+    "Cardinality and sector constrained optimization",
+    "Exploring Pareto frontier via annealing"
+  ],
+  "inputs": {
+    "expected_returns": {
+      "type": "array",
+      "shape": "(N,)",
+      "description": "Asset return estimates"
+    },
+    "covariance_matrix": {
+      "type": "array",
+      "shape": "(N, N)",
+      "description": "Risk matrix"
+    },
+    "esg_scores": {
+      "type": "array",
+      "shape": "(N,)",
+      "description": "Optional ESG or auxiliary objective scores"
+    },
+    "transaction_costs": {
+      "type": "array",
+      "shape": "(N,)",
+      "description": "Costs or turnover penalties"
+    },
+    "objective_weights": {
+      "type": "dict",
+      "description": "Weights for return, risk, ESG, cost terms"
+    },
+    "constraints": {
+      "type": "dict",
+      "description": "Budget, bounds, cardinality, sector limits"
+    }
+  },
+  "outputs": {
+    "best_solution": {
+      "type": "dict",
+      "description": "Binary assignment from annealer"
+    },
+    "decoded_weights": {
+      "type": "array",
+      "description": "Portfolio weights corresponding to bitstring"
+    },
+    "objective_breakdown": {
+      "type": "dict",
+      "description": "Return, risk, ESG, cost contributions for solution"
+    },
+    "solver_stats": {
+      "type": "dict",
+      "description": "Anneal time, num_reads, energy distribution"
+    }
+  },
+  "algorithm_steps": [
+    "Discretize weights or inclusion decisions",
+    "Construct QUBO combining objectives with penalties",
+    "Submit to quantum annealer / QAOA",
+    "Decode samples, enforce feasibility, evaluate objectives",
+    "Select solution and optionally iterate with different weights"
+  ],
+  "pseudocode": {
+    "language": "python",
+    "snippet": "bqm = BinaryQuadraticModel(linear, quadratic, offset, vartype='BINARY')\nsampleset = sampler.sample(bqm, num_reads=2000)\nbest = decode(sampleset.first.sample)"
+  },
+  "dependencies": {
+    "required": [
+      "dwave-ocean-sdk",
+      "numpy"
+    ],
+    "optional": [
+      "qiskit-optimization",
+      "mlflow"
+    ]
+  },
+  "advantages": [
+    "Natural handling of multiple objectives and hard constraints",
+    "Leverages existing annealing hardware",
+    "Produces diverse candidate solutions for Pareto analysis"
+  ],
+  "limitations": [
+    "Requires careful scaling of coefficients",
+    "Discretization introduces approximation error",
+    "Annealer noise may violate constraints without post-processing"
+  ],
+  "references": [
+    {
+      "title": "Portfolio Optimization with Quantum Annealing",
+      "authors": "Venturelli & Kondratyev",
+      "year": 2019,
+      "url": "https://www.frontiersin.org/articles/10.3389/fphy.2019.00031/full"
+    }
+  ],
+  "logging_metadata": {
+    "inputs_to_log": [
+      "objective_weights",
+      "constraint_penalties",
+      "annealer_settings"
+    ],
+    "outputs_to_log": [
+      "best_solution",
+      "energy",
+      "decoded_objectives"
+    ]
+  },
+  "integration_points": {
+    "optimizer_service": "Quantum option for multi-objective portfolios",
+    "portfolio_dashboard": "Displays Pareto trade-offs from QA runs",
+    "experiment_tracker": "Stores annealer performance vs classical MOEAs"
+  }
+}
+

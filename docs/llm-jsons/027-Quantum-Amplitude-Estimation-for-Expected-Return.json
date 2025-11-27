@@ -1,0 +1,111 @@
+{
+  "tool_name": "qae_expected_return",
+  "display_name": "Quantum Amplitude Estimation for Expected Return",
+  "category": "quantum_algorithms",
+  "subcategory": "amplitude_estimation",
+  "description": "Uses Quantum Amplitude Estimation (QAE) to estimate expected portfolio returns with quadratic speedup over classical Monte Carlo by encoding payoff distributions into quantum amplitudes.",
+  "use_cases": [
+    "Fast estimation of expected returns for large scenario sets",
+    "Subroutine inside quantum portfolio optimizers",
+    "Benchmark for quantum advantage in expectation estimation"
+  ],
+  "inputs": {
+    "scenario_distribution": {
+      "type": "quantum_state",
+      "description": "Distribution over return scenarios encoded via state preparation",
+      "source": "Classical Monte Carlo or QGAN"
+    },
+    "payoff_function": {
+      "type": "callable",
+      "description": "Maps scenario to return contribution encoded via controlled rotation"
+    },
+    "n_qubits": {
+      "type": "int",
+      "description": "Number of qubits for scenario register + ancilla",
+      "typical_range": [6, 18]
+    },
+    "iterations": {
+      "type": "int",
+      "description": "Number of QAE iterations / calls to Grover operator",
+      "typical_range": [10, 500]
+    },
+    "backend": {
+      "type": "config",
+      "description": "Quantum simulator or hardware specification"
+    }
+  },
+  "outputs": {
+    "expected_return": {
+      "type": "float",
+      "description": "Estimated expected return scaled from amplitude"
+    },
+    "confidence_interval": {
+      "type": "tuple",
+      "description": "Confidence bounds determined by QAE variant",
+      "unit": "return units"
+    },
+    "runtime_stats": {
+      "type": "dict",
+      "description": "Number of oracle calls, circuit depth, backend runtime"
+    }
+  },
+  "algorithm_steps": [
+    "Prepare quantum state encoding scenario probabilities",
+    "Encode payoff into ancilla amplitude via controlled rotations",
+    "Run QAE (standard/iterative/MLE) to estimate amplitude",
+    "Convert amplitude to expected return using scaling factors",
+    "Compare vs classical Monte Carlo baseline"
+  ],
+  "pseudocode": {
+    "language": "python",
+    "snippet": "iae = IterativeAmplitudeEstimation(epsilon_target=0.01,...)\nresult = iae.estimate()\nexpected_return = scale * result.estimation"
+  },
+  "dependencies": {
+    "required": [
+      "qiskit",
+      "qiskit-finance",
+      "numpy"
+    ],
+    "optional": [
+      "mlflow",
+      "qiskit-aer"
+    ]
+  },
+  "advantages": [
+    "Quadratic speedup in sample complexity",
+    "Integrates with other quantum finance modules",
+    "Provides rigorous benchmark for quantum Monte Carlo"
+  ],
+  "limitations": [
+    "Requires coherent state preparation and oracle circuits",
+    "Circuit depth increases with precision",
+    "Noise can degrade accuracy on current hardware"
+  ],
+  "references": [
+    {
+      "title": "Quantum Amplitude Estimation and Applications",
+      "authors": "Brassard et al.",
+      "year": 2002,
+      "url": "https://arxiv.org/abs/quant-ph/0005055"
+    }
+  ],
+  "logging_metadata": {
+    "inputs_to_log": [
+      "state_prep_params",
+      "backend",
+      "iterations",
+      "scale_factor"
+    ],
+    "outputs_to_log": [
+      "expected_return",
+      "confidence_interval",
+      "oracle_calls"
+    ]
+  },
+  "integration_points": {
+    "portfolio_optimizer": "Uses expected return estimates as inputs",
+    "risk_module": "Shares scenario loader and payoff definitions",
+    "experiment_tracker": "Logs backend and precision data"
+  }
+}
+

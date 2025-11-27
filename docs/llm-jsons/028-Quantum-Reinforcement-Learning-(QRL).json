@@ -1,0 +1,104 @@
+{
+  "tool_name": "quantum_rl_agent",
+  "display_name": "Quantum Reinforcement Learning (QRL)",
+  "category": "quantum_ml",
+  "subcategory": "reinforcement_learning",
+  "description": "RL trading agent whose policy/value modules incorporate quantum circuits (PQC actors, QAE-based critics) to explore potential quantum advantage in sequential decision-making.",
+  "use_cases": [
+    "Quantum policy gradient for portfolio allocation",
+    "Quantum-enhanced execution strategy",
+    "Benchmark vs classical RL under different regimes"
+  ],
+  "inputs": {
+    "environment_state": {
+      "type": "dict",
+      "description": "Same observation set as classical RL (prices, indicators, positions, risk metrics) compressed to match qubit budget"
+    },
+    "quantum_policy_config": {
+      "type": "dict",
+      "description": "Number of qubits, circuit depth, ansatz type, measurement scheme"
+    },
+    "backend": {
+      "type": "config",
+      "description": "Quantum simulator or hardware settings (shots, noise model)"
+    },
+    "training_hyperparams": {
+      "type": "dict",
+      "description": "Learning rate, optimizer, batch size, epochs"
+    }
+  },
+  "outputs": {
+    "policy_parameters": {
+      "type": "dict",
+      "description": "Trained quantum + classical weights"
+    },
+    "action_probabilities": {
+      "type": "array",
+      "description": "Action distribution produced by quantum policy"
+    },
+    "performance_metrics": {
+      "type": "dict",
+      "description": "Return, Sharpe, CVaR, violation counts compared to classical RL"
+    }
+  },
+  "algorithm_steps": [
+    "Encode observations into quantum states (angle or amplitude embedding)",
+    "Evaluate quantum policy circuit to obtain action probabilities",
+    "Use parameter-shift gradients or QAE for policy/value updates",
+    "Iterate through RL training loop with replay buffer / trajectories",
+    "Evaluate and deploy with risk guardrails"
+  ],
+  "pseudocode": {
+    "language": "python",
+    "snippet": "policy = QuantumPolicy(); optimizer = Adam(policy.parameters(), lr=1e-3)\nloss = -torch.sum(log_probs * advantages); loss.backward(); optimizer.step()"
+  },
+  "dependencies": {
+    "required": [
+      "pennylane or qiskit-machine-learning",
+      "torch",
+      "stable-baselines3 (for environment utilities)"
+    ],
+    "optional": [
+      "gymnasium",
+      "mlflow",
+      "optuna"
+    ]
+  },
+  "advantages": [
+    "Explores quantum-enhanced policy representations",
+    "Integrates with existing RL environment",
+    "Provides benchmark for quantum advantage in decision-making"
+  ],
+  "limitations": [
+    "Quantum circuit evaluation adds latency",
+    "Shot noise impacts gradient estimates",
+    "Current hardware limits qubit count/depth"
+  ],
+  "references": [
+    {
+      "title": "Quantum Reinforcement Learning in Continuous Action Spaces",
+      "authors": "Skolik et al.",
+      "year": 2022,
+      "url": "https://quantum-journal.org/papers/q-2022-02-24-651/"
+    }
+  ],
+  "logging_metadata": {
+    "inputs_to_log": [
+      "ansatz_config",
+      "backend_type",
+      "shots",
+      "training_seed"
+    ],
+    "outputs_to_log": [
+      "policy_checkpoint",
+      "performance_metrics",
+      "hardware_fidelity"
+    ]
+  },
+  "integration_points": {
+    "classical_rl_service": "Shared environment and risk guardrails",
+    "quantum_resource_manager": "Allocates backend time/qubits",
+    "experiment_tracker": "Logs comparative results vs classical RL"
+  }
+}
+

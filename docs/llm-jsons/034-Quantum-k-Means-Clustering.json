@@ -1,0 +1,104 @@
+{
+  "tool_name": "quantum_kmeans",
+  "display_name": "Quantum k-Means / Clustering",
+  "category": "quantum_ml",
+  "subcategory": "clustering",
+  "description": "Hybrid clustering algorithm that uses quantum circuits to estimate distances or kernel similarities while retaining classical Lloyd iterations.",
+  "use_cases": [
+    "Market regime clustering",
+    "Asset grouping for portfolio construction",
+    "Benchmark vs classical k-means/PCA pipeline"
+  ],
+  "inputs": {
+    "features": {
+      "type": "array",
+      "shape": "(T, F)",
+      "description": "Normalized feature vectors"
+    },
+    "n_clusters": {
+      "type": "int",
+      "description": "Number of clusters",
+      "default": 3
+    },
+    "encoding_scheme": {
+      "type": "str",
+      "description": "Amplitude or angle embedding for quantum states"
+    },
+    "backend": {
+      "type": "config",
+      "description": "Quantum simulator/hardware settings (shots, noise)"
+    }
+  },
+  "outputs": {
+    "cluster_assignments": {
+      "type": "array",
+      "shape": "(T,)",
+      "description": "Cluster label per observation"
+    },
+    "centroids": {
+      "type": "array",
+      "description": "Classical centroid vectors after convergence"
+    },
+    "distance_matrix": {
+      "type": "array",
+      "description": "Quantum-estimated distances between points and centroids"
+    }
+  },
+  "algorithm_steps": [
+    "Normalize features and encode as quantum states",
+    "Initialize centroids (classically or via quantum sampling)",
+    "Use quantum distance estimation (swap test / QAE) to compute distances",
+    "Assign clusters classically, update centroids, re-encode",
+    "Repeat until convergence"
+  ],
+  "pseudocode": {
+    "language": "python",
+    "snippet": "distances = quantum_distance_matrix(features, centroids)\nassignments = np.argmin(distances, axis=1)"
+  },
+  "dependencies": {
+    "required": [
+      "qiskit or pennylane",
+      "numpy",
+      "scikit-learn"
+    ],
+    "optional": [
+      "mlflow"
+    ]
+  },
+  "advantages": [
+    "Potential speedups in distance computation",
+    "Integrates with existing quantum feature maps",
+    "Provides comparative benchmark for clustering tasks"
+  ],
+  "limitations": [
+    "Quantum distance estimation still costly on large datasets",
+    "Overall speedup depends on efficient state preparation",
+    "Noise can degrade distance accuracy"
+  ],
+  "references": [
+    {
+      "title": "q-means: A quantum algorithm for unsupervised machine learning",
+      "authors": "Kerenidis et al.",
+      "year": 2019,
+      "url": "https://arxiv.org/abs/1904.02260"
+    }
+  ],
+  "logging_metadata": {
+    "inputs_to_log": [
+      "n_clusters",
+      "encoding_scheme",
+      "backend_settings"
+    ],
+    "outputs_to_log": [
+      "cluster_assignments",
+      "within_cluster_distance",
+      "runtime"
+    ]
+  },
+  "integration_points": {
+    "regime_service": "Provides alternative clustering signals",
+    "optimizer": "Uses clusters for asset grouping",
+    "experiment_tracker": "Stores comparisons vs classical k-means"
+  }
+}
+
