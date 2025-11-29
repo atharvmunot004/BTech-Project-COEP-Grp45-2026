@@ -1,0 +1,757 @@
+{
+  "total_papers": 105,
+  "papers": [
+    {
+      "title": "Self-Adaptive Quantum Kernel Principal Component Analysis",
+      "authors": "Wang et al.",
+      "year": 2025,
+      "source": "Advanced Science",
+      "url": "https://advanced.onlinelibrary.wiley.com/doi/10.1002/advs.202411573",
+      "performance-metrics": [],
+      "keywords": [],
+      "abstract": "",
+      "summary": "",
+      "conclusion": "",
+      "recommendations": "",
+      "limitations": "",
+      "future-work": "",
+      "related-work": "",
+      "related-projects": "",
+      "related-publications": "",
+      "related-software": "",
+      "related-hardware": "",
+      "related-datasets": "",
+      "related-tools": "",
+      "related-libraries": "",
+      "related-frameworks": ""
+    },
+    {
+      "title": "Efficient CVaR estimation using importance-sampling Monte Carlo",
+      "authors": "Jiang et al.",
+      "year": 2025,
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/2502.04562"
+    },
+    {
+      "title": "Quantum generative modeling for financial time series with temporal correlations",
+      "authors": "Dechant et al.",
+      "year": 2025,
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/2507.22035"
+    },
+    {
+      "title": "Integrated GARCH-GRU in Financial Volatility Forecasting",
+      "authors": null,
+      "year": 2025,
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/2504.09380"
+    },
+    {
+      "title": "Quantum Subgradient Estimation for Conditional Value-at-Risk Optimization",
+      "authors": null,
+      "year": 2025,
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/2510.04736"
+    },
+    {
+      "title": "Benchmarking Quantum Solvers in Noisy Digital Simulations for Financial Portfolio Optimization",
+      "authors": null,
+      "year": 2025,
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/2508.21123"
+    },
+    {
+      "title": "Quantum Risk Analysis of Financial Derivatives",
+      "authors": "Stamatopoulos, Clader, Woerner, Zeng",
+      "year": 2024,
+      "source": "arXiv",
+      "url": "https://arxiv.org/pdf/2404.10088"
+    },
+    {
+      "title": "Enhancing Financial Time Series Prediction with Quantum-Enhanced Synthetic Data Generation: A Case Study on the S&P 500 Using a Quantum Wasserstein GAN",
+      "authors": "Orlandi, Barbierato & Gatti",
+      "year": 2024,
+      "source": "MDPI",
+      "url": "https://www.mdpi.com/2079-9292/13/11/2158"
+    },
+    {
+      "title": "Forecasting conditional volatility based on hybrid GARCH",
+      "authors": "Huang et al.",
+      "year": 2024,
+      "source": "ScienceDirect",
+      "url": "https://www.sciencedirect.com/science/article/abs/pii/S1062940824000731"
+    },
+    {
+      "title": "Assessing risk forecasting models: Monte Carlo and machine learning approaches",
+      "authors": "Giot & Laurent",
+      "year": 2024,
+      "source": "ScienceDirect",
+      "url": "https://www.sciencedirect.com/science/article/abs/pii/S1057521924000152"
+    },
+    {
+      "title": "Dynamic threshold exceedance models and extreme risk forecasting",
+      "authors": "Candia et al.",
+      "year": 2024,
+      "source": null,
+      "url": null
+    },
+    {
+      "title": "Robust estimation of the range-based GARCH model",
+      "authors": null,
+      "year": 2024,
+      "source": "ScienceDirect",
+      "url": "https://www.sciencedirect.com/science/article/pii/S026499932400244X"
+    },
+    {
+      "title": "Quantum Monte Carlo Integration for Simulation-Based Optimization",
+      "authors": null,
+      "year": 2024,
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/2410.03926"
+    },
+    {
+      "title": "Hybrid quantum–classical Monte Carlo VaR",
+      "authors": "Zhang et al.",
+      "year": 2023,
+      "source": "IEEE Trans. Quantum Engineering",
+      "url": "https://ieeexplore.ieee.org/document/10090514"
+    },
+    {
+      "title": "Efficient Estimation in Extreme Value Regression Models",
+      "authors": "Hambuckers et al.",
+      "year": 2023,
+      "source": null,
+      "url": null
+    },
+    {
+      "title": "Threshold selection and tail risk estimation",
+      "authors": "Benito et al.",
+      "year": 2023,
+      "source": null,
+      "url": null
+    },
+    {
+      "title": "Monte Carlo and copula-based VaR in turbulent markets",
+      "authors": "Aziz & Nadarajah",
+      "year": 2023,
+      "source": "SpringerLink",
+      "url": "https://link.springer.com/article/10.1007/s10479-023-05176-4"
+    },
+    {
+      "title": "Real quantum amplitude estimation",
+      "authors": null,
+      "year": 2023,
+      "source": "EPJ Quantum Technology",
+      "url": "https://epjquantumtechnology.springeropen.com/articles/10.1140/epjqt/s40507-023-00159-0"
+    },
+    {
+      "title": "Q-LSTM for financial time series forecasting",
+      "authors": "Zlokapa et al.",
+      "year": 2022,
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/2206.02426"
+    },
+    {
+      "title": "Conditional EVT models (2T-POT Hawkes)",
+      "authors": "Tomlinson et al.",
+      "year": 2022,
+      "source": null,
+      "url": null
+    },
+    {
+      "title": "Hybrid quantum-classical policy gradient methods",
+      "authors": "Skolik et al.",
+      "year": 2022,
+      "source": "Quantum",
+      "url": "https://quantum-journal.org/papers/q-2022-02-24-651/"
+    },
+    {
+      "title": "Generative Adversarial Networks Applied to Synthetic Financial Scenarios Generation",
+      "authors": "Rizzato et al.",
+      "year": 2022,
+      "source": "ressources-actuarielles.net",
+      "url": "https://www.ressources-actuarielles.net/..."
+    },
+    {
+      "title": "Quantum Risk Analysis: Beyond (Conditional) Value-at-Risk",
+      "authors": "Laudagé & Turkalj",
+      "year": 2022,
+      "source": "arXiv",
+      "url": "https://arxiv.org/pdf/2211.04456"
+    },
+    {
+      "title": "Quantum computing for financial risk measurement",
+      "authors": null,
+      "year": 2022,
+      "source": "SpringerLink",
+      "url": "https://link.springer.com/article/10.1007/s11128-022-03777-2"
+    },
+    {
+      "title": "Benchmarking the performance of portfolio optimization with QAOA",
+      "authors": null,
+      "year": 2022,
+      "source": "SpringerLink",
+      "url": "https://link.springer.com/article/10.1007/s11128-022-03766-5"
+    },
+    {
+      "title": "QBM for financial data generation",
+      "authors": "Zoufal et al.",
+      "year": 2021,
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/2006.06004"
+    },
+    {
+      "title": "Simultaneous quantum estimation of multiple moments",
+      "authors": "Zhao et al.",
+      "year": 2021,
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/2103.09230"
+    },
+    {
+      "title": "Transformational Approach to Analytical Value-at-Risk",
+      "authors": "Prakash et al.",
+      "year": 2021,
+      "source": "MDPI",
+      "url": "https://www.mdpi.com/1911-8074/14/2/51"
+    },
+    {
+      "title": "Toward pricing financial derivatives with an IBM quantum computer",
+      "authors": "Martin, Candelas et al.",
+      "year": 2021,
+      "source": "Physical Review Research",
+      "url": "https://link.aps.org/doi/10.1103/PhysRevResearch.3.013167"
+    },
+    {
+      "title": "Quantum recurrent neural networks",
+      "authors": "Kyriienko et al.",
+      "year": 2021,
+      "source": "Quantum Sci. Technol.",
+      "url": "https://iopscience.iop.org/article/10.1088/2058-9565/ac1ab9"
+    },
+    {
+      "title": "Quantum kernel methods for financial datasets",
+      "authors": "Kusumoto et al.",
+      "year": 2021,
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/2108.04534"
+    },
+    {
+      "title": "An evolving objective function for improved variational quantum optimisation",
+      "authors": "Kolotouros et al.",
+      "year": 2021,
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/2105.11766"
+    },
+    {
+      "title": "Quantum RL with quantum circuits",
+      "authors": "Jerbi et al.",
+      "year": 2021,
+      "source": "Quantum Sci. Technol.",
+      "url": "https://iopscience.iop.org/article/10.1088/2058-9565/ac1d78"
+    },
+    {
+      "title": "ARIMA models - Forecasting: Principles and Practice",
+      "authors": "Hyndman & Athanasopoulos",
+      "year": 2021,
+      "source": "OTexts",
+      "url": "https://otexts.com/fpp3/arima.html"
+    },
+    {
+      "title": "QBM for financial regime detection",
+      "authors": "Herr et al.",
+      "year": 2021,
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/2103.10953"
+    },
+    {
+      "title": "Multi-objective portfolio optimization on D-Wave",
+      "authors": "Fung et al.",
+      "year": 2021,
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/2103.15912"
+    },
+    {
+      "title": "Scenario generation for market risk models using generative neural networks",
+      "authors": "Flaig & Junike",
+      "year": 2021,
+      "source": "arXiv",
+      "url": "https://arxiv.org/pdf/2109.10072"
+    },
+    {
+      "title": "Mean-Variance-VaR portfolios: MIQP formulation and performance analysis",
+      "authors": "Cesarone et al.",
+      "year": 2021,
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/2111.09773"
+    },
+    {
+      "title": "Deep RL for quantitative trading: survey and results",
+      "authors": "Zhang et al.",
+      "year": 2020,
+      "source": "AAAI",
+      "url": "https://ojs.aaai.org/index.php/AAAI/article/view/6334"
+    },
+    {
+      "title": "Quantum algorithms for Monte Carlo pricing",
+      "authors": "Stamatopoulos et al.",
+      "year": 2020,
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/2006.11382"
+    },
+    {
+      "title": "Quantum algorithms for Monte Carlo finance",
+      "authors": "Stamatopoulos et al.",
+      "year": 2020,
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/2009.03842"
+    },
+    {
+      "title": "Financial time series forecasting with deep learning: A systematic literature review",
+      "authors": "Sezer et al.",
+      "year": 2020,
+      "source": "Expert Systems",
+      "url": "https://onlinelibrary.wiley.com/doi/abs/10.1111/exsy.12302"
+    },
+    {
+      "title": "Practical limitations / hybrid approaches",
+      "authors": "Schuld",
+      "year": 2020,
+      "source": "Quantum Inf. Process.",
+      "url": "https://link.springer.com/article/10.1007/s11128-020-02974-x"
+    },
+    {
+      "title": "Transfer learning in hybrid quantum/classical models",
+      "authors": "Mari et al.",
+      "year": 2020,
+      "source": "Quantum",
+      "url": "https://quantum-journal.org/papers/q-2020-03-09-248/"
+    },
+    {
+      "title": "Quantum-enhanced SARSA",
+      "authors": "Lockwood & Meier",
+      "year": 2020,
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/2008.02823"
+    },
+    {
+      "title": "A Low Complexity Quantum Principal Component Analysis Algorithm",
+      "authors": "He et al.",
+      "year": 2020,
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/2010.00831"
+    },
+    {
+      "title": "Empirical Asset Pricing via Machine Learning",
+      "authors": "Gu et al.",
+      "year": 2020,
+      "source": "Review of Financial Studies",
+      "url": "https://academic.oup.com/rfs/article/33/5/2223/5731311"
+    },
+    {
+      "title": "Hybrid quantum-classical LSTM networks",
+      "authors": "Chen et al.",
+      "year": 2020,
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/2009.01783"
+    },
+    {
+      "title": "QAOA for portfolio optimization on NISQ devices",
+      "authors": "Barkoutsos et al.",
+      "year": 2020,
+      "source": "Quantum",
+      "url": "https://quantum-journal.org/papers/q-2020-07-06-291/"
+    },
+    {
+      "title": "Improving Variational Quantum Optimization using CVaR",
+      "authors": null,
+      "year": 2020,
+      "source": "Quantum",
+      "url": "https://quantum-journal.org/papers/q-2020-04-20-256/"
+    },
+    {
+      "title": "Quantum optimization for finance with QUBO mappings",
+      "authors": "Venturelli et al.",
+      "year": 2019,
+      "source": "Front. Phys.",
+      "url": "https://www.frontiersin.org/articles/10.3389/fphy.2019.00031/full"
+    },
+    {
+      "title": "Quantum feature maps for machine learning",
+      "authors": "Schuld & Killoran",
+      "year": 2019,
+      "source": "PRL",
+      "url": "https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.122.040504"
+    },
+    {
+      "title": "Quantum circuits as universal approximators",
+      "authors": "Schuld & Killoran",
+      "year": 2019,
+      "source": "PRL",
+      "url": "https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.122.040801"
+    },
+    {
+      "title": "Deep Reinforcement Learning for Portfolio Management (DeepTrader)",
+      "authors": "Li et al.",
+      "year": 2019,
+      "source": "AAAI",
+      "url": "https://aaai.org/ojs/index.php/AAAI/article/view/3809"
+    },
+    {
+      "title": "Quantum generative models for learning distributions",
+      "authors": "Khoshaman et al.",
+      "year": 2019,
+      "source": "npj Quantum Info",
+      "url": "https://www.nature.com/articles/s41534-019-0187-2"
+    },
+    {
+      "title": "q-means: quantum algorithm for unsupervised learning",
+      "authors": "Kerenidis et al.",
+      "year": 2019,
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/1904.02260"
+    },
+    {
+      "title": "Portfolio rebalancing with QAOA",
+      "authors": "Hodson et al.",
+      "year": 2019,
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/1911.06259"
+    },
+    {
+      "title": "Supervised learning with quantum-enhanced feature spaces",
+      "authors": "Havlíček et al.",
+      "year": 2019,
+      "source": "Nature",
+      "url": "https://www.nature.com/articles/s41586-019-0980-2"
+    },
+    {
+      "title": "Parameterized quantum circuits as generative models",
+      "authors": "Benedetti et al.",
+      "year": 2019,
+      "source": "Quantum Sci. Technol.",
+      "url": "https://iopscience.iop.org/article/10.1088/2058-9565/ab4eb5"
+    },
+    {
+      "title": "Quantum risk analysis",
+      "authors": null,
+      "year": 2019,
+      "source": "IBM Research",
+      "url": "https://research.ibm.com/publications/quantum-risk-analysis"
+    },
+    {
+      "title": "Quantum algorithms for portfolio optimization",
+      "authors": "Rebentrost et al.",
+      "year": 2018,
+      "source": "Phys. Rev. A",
+      "url": "https://journals.aps.org/pra/abstract/10.1103/PhysRevA.98.022321"
+    },
+    {
+      "title": "Deep learning with long short-term memory networks for financial market predictions",
+      "authors": "Fischer & Krauss",
+      "year": 2018,
+      "source": "Journal of Forecasting",
+      "url": "https://onlinelibrary.wiley.com/doi/abs/10.1002/for.2473"
+    },
+    {
+      "title": "Reinforcement Learning in finance: challenges and practical considerations",
+      "authors": "Fischer",
+      "year": 2018,
+      "source": "SSRN",
+      "url": "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3128246"
+    },
+    {
+      "title": "Classification with quantum neural networks",
+      "authors": "Farhi & Neven",
+      "year": 2018,
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/1802.06002"
+    },
+    {
+      "title": "Quantum Boltzmann machine learning",
+      "authors": "Amin et al.",
+      "year": 2018,
+      "source": "PRX",
+      "url": "https://journals.aps.org/prx/abstract/10.1103/PhysRevX.8.021050"
+    },
+    {
+      "title": "Deep RL for multi-step cryptocurrency portfolio allocation",
+      "authors": "Jiang et al.",
+      "year": 2017,
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/1706.10059"
+    },
+    {
+      "title": "Portfolio rebalancing on D-Wave",
+      "authors": "Rosenberg et al.",
+      "year": 2016,
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/1604.05718"
+    },
+    {
+      "title": "XGBoost: A Scalable Tree Boosting System",
+      "authors": "Chen & Guestrin",
+      "year": 2016,
+      "source": "KDD",
+      "url": "https://dl.acm.org/doi/10.1145/2939672.2939785"
+    },
+    {
+      "title": "Quantum speedup of Monte Carlo methods",
+      "authors": "Montanaro",
+      "year": 2015,
+      "source": "Proc. Roy. Soc. A",
+      "url": "https://royalsocietypublishing.org/doi/10.1098/rspa.2015.0301"
+    },
+    {
+      "title": "Quantum principal component analysis",
+      "authors": "Lloyd, Mohseni & Rebentrost",
+      "year": 2014,
+      "source": "Nature Physics",
+      "url": "https://www.nature.com/articles/nphys3029"
+    },
+    {
+      "title": "Quantum algorithms for clustering via distance estimation",
+      "authors": "Lloyd et al.",
+      "year": 2013,
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/1304.7827"
+    },
+    {
+      "title": "Value and Momentum Everywhere",
+      "authors": "Asness et al.",
+      "year": 2013,
+      "source": "Journal of Finance",
+      "url": "https://onlinelibrary.wiley.com/doi/abs/10.1111/jofi.12068"
+    },
+    {
+      "title": "Time series momentum",
+      "authors": "Moskowitz et al.",
+      "year": 2012,
+      "source": "Journal of Financial Economics",
+      "url": "https://www.sciencedirect.com/science/article/pii/S0304407612000286"
+    },
+    {
+      "title": "On the efficiency of risk measures for funds of hedge funds",
+      "authors": "Laube et al.",
+      "year": 2011,
+      "source": "SpringerLink",
+      "url": "https://link.springer.com/article/10.1057/jdhf.2011.3"
+    },
+    {
+      "title": "The Properties of Equally Weighted Risk Contribution Portfolios",
+      "authors": "Maillard et al.",
+      "year": 2010,
+      "source": "Journal of Portfolio Management",
+      "url": "https://jpm.pm-research.com/content/36/4/60"
+    },
+    {
+      "title": "Pairs Trading: Performance of a Relative-Value Arbitrage Rule",
+      "authors": "Gatev et al.",
+      "year": 2006,
+      "source": "Review of Financial Studies",
+      "url": "https://academic.oup.com/rfs/article/19/3/797/1599809"
+    },
+    {
+      "title": "Using ARIMA model to forecast stock price",
+      "authors": "Pai & Lin",
+      "year": 2005,
+      "source": "ScienceDirect",
+      "url": "https://www.sciencedirect.com/science/article/pii/S0305054805000081"
+    },
+    {
+      "title": "Pairs Trading",
+      "authors": "Elliott et al.",
+      "year": 2005,
+      "source": "Quantitative Finance",
+      "url": "https://www.tandfonline.com/doi/abs/10.1080/14697680500149370"
+    },
+    {
+      "title": "Honey, I Shrunk the Sample Covariance Matrix",
+      "authors": "Ledoit & Wolf",
+      "year": 2004,
+      "source": "Journal of Portfolio Management",
+      "url": "https://www.jstor.org/stable/4485060"
+    },
+    {
+      "title": "Conditional value-at-risk for general loss distributions",
+      "authors": "Krokhmal et al.",
+      "year": 2002,
+      "source": "Journal of Banking & Finance",
+      "url": "https://www.sciencedirect.com/science/article/pii/S0378426602001042"
+    },
+    {
+      "title": "Principal Component Analysis",
+      "authors": "Jolliffe",
+      "year": 2002,
+      "source": "Springer",
+      "url": "https://link.springer.com/book/10.1007/978-1-4757-1904-8"
+    },
+    {
+      "title": "Original amplitude estimation algorithm",
+      "authors": "Brassard et al.",
+      "year": 2002,
+      "source": "Contemporary Mathematics",
+      "url": "https://arxiv.org/abs/quant-ph/0005055"
+    },
+    {
+      "title": "International Asset Allocation with Regime Shifts",
+      "authors": "Ang & Bekaert",
+      "year": 2002,
+      "source": "Review of Financial Studies",
+      "url": "https://academic.oup.com/rfs/article/15/4/1137/1586418"
+    },
+    {
+      "title": "Application of support vector machines in financial time series forecasting",
+      "authors": "Tay & Cao",
+      "year": 2001,
+      "source": "Expert Systems",
+      "url": "https://www.sciencedirect.com/science/article/pii/S0957417401000841"
+    },
+    {
+      "title": "Recurrent Reinforcement Learning for trading",
+      "authors": "Moody & Saffell",
+      "year": 2001,
+      "source": "Neural Networks",
+      "url": "https://doi.org/10.1016/S0893-6080(01)00040-1"
+    },
+    {
+      "title": "Random Forests",
+      "authors": "Breiman",
+      "year": 2001,
+      "source": "Machine Learning",
+      "url": "https://link.springer.com/article/10.1023/A:1010933404324"
+    },
+    {
+      "title": "Optimization of Conditional Value-at-Risk",
+      "authors": "Rockafellar & Uryasev",
+      "year": 2000,
+      "source": "Journal of Risk",
+      "url": "https://www.jstor.org/stable/2586997"
+    },
+    {
+      "title": "Finite Mixture Models",
+      "authors": "McLachlan & Peel",
+      "year": 2000,
+      "source": "Wiley",
+      "url": "https://www.wiley.com/en-us/Finite+Mixture+Models-p-9780471006268"
+    },
+    {
+      "title": "Quantum annealing and Boltzmann machines",
+      "authors": "Kadowaki & Nishimori",
+      "year": 1998,
+      "source": "PRE",
+      "url": "https://journals.aps.org/pre/abstract/10.1103/PhysRevE.58.5355"
+    },
+    {
+      "title": "Long Short-Term Memory",
+      "authors": "Hochreiter & Schmidhuber",
+      "year": 1997,
+      "source": "Neural Computation",
+      "url": "https://www.bioinf.jku.at/publications/older/2604.pdf"
+    },
+    {
+      "title": "The Nature of Statistical Learning Theory",
+      "authors": "Vapnik",
+      "year": 1995,
+      "source": "Springer",
+      "url": "https://link.springer.com/book/10.1007/978-1-4757-2440-0"
+    },
+    {
+      "title": "Autoregressive conditional heteroskedasticity and changes in regime",
+      "authors": "Hamilton & Susmel",
+      "year": 1994,
+      "source": "Journal of Econometrics",
+      "url": "https://www.sciencedirect.com/science/article/pii/0304407694900208"
+    },
+    {
+      "title": "Returns to Buying Winners and Selling Losers",
+      "authors": "Jegadeesh & Titman",
+      "year": 1993,
+      "source": "Journal of Finance",
+      "url": "https://www.jstor.org/stable/2328882"
+    },
+    {
+      "title": "Global Portfolio Optimization",
+      "authors": "Black & Litterman",
+      "year": 1992,
+      "source": "Financial Analysts Journal",
+      "url": "https://www.jstor.org/stable/4479577"
+    },
+    {
+      "title": "The Markowitz Optimization Enigma: Is 'Optimized' Optimal?",
+      "authors": "Michaud",
+      "year": 1989,
+      "source": "Financial Analysts Journal",
+      "url": "https://www.jstor.org/stable/4479057"
+    },
+    {
+      "title": "A New Approach to the Economic Analysis of Nonstationary Time Series",
+      "authors": "Hamilton",
+      "year": 1989,
+      "source": "Econometrica",
+      "url": "https://www.jstor.org/stable/1912559"
+    },
+    {
+      "title": "Time Series Analysis: Forecasting and Control",
+      "authors": "Box & Jenkins",
+      "year": 1976,
+      "source": "Wiley",
+      "url": "https://www.wiley.com/en-us/Time+Series+Analysis%3A+Forecasting+and+Control%2C+5th+Edition-p-9781118675021"
+    },
+    {
+      "title": "Portfolio Selection",
+      "authors": "Markowitz",
+      "year": 1952,
+      "source": "Journal of Finance",
+      "url": "https://www.jstor.org/stable/2327556"
+    },
+    {
+      "title": "Value at Risk, GARCH Modelling and the Forecasting",
+      "authors": "Füss",
+      "year": null,
+      "source": "SpringerLink",
+      "url": "https://link.springer.com/chapter/10.1057/9781137554178_5"
+    },
+    {
+      "title": "Realized Peaks Over Threshold (Realized POT)",
+      "authors": "Bee et al.",
+      "year": null,
+      "source": null,
+      "url": null
+    },
+    {
+      "title": "Parametric Method in Value at Risk (VaR): Definition and Examples",
+      "authors": null,
+      "year": null,
+      "source": "Investopedia",
+      "url": "https://www.investopedia.com/ask/answers/041715/what-variancecovariance-matrix-or-parametric-method-value-risk-var.asp"
+    },
+    {
+      "title": "Forecasting hedge funds volatility: a Markov regime-switching GARCH",
+      "authors": null,
+      "year": null,
+      "source": "SSRN",
+      "url": "https://papers.ssrn.com/sol3/Delivery.cfm/SSRN_ID1768864_code639897.pdf"
+    },
+    {
+      "title": "Portfolio Optimization - Qiskit Finance",
+      "authors": null,
+      "year": null,
+      "source": "Qiskit Community GitHub",
+      "url": "https://qiskit-community.github.io/qiskit-finance/tutorials/01_portfolio_optimization.html"
+    },
+    {
+      "title": "Improving Variational Quantum Optimization using CVaR - Qiskit Tutorial",
+      "authors": null,
+      "year": null,
+      "source": "Qiskit Optimization",
+      "url": "https://qiskit-community.github.io/qiskit-optimization/tutorials/08_cvar_optimization.html"
+    },
+    {
+      "title": "Improved Quantum Approximate Optimization Algorithm based on Conditional Value-at-Risk for Portfolio Optimization",
+      "authors": null,
+      "year": null,
+      "source": "ResearchGate",
+      "url": "https://www.researchgate.net/publication/388016183"
+    }
+  ]
+}
