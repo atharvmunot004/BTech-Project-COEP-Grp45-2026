@@ -8,22 +8,7 @@
       "source": "Advanced Science",
       "url": "https://advanced.onlinelibrary.wiley.com/doi/10.1002/advs.202411573",
       "performance-metrics": [],
-      "keywords": [],
-      "abstract": "",
-      "summary": "",
-      "conclusion": "",
-      "recommendations": "",
-      "limitations": "",
-      "future-work": "",
-      "related-work": "",
-      "related-projects": "",
-      "related-publications": "",
-      "related-software": "",
-      "related-hardware": "",
-      "related-datasets": "",
-      "related-tools": "",
-      "related-libraries": "",
-      "related-frameworks": ""
+      "tools-used-in": []
     },
     {
       "title": "Efficient CVaR estimation using importance-sampling Monte Carlo",
