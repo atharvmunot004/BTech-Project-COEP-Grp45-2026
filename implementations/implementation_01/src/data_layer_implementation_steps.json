@@ -1,459 +1,457 @@
 {
     "component": "Data Layer",
-    "purpose": "Persistent raw data storage and serving; canonical source of truth for OHLCV and metadata",
+    "purpose": "Read existing CSV files from dataset/ folder and convert them into the format required by Data Preprocessing Engine",
+    "current_data_format": {
+        "location": "dataset/ folder",
+        "file_naming": "SYMBOL_10yr_daily.csv (e.g., ASIANPAINT_10yr_daily.csv)",
+        "csv_structure": {
+            "row_1": "Column headers: Price, Close, High, Low, Open, Volume",
+            "row_2": "Ticker information: SYMBOL.NS, SYMBOL.NS, ...",
+            "row_3": "Date label row: Date,,,,,",
+            "row_4_onwards": "Actual data: Date, Price, Close, High, Low, Open, Volume",
+            "note": "Date column is implied but not explicitly in header row"
+        },
+        "columns": ["Date", "Price", "Close", "High", "Low", "Open", "Volume"],
+        "symbol_format": "SYMBOL.NS (e.g., ASIANPAINT.NS, TCS.NS)"
+    },
+    "target_format_for_preprocessing": {
+        "description": "Format required by Data Preprocessing Engine",
+        "structure": "pandas DataFrame",
+        "index": "Date (datetime64[ns], ISO 8601 format)",
+        "columns": "Symbol-based columns for Close and optionally OHLCV",
+        "options": [
+            {
+                "option_1": "Close prices only",
+                "columns": "Symbol names (ASIANPAINT, TCS, etc.)",
+                "values": "Close prices",
+                "example": "Date index, columns=['ASIANPAINT', 'TCS', ...]"
+            },
+            {
+                "option_2": "Full OHLCV",
+                "columns": "MultiIndex or prefixed columns",
+                "values": "All OHLCV data",
+                "example": "Date index, columns=['ASIANPAINT_Close', 'ASIANPAINT_Volume', 'TCS_Close', ...]"
+            }
+        ],
+        "required_format": "index=date, columns=symbols, values=close (and OHLCV if needed)"
+    },
     "implementation_steps": [
         {
             "step": 1,
-            "title": "Setup Project Structure",
-            "description": "Create the basic folder structure for the Data Layer",
+            "title": "Setup Project Structure and Configuration",
+            "description": "Create basic folder structure and configuration for Data Layer",
             "tasks": [
-                "Create `dataset/` folder if it doesn't exist",
-                "Create `src/implementation_01/data/` folder for data layer modules",
-                "Create `src/implementation_01/data/__init__.py` to make it a package",
-                "Set up logging configuration for data layer operations"
+                "Create `implementations/implementation_01/src/data_layer/` folder",
+                "Create `implementations/implementation_01/src/data_layer/__init__.py`",
+                "Create `config.py` with dataset folder path configuration",
+                "Set up logging configuration",
+                "Define constants for CSV parsing (header rows to skip, column mappings)"
             ],
             "files_to_create": [
-                "src/implementation_01/data/__init__.py",
-                "src/implementation_01/data/logger_config.py"
+                "implementations/implementation_01/src/data_layer/__init__.py",
+                "implementations/implementation_01/src/data_layer/config.py",
+                "implementations/implementation_01/src/data_layer/logger_config.py"
             ],
+            "code_structure": {
+                "config.py": {
+                    "constants": [
+                        "DATASET_FOLDER = '../dataset' or configurable path",
+                        "CSV_SKIP_ROWS = 3  # Skip first 3 rows (headers, ticker, date label)",
+                        "DATE_COLUMN = 'Date'",
+                        "OHLCV_COLUMNS = ['Open', 'High', 'Low', 'Close', 'Volume', 'Price']",
+                        "SYMBOL_EXTRACT_PATTERN = r'([A-Z]+)\\.NS'  # Extract symbol from ticker"
+                    ]
+                }
+            },
             "dependencies": [
                 "os",
-                "logging",
-                "pathlib"
+                "pathlib",
+                "logging"
             ]
         },
         {
             "step": 2,
-            "title": "Create Data Schema and Validation",
-            "description": "Define the expected data schema and validation functions for OHLCV records",
+            "title": "Create CSV Reader with Custom Parser",
+            "description": "Implement function to read the non-standard CSV format from dataset folder",
             "tasks": [
-                "Define expected column names: ['Date', 'Symbol', 'Open', 'High', 'Low', 'Close', 'Volume', 'Adjusted Close', 'corporate_action_flags']",
-                "Create schema validation function to check data types (Date as datetime, prices as float64, Volume as int64)",
-                "Validate ISO 8601 date format (YYYY-MM-DD)",
-                "Check for required columns presence",
-                "Validate price relationships (Low <= Open/Close/High <= High)",
-                "Handle optional columns gracefully (Adjusted Close, corporate_action_flags)"
-            ],
-            "files_to_create": [
-                "src/implementation_01/data/schema.py"
-            ],
-            "code_example": {
-                "schema_definition": {
-                    "required_columns": ["Date", "Symbol", "Open", "High", "Low", "Close", "Volume"],
-                    "optional_columns": ["Adjusted Close", "corporate_action_flags"],
-                    "dtypes": {
-                        "Date": "datetime64[ns]",
-                        "Symbol": "object",
-                        "Open": "float64",
-                        "High": "float64",
-                        "Low": "float64",
-                        "Close": "float64",
-                        "Volume": "int64",
-                        "Adjusted Close": "float64",
-                        "corporate_action_flags": "object"
-                    }
-                }
-            },
-            "dependencies": [
-                "pandas",
-                "numpy",
-                "datetime"
-            ]
-        },
-        {
-            "step": 3,
-            "title": "Create CSV Reader Module",
-            "description": "Implement functions to read and parse CSV files from the dataset folder",
-            "tasks": [
-                "Create function `read_csv_file(filepath)` that reads CSV with proper date parsing",
-                "Handle different CSV formats (date as index vs date column)",
+                "Create `read_csv_with_custom_format(filepath: str) -> pd.DataFrame` function",
+                "Skip first 3 rows (header, ticker, date label)",
+                "Read CSV starting from row 4 with proper column names: ['Date', 'Price', 'Close', 'High', 'Low', 'Open', 'Volume']",
+                "Parse Date column as datetime with ISO 8601 format (YYYY-MM-DD)",
                 "Set Date as DataFrame index",
-                "Extract Symbol from filename or data if present",
-                "Normalize column names (handle case variations, spaces, underscores)",
-                "Apply schema validation after reading",
-                "Handle encoding issues (UTF-8, fallback to latin-1)",
-                "Add metadata (file_path, load_timestamp, file_size)"
+                "Extract symbol name from row 2 (Ticker row) or filename",
+                "Normalize symbol name (remove .NS suffix, convert to uppercase)",
+                "Handle encoding issues (UTF-8)",
+                "Validate that required columns exist",
+                "Return DataFrame with Date index and OHLCV columns"
             ],
             "files_to_create": [
-                "src/implementation_01/data/csv_reader.py"
+                "implementations/implementation_01/src/data_layer/csv_reader.py"
             ],
             "code_structure": {
                 "functions": [
-                    "read_csv_file(filepath: str) -> pd.DataFrame",
-                    "normalize_column_names(df: pd.DataFrame) -> pd.DataFrame",
-                    "extract_symbol_from_filename(filepath: str) -> str",
-                    "validate_ohlcv_data(df: pd.DataFrame) -> bool"
+                    "read_csv_with_custom_format(filepath: str) -> tuple[pd.DataFrame, str]",
+                    "extract_symbol_from_file(filepath: str) -> str",
+                    "extract_symbol_from_ticker_row(filepath: str) -> str",
+                    "normalize_symbol_name(symbol: str) -> str",
+                    "parse_date_column(df: pd.DataFrame) -> pd.DataFrame"
                 ]
+            },
+            "code_example": {
+                "pseudocode": "df = pd.read_csv(filepath, skiprows=3, names=['Date', 'Price', 'Close', 'High', 'Low', 'Open', 'Volume']); df['Date'] = pd.to_datetime(df['Date']); df.set_index('Date', inplace=True); symbol = extract_symbol_from_file(filepath); return df, symbol"
             },
             "dependencies": [
                 "pandas",
                 "os",
-                "pathlib",
-                "datetime"
-            ]
-        },
-        {
-            "step": 4,
-            "title": "Create Data Loader Class",
-            "description": "Implement the main DataLoader class that serves as the interface to the Data Layer",
-            "tasks": [
-                "Create `DataLoader` class with dataset folder path as parameter",
-                "Implement `list_available_symbols()` method to scan dataset folder and return available symbols",
-                "Implement `load_symbol(symbol: str, start_date: str = None, end_date: str = None) -> pd.DataFrame`",
-                "Implement `load_multiple_symbols(symbols: list, start_date: str = None, end_date: str = None) -> dict`",
-                "Implement date filtering using ISO 8601 format",
-                "Cache loaded data in memory (optional, with TTL)",
-                "Handle file not found errors gracefully",
-                "Return data in standardized format (Date as index, OHLCV columns)"
-            ],
-            "files_to_create": [
-                "src/implementation_01/data/data_loader.py"
-            ],
-            "code_structure": {
-                "class": "DataLoader",
-                "methods": [
-                    "__init__(dataset_folder: str)",
-                    "list_available_symbols() -> list[str]",
-                    "load_symbol(symbol: str, start_date: str = None, end_date: str = None) -> pd.DataFrame",
-                    "load_multiple_symbols(symbols: list, start_date: str = None, end_date: str = None) -> dict[str, pd.DataFrame]",
-                    "_find_symbol_file(symbol: str) -> str",
-                    "_normalize_date_range(df: pd.DataFrame, start_date: str, end_date: str) -> pd.DataFrame"
-                ]
-            },
-            "dependencies": [
-                "pandas",
-                "os",
-                "glob",
-                "pathlib",
-                "functools (for caching)"
-            ]
-        },
-        {
-            "step": 5,
-            "title": "Create File Path Resolver",
-            "description": "Implement utility to map symbol names to CSV file paths",
-            "tasks": [
-                "Create function to match symbol to filename patterns (e.g., 'ASIANPAINT' -> 'ASIANPAINT_10yr_daily.csv')",
-                "Handle case-insensitive matching",
-                "Support multiple naming conventions",
-                "Return absolute file path",
-                "Handle ambiguous matches (multiple files for same symbol)"
-            ],
-            "files_to_create": [
-                "src/implementation_01/data/path_resolver.py"
-            ],
-            "code_structure": {
-                "functions": [
-                    "resolve_symbol_to_filepath(symbol: str, dataset_folder: str) -> str",
-                    "_find_files_matching_symbol(symbol: str, dataset_folder: str) -> list[str]",
-                    "_normalize_symbol_name(symbol: str) -> str"
-                ]
-            },
-            "dependencies": [
-                "os",
-                "glob",
                 "pathlib",
                 "re"
             ]
         },
         {
-            "step": 6,
-            "title": "Create Data Exporter Module",
-            "description": "Implement functions to export data in various formats (Parquet, CSV, in-memory DataFrame)",
+            "step": 3,
+            "title": "Create Symbol Discovery and File Resolver",
+            "description": "Implement utilities to discover available symbols and map them to CSV files",
             "tasks": [
-                "Create `export_to_parquet(df: pd.DataFrame, output_path: str)` function",
-                "Create `export_to_csv(df: pd.DataFrame, output_path: str)` function",
-                "Create `to_dataframe_format(df: pd.DataFrame) -> pd.DataFrame` for standardized output",
-                "Handle multi-index DataFrames (date x symbol)",
-                "Preserve metadata in output files",
-                "Support compression for Parquet (snappy, gzip)"
+                "Create function to scan dataset folder and list all CSV files",
+                "Create function `get_available_symbols(dataset_folder: str) -> list[str]`",
+                "Extract symbol names from filenames (e.g., 'ASIANPAINT_10yr_daily.csv' -> 'ASIANPAINT')",
+                "Create function `resolve_symbol_to_filepath(symbol: str, dataset_folder: str) -> str`",
+                "Handle case-insensitive symbol matching",
+                "Validate that files exist before returning paths",
+                "Return list of available symbols in sorted order"
             ],
             "files_to_create": [
-                "src/implementation_01/data/data_exporter.py"
+                "implementations/implementation_01/src/data_layer/symbol_resolver.py"
             ],
             "code_structure": {
                 "functions": [
-                    "export_to_parquet(df: pd.DataFrame, output_path: str, compression: str = 'snappy')",
-                    "export_to_csv(df: pd.DataFrame, output_path: str, index: bool = True)",
-                    "to_dataframe_format(df: pd.DataFrame, pivot: bool = False) -> pd.DataFrame",
-                    "_prepare_multi_symbol_df(symbols_dict: dict) -> pd.DataFrame"
+                    "get_available_symbols(dataset_folder: str) -> list[str]",
+                    "resolve_symbol_to_filepath(symbol: str, dataset_folder: str) -> str",
+                    "extract_symbol_from_filename(filename: str) -> str",
+                    "_find_all_csv_files(dataset_folder: str) -> list[str]",
+                    "validate_symbol_exists(symbol: str, dataset_folder: str) -> bool"
                 ]
             },
             "dependencies": [
-                "pandas",
-                "pyarrow (for Parquet)",
-                "os"
-            ]
-        },
-        {
-            "step": 7,
-            "title": "Create Metadata Handler",
-            "description": "Track and manage metadata about datasets (version, source, checksums, last modified)",
-            "tasks": [
-                "Create function to compute file checksums (MD5 or SHA256)",
-                "Track file metadata (size, modification time, row count)",
-                "Create `get_dataset_info(symbol: str) -> dict` function",
-                "Store metadata cache (JSON file) for faster access",
-                "Validate data integrity using checksums",
-                "Track data source information (exchange, provider, download date)"
-            ],
-            "files_to_create": [
-                "src/implementation_01/data/metadata_handler.py"
-            ],
-            "code_structure": {
-                "functions": [
-                    "compute_file_checksum(filepath: str) -> str",
-                    "get_dataset_info(symbol: str, dataset_folder: str) -> dict",
-                    "update_metadata_cache(dataset_folder: str)",
-                    "get_data_range(symbol: str) -> tuple[str, str]",
-                    "get_row_count(symbol: str) -> int"
-                ],
-                "metadata_schema": {
-                    "symbol": "str",
-                    "filepath": "str",
-                    "checksum": "str",
-                    "file_size_bytes": "int",
-                    "last_modified": "str (ISO 8601)",
-                    "date_range": {"start": "str", "end": "str"},
-                    "row_count": "int",
-                    "source": "str",
-                    "download_date": "str"
-                }
-            },
-            "dependencies": [
-                "hashlib",
-                "json",
                 "os",
-                "pathlib",
-                "pandas"
+                "glob",
+                "pathlib"
             ]
         },
         {
-            "step": 8,
-            "title": "Create Data Validation and Quality Checks",
-            "description": "Implement comprehensive data quality validation",
+            "step": 4,
+            "title": "Create Single Symbol Data Loader",
+            "description": "Load and return data for a single symbol",
             "tasks": [
-                "Check for missing values in critical columns",
-                "Detect outliers (prices/volumes outside reasonable ranges)",
-                "Validate time series continuity (no unexpected gaps in dates)",
-                "Check for duplicate dates",
-                "Validate trading calendar (exclude weekends/holidays if needed)",
-                "Generate data quality report",
-                "Handle corporate actions flags if present",
-                "Validate adjusted vs unadjusted prices"
+                "Create function `load_single_symbol(symbol: str, dataset_folder: str, start_date: str = None, end_date: str = None) -> pd.DataFrame`",
+                "Resolve symbol to filepath",
+                "Read CSV using custom parser",
+                "Filter by date range if provided (ISO 8601 format)",
+                "Return DataFrame with Date index and OHLCV columns",
+                "Add symbol name as metadata attribute to DataFrame",
+                "Handle file not found errors with clear error messages"
             ],
             "files_to_create": [
-                "src/implementation_01/data/quality_checks.py"
+                "implementations/implementation_01/src/data_layer/single_symbol_loader.py"
             ],
             "code_structure": {
                 "functions": [
-                    "validate_data_quality(df: pd.DataFrame) -> dict",
-                    "check_missing_values(df: pd.DataFrame) -> dict",
-                    "detect_outliers(df: pd.DataFrame, method: str = 'iqr') -> pd.DataFrame",
-                    "check_date_continuity(df: pd.DataFrame) -> dict",
-                    "detect_duplicate_dates(df: pd.DataFrame) -> list",
-                    "generate_quality_report(symbol: str, df: pd.DataFrame) -> dict"
+                    "load_single_symbol(symbol: str, dataset_folder: str, start_date: str = None, end_date: str = None) -> pd.DataFrame",
+                    "_filter_by_date_range(df: pd.DataFrame, start_date: str, end_date: str) -> pd.DataFrame"
                 ]
             },
             "dependencies": [
                 "pandas",
-                "numpy",
                 "datetime"
             ]
         },
         {
-            "step": 9,
-            "title": "Create API/Interface Module",
-            "description": "Create a unified API interface for accessing the Data Layer",
+            "step": 5,
+            "title": "Create Format Converter for Data Preprocessing Engine",
+            "description": "Convert loaded data into the wide format required by Data Preprocessing Engine (index=date, columns=symbols)",
             "tasks": [
-                "Create main `DataLayer` class that encapsulates all functionality",
-                "Implement REST-like methods: `get(symbol)`, `get_multiple(symbols)`, `list()`, `info(symbol)`",
-                "Add configuration management (dataset folder path, caching settings)",
-                "Implement error handling and custom exceptions",
-                "Add logging for all operations",
-                "Create factory function for easy instantiation"
+                "Create function `convert_to_preprocessing_format(symbols_dict: dict[str, pd.DataFrame], price_type: str = 'Close', include_ohlcv: bool = False) -> pd.DataFrame`",
+                "For Close prices only: Create wide DataFrame where index=Date, columns=symbols, values=Close",
+                "For full OHLCV: Create wide DataFrame with prefixed columns (SYMBOL_Close, SYMBOL_Volume, etc.)",
+                "Align dates across all symbols (inner join to get common dates)",
+                "Handle missing dates (forward fill or drop based on config)",
+                "Sort by Date index",
+                "Ensure consistent date range across all symbols",
+                "Return DataFrame ready for Data Preprocessing Engine"
             ],
             "files_to_create": [
-                "src/implementation_01/data/data_layer.py"
+                "implementations/implementation_01/src/data_layer/format_converter.py"
             ],
             "code_structure": {
-                "class": "DataLayer",
-                "methods": [
-                    "__init__(dataset_folder: str, enable_cache: bool = True)",
-                    "get(symbol: str, start_date: str = None, end_date: str = None) -> pd.DataFrame",
-                    "get_multiple(symbols: list, start_date: str = None, end_date: str = None) -> dict",
-                    "list_symbols() -> list[str]",
-                    "info(symbol: str) -> dict",
-                    "validate(symbol: str) -> dict",
-                    "export(symbol: str, format: str = 'dataframe', output_path: str = None)"
-                ],
-                "custom_exceptions": [
-                    "SymbolNotFoundError",
-                    "InvalidDataFormatError",
-                    "DataLoadError"
+                "functions": [
+                    "convert_to_preprocessing_format(symbols_dict: dict[str, pd.DataFrame], price_type: str = 'Close', include_ohlcv: bool = False) -> pd.DataFrame",
+                    "create_close_prices_df(symbols_dict: dict[str, pd.DataFrame], date_alignment: str = 'inner') -> pd.DataFrame",
+                    "create_full_ohlcv_df(symbols_dict: dict[str, pd.DataFrame], date_alignment: str = 'inner') -> pd.DataFrame",
+                    "_align_dates(symbols_dict: dict[str, pd.DataFrame], how: str = 'inner') -> pd.DataFrame",
+                    "_add_symbol_prefix(df: pd.DataFrame, symbol: str) -> pd.DataFrame"
                 ]
             },
+            "code_example": {
+                "close_only": "df_list = [df['Close'].rename(symbol) for symbol, df in symbols_dict.items()]; result = pd.concat(df_list, axis=1); result = result.dropna(how='any')  # or use inner join",
+                "full_ohlcv": "For each symbol, add prefix to all OHLCV columns, then concat horizontally"
+            },
             "dependencies": [
-                "All previous modules",
-                "logging"
-            ]
-        },
-        {
-            "step": 10,
-            "title": "Create Unit Tests",
-            "description": "Write comprehensive unit tests for all Data Layer components",
-            "tasks": [
-                "Create test fixtures with sample OHLCV data",
-                "Test CSV reader with various formats",
-                "Test DataLoader with single and multiple symbols",
-                "Test date filtering functionality",
-                "Test error handling (file not found, invalid data)",
-                "Test schema validation",
-                "Test metadata handler",
-                "Test data quality checks",
-                "Test export functions",
-                "Use pytest framework"
-            ],
-            "files_to_create": [
-                "tests/test_data_layer.py",
-                "tests/fixtures/sample_data.csv",
-                "tests/test_csv_reader.py",
-                "tests/test_data_loader.py",
-                "tests/test_quality_checks.py"
-            ],
-            "dependencies": [
-                "pytest",
-                "pytest-cov (for coverage)",
                 "pandas",
                 "numpy"
             ]
         },
         {
-            "step": 11,
-            "title": "Create Configuration File",
-            "description": "Create configuration management for Data Layer settings",
+            "step": 6,
+            "title": "Create Multi-Symbol Data Loader",
+            "description": "Load multiple symbols and return in format suitable for Data Preprocessing Engine",
             "tasks": [
-                "Create `config.py` or `config.yaml` for Data Layer settings",
-                "Define default dataset folder path",
-                "Configure caching settings (TTL, max size)",
-                "Set default date format (ISO 8601)",
-                "Configure logging levels",
-                "Set file naming conventions",
-                "Allow environment variable overrides"
+                "Create function `load_multiple_symbols(symbols: list[str], dataset_folder: str, start_date: str = None, end_date: str = None, format: str = 'preprocessing') -> pd.DataFrame`",
+                "Load each symbol individually using single symbol loader",
+                "Combine into dictionary: {symbol: DataFrame}",
+                "Convert to preprocessing format using format converter",
+                "Return wide format DataFrame (index=Date, columns=symbols for Close or prefixed for OHLCV)",
+                "Handle cases where some symbols might not have data for certain dates",
+                "Provide option to return as dictionary of individual DataFrames if needed"
             ],
             "files_to_create": [
-                "src/implementation_01/data/config.py",
-                "src/implementation_01/data/config.yaml (optional)"
-            ],
-            "dependencies": [
-                "os",
-                "yaml (optional)",
-                "pathlib"
-            ]
-        },
-        {
-            "step": 12,
-            "title": "Create Documentation and Examples",
-            "description": "Write documentation and usage examples",
-            "tasks": [
-                "Create README.md for Data Layer with usage examples",
-                "Add docstrings to all public functions and classes",
-                "Create example notebook showing Data Layer usage",
-                "Document data format requirements",
-                "Add troubleshooting guide",
-                "Include performance benchmarks"
-            ],
-            "files_to_create": [
-                "src/implementation_01/data/README.md",
-                "docs/data_layer_examples.ipynb"
-            ],
-            "dependencies": []
-        },
-        {
-            "step": 13,
-            "title": "Integration with Data Preprocessing Engine",
-            "description": "Ensure Data Layer output format matches Data Preprocessing Engine input requirements",
-            "tasks": [
-                "Verify output format: pandas DataFrame with Date index and symbol columns",
-                "Test data handoff to Data Preprocessing Engine",
-                "Implement format conversion if needed (pivot from long to wide format)",
-                "Ensure compatibility with expected input format: 'index=date, columns=symbols, values=close (and OHLCV if needed)'",
-                "Add helper function to convert to preprocessing engine format"
-            ],
-            "files_to_create": [
-                "src/implementation_01/data/preprocessing_adapter.py"
+                "implementations/implementation_01/src/data_layer/multi_symbol_loader.py"
             ],
             "code_structure": {
                 "functions": [
-                    "to_preprocessing_format(symbols_dict: dict, price_type: str = 'Close') -> pd.DataFrame",
-                    "_pivot_ohlcv_data(df: pd.DataFrame, price_column: str = 'Close') -> pd.DataFrame"
+                    "load_multiple_symbols(symbols: list[str], dataset_folder: str, start_date: str = None, end_date: str = None, format: str = 'preprocessing', price_type: str = 'Close', include_ohlcv: bool = False) -> pd.DataFrame",
+                    "load_multiple_symbols_as_dict(symbols: list[str], dataset_folder: str, start_date: str = None, end_date: str = None) -> dict[str, pd.DataFrame]"
                 ]
             },
             "dependencies": [
                 "pandas"
             ]
+        },
+        {
+            "step": 7,
+            "title": "Create Main Data Layer Interface",
+            "description": "Create the main DataLayer class that provides unified interface for accessing data",
+            "tasks": [
+                "Create `DataLayer` class with dataset_folder as parameter",
+                "Implement `get_symbol(symbol: str, start_date: str = None, end_date: str = None) -> pd.DataFrame` for single symbol",
+                "Implement `get_symbols(symbols: list[str], start_date: str = None, end_date: str = None, price_type: str = 'Close', include_ohlcv: bool = False) -> pd.DataFrame` for multiple symbols in preprocessing format",
+                "Implement `list_symbols() -> list[str]` to get available symbols",
+                "Implement `get_all_symbols(start_date: str = None, end_date: str = None, price_type: str = 'Close', include_ohlcv: bool = False) -> pd.DataFrame` to load all available symbols",
+                "Add caching mechanism (optional) to avoid re-reading files",
+                "Implement error handling with custom exceptions",
+                "Add logging for all operations",
+                "Return DataFrames in format directly usable by Data Preprocessing Engine"
+            ],
+            "files_to_create": [
+                "implementations/implementation_01/src/data_layer/data_layer.py"
+            ],
+            "code_structure": {
+                "class": "DataLayer",
+                "methods": [
+                    "__init__(dataset_folder: str, enable_cache: bool = False)",
+                    "list_symbols() -> list[str]",
+                    "get_symbol(symbol: str, start_date: str = None, end_date: str = None) -> pd.DataFrame",
+                    "get_symbols(symbols: list[str], start_date: str = None, end_date: str = None, price_type: str = 'Close', include_ohlcv: bool = False) -> pd.DataFrame",
+                    "get_all_symbols(start_date: str = None, end_date: str = None, price_type: str = 'Close', include_ohlcv: bool = False) -> pd.DataFrame",
+                    "_clear_cache()",
+                    "_get_cached(symbol: str)",
+                    "_set_cache(symbol: str, df: pd.DataFrame)"
+                ],
+                "custom_exceptions": [
+                    "SymbolNotFoundError",
+                    "InvalidDateFormatError",
+                    "DataLoadError"
+                ]
+            },
+            "dependencies": [
+                "All previous modules",
+                "functools (for caching)",
+                "logging"
+            ]
+        },
+        {
+            "step": 8,
+            "title": "Create Data Validation Functions",
+            "description": "Validate loaded data for quality and completeness",
+            "tasks": [
+                "Create function to validate DataFrame structure (Date index, required columns)",
+                "Check for missing values in critical columns (Close price)",
+                "Validate date range continuity (detect large gaps)",
+                "Check for duplicate dates",
+                "Validate price relationships (Low <= Open/Close/High <= High)",
+                "Generate validation report",
+                "Create function `validate_data_quality(df: pd.DataFrame, symbol: str) -> dict`"
+            ],
+            "files_to_create": [
+                "implementations/implementation_01/src/data_layer/validation.py"
+            ],
+            "code_structure": {
+                "functions": [
+                    "validate_dataframe_structure(df: pd.DataFrame) -> bool",
+                    "check_missing_values(df: pd.DataFrame) -> dict",
+                    "validate_price_relationships(df: pd.DataFrame) -> dict",
+                    "check_date_continuity(df: pd.DataFrame) -> dict",
+                    "detect_duplicate_dates(df: pd.DataFrame) -> list",
+                    "validate_data_quality(df: pd.DataFrame, symbol: str) -> dict"
+                ]
+            },
+            "dependencies": [
+                "pandas",
+                "numpy"
+            ]
+        },
+        {
+            "step": 9,
+            "title": "Create Unit Tests",
+            "description": "Write comprehensive tests for all Data Layer components",
+            "tasks": [
+                "Create test fixtures with sample CSV data matching the actual format",
+                "Test CSV reader with custom format parsing",
+                "Test symbol extraction from filenames and ticker rows",
+                "Test single symbol loading",
+                "Test multi-symbol loading and format conversion",
+                "Test date filtering functionality",
+                "Test format conversion to preprocessing format (Close only and full OHLCV)",
+                "Test date alignment across multiple symbols",
+                "Test error handling (file not found, invalid dates)",
+                "Test DataLayer class interface",
+                "Test validation functions",
+                "Use pytest framework"
+            ],
+            "files_to_create": [
+                "implementations/implementation_01/tests/test_data_layer.py",
+                "implementations/implementation_01/tests/fixtures/sample_symbol_10yr_daily.csv",
+                "implementations/implementation_01/tests/test_csv_reader.py",
+                "implementations/implementation_01/tests/test_format_converter.py",
+                "implementations/implementation_01/tests/test_multi_symbol_loader.py"
+            ],
+            "dependencies": [
+                "pytest",
+                "pytest-cov",
+                "pandas",
+                "numpy"
+            ]
+        },
+        {
+            "step": 10,
+            "title": "Create Integration Test with Data Preprocessing Engine",
+            "description": "Test that Data Layer output is compatible with Data Preprocessing Engine input",
+            "tasks": [
+                "Load sample data using DataLayer",
+                "Verify output format matches Data Preprocessing Engine requirements: 'index=date, columns=symbols, values=close'",
+                "Test with Close prices only format",
+                "Test with full OHLCV format if needed",
+                "Verify date alignment and data types",
+                "Test handoff to preprocessing engine (mock or actual)",
+                "Create integration test script"
+            ],
+            "files_to_create": [
+                "implementations/implementation_01/tests/test_integration_preprocessing.py"
+            ],
+            "dependencies": [
+                "pytest",
+                "pandas"
+            ]
+        },
+        {
+            "step": 11,
+            "title": "Create Usage Examples and Documentation",
+            "description": "Create documentation and example usage scripts",
+            "tasks": [
+                "Create README.md with usage examples",
+                "Add docstrings to all public functions and classes",
+                "Create example script showing: loading single symbol, loading multiple symbols, format conversion",
+                "Create example showing integration with Data Preprocessing Engine",
+                "Document expected CSV format",
+                "Document output format for preprocessing engine",
+                "Add troubleshooting guide"
+            ],
+            "files_to_create": [
+                "implementations/implementation_01/src/data_layer/README.md",
+                "implementations/implementation_01/examples/data_layer_usage.py",
+                "implementations/implementation_01/examples/integration_preprocessing.py"
+            ],
+            "dependencies": []
         }
     ],
     "output_format_specification": {
-        "format": "pandas DataFrame",
-        "index": "Date (datetime64[ns], ISO 8601 format)",
-        "columns": [
-            "For single symbol: ['Open', 'High', 'Low', 'Close', 'Volume', 'Adjusted Close' (optional)]",
-            "For multiple symbols (pivoted): MultiIndex or columns named like 'SYMBOL_Close', 'SYMBOL_Volume', etc."
-        ],
-        "access_methods": [
-            "Direct DataFrame return",
-            "File export (Parquet/CSV)",
-            "In-memory cache"
-        ]
+        "primary_output": {
+            "for_preprocessing_engine": {
+                "format": "pandas DataFrame",
+                "index": "Date (datetime64[ns], ISO 8601 format YYYY-MM-DD)",
+                "columns_close_only": "Symbol names (e.g., ['ASIANPAINT', 'TCS', 'RELIANCE', ...])",
+                "values_close_only": "Close prices (float64)",
+                "columns_full_ohlcv": "Prefixed columns (e.g., ['ASIANPAINT_Close', 'ASIANPAINT_Volume', 'TCS_Close', ...])",
+                "values_full_ohlcv": "OHLCV values (float64 for prices, int64 for Volume)",
+                "example_close_only": "DataFrame with index=Date, columns=['ASIANPAINT', 'TCS'], values=Close prices",
+                "example_full_ohlcv": "DataFrame with index=Date, columns=['ASIANPAINT_Close', 'ASIANPAINT_Volume', 'TCS_Close', ...]"
+            }
+        },
+        "alternative_output": {
+            "single_symbol": {
+                "format": "pandas DataFrame",
+                "index": "Date",
+                "columns": "['Open', 'High', 'Low', 'Close', 'Volume', 'Price']",
+                "usage": "For single symbol analysis"
+            },
+            "multi_symbol_dict": {
+                "format": "dict[str, pd.DataFrame]",
+                "keys": "Symbol names",
+                "values": "Individual DataFrames with Date index and OHLCV columns",
+                "usage": "For flexible processing before format conversion"
+            }
+        }
     },
     "dependencies_required": [
         "pandas >= 1.5.0",
         "numpy >= 1.23.0",
-        "pyarrow >= 10.0.0 (for Parquet support)",
-        "python-dateutil >= 2.8.0",
-        "pytest >= 7.0.0 (for testing)"
+        "pytest >= 7.0.0 (for testing)",
+        "python-dateutil >= 2.8.0"
     ],
     "expected_file_structure": {
-        "src/implementation_01/data/": [
+        "implementations/implementation_01/src/data_layer/": [
             "__init__.py",
             "config.py",
-            "schema.py",
-            "csv_reader.py",
-            "data_loader.py",
-            "path_resolver.py",
-            "data_exporter.py",
-            "metadata_handler.py",
-            "quality_checks.py",
-            "data_layer.py",
-            "preprocessing_adapter.py",
             "logger_config.py",
+            "csv_reader.py",
+            "symbol_resolver.py",
+            "single_symbol_loader.py",
+            "format_converter.py",
+            "multi_symbol_loader.py",
+            "data_layer.py",
+            "validation.py",
             "README.md"
         ],
-        "dataset/": [
-            "*.csv (symbol data files)"
+        "implementations/implementation_01/examples/": [
+            "data_layer_usage.py",
+            "integration_preprocessing.py"
         ],
-        "tests/": [
+        "implementations/implementation_01/tests/": [
             "test_data_layer.py",
             "test_csv_reader.py",
-            "test_data_loader.py",
-            "fixtures/sample_data.csv"
+            "test_format_converter.py",
+            "test_multi_symbol_loader.py",
+            "test_integration_preprocessing.py",
+            "fixtures/sample_symbol_10yr_daily.csv"
         ]
     },
-    "testing_strategy": {
-        "unit_tests": "Test each module independently",
-        "integration_tests": "Test full data loading pipeline",
-        "performance_tests": "Measure load times for 10 symbols x 10 years",
-        "data_quality_tests": "Validate against known good datasets"
+    "key_transformation_steps": {
+        "step_1_read": "Read CSV with custom parser (skip 3 rows, parse Date column)",
+        "step_2_extract": "Extract symbol from filename or ticker row",
+        "step_3_load": "Load single or multiple symbols into DataFrames",
+        "step_4_convert": "Convert to wide format: index=Date, columns=symbols",
+        "step_5_align": "Align dates across symbols (inner join for common dates)",
+        "step_6_output": "Return DataFrame ready for Data Preprocessing Engine"
     },
     "notes": [
+        "Data already exists in dataset/ folder - no need to download or create data",
+        "Focus is on reading existing CSVs and converting to required format",
+        "Output must match Data Preprocessing Engine input: 'index=date, columns=symbols, values=close'",
+        "Handle date alignment when loading multiple symbols (use inner join for common dates)",
+        "Support both Close-only and full OHLCV output formats",
         "All dates must be in ISO 8601 format (YYYY-MM-DD)",
-        "Data should be adjusted for corporate actions",
-        "Handle missing data gracefully (flag and document)",
-        "Support both single symbol and multi-symbol queries",
-        "Maintain backward compatibility with existing CSV formats",
-        "Implement caching to improve performance for repeated queries",
-        "Log all data access operations for debugging and audit",
-        "Ensure thread-safety if used in concurrent environments"
+        "Validate data quality but don't modify source data (read-only operations)",
+        "Optimize for performance when loading all 10 symbols",
+        "Ensure thread-safety if used in concurrent environments",
+        "Log all operations for debugging"
     ]
 }
