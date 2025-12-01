@@ -1,20 +1,17 @@
 {
-  "system": "Hybrid Quantum–Classical Portfolio & Risk Engine",
-  "description": "Unified architecture for classical + quantum risk assessment, classical + quantum portfolio optimization, and integrated backtesting. Designed for 10 stocks × 10 years dataset, extensible to larger universes and quantum simulators / hardware.",
+  "system": "Hybrid Quantum-Classical Portfolio & Risk Engine",
+  "description": "Unified architecture for classical + quantum risk assessment, classical + quantum portfolio optimization, and integrated backtesting. Designed for 10 stocks x 10 years dataset, extensible to larger universes and quantum simulators / hardware.",
   "blocks": [
     {
       "name": "Data Layer",
       "purpose": "Persistent raw data storage and serving; canonical source of truth for OHLCV and metadata.",
       "components": [
-        "DB (Postgres/TimescaleDB or file store)",
-        "data_api.py (endpoint for pulls)",
-        "data_ingest_workers (periodic fetchers)",
-        "raw_data_store (parquet/csv)"
+        "dataset folder"
       ],
       "input": {
-        "source": "Exchange data providers / internal server feed / CSV uploads",
+        "source": "Exchange data providers CSV uploads, files in dataset folder",
         "format": "OHLCV records (Date, Symbol, Open, High, Low, Close, Volume, Adjusted Close, corporate_action_flags)",
-        "frequency": "daily (can be extended to intraday)",
+        "frequency": "daily",
         "notes": "Data should be adjusted for corporate actions. Timestamps in ISO 8601 (YYYY-MM-DD)."
       },
       "output": {
@@ -22,9 +19,7 @@
         "format": "Parquet/CSV or in-memory pandas DataFrame; index = date, columns = symbols, values = close (and OHLCV if needed)",
         "access": "via DB/API calls (REST or direct DB client) or filesystem path"
       },
-      "dependencies": [],
-      "expected_runtime_estimate": "Data retrieval: milliseconds–seconds depending on range; initial full-load (10 years × 10 symbols): < 1s–3s on local SSD",
-      "notes": "Ensure timezones normalized and data adjusted. Provide sample schema file (data/schema.json) describing column types."
+      "dependencies": []
     },
     {
       "name": "Data Preprocessing Engine",
@@ -59,7 +54,7 @@
         "psycopg2/sqlalchemy (if DB)",
         "pandas, numpy"
       ],
-      "expected_runtime_estimate": "Ten years × 10 symbols: < 1 second to compute returns/cov on a standard server",
+      "expected_runtime_estimate": "Ten years x 10 symbols: < 1 second to compute returns/cov on a standard server",
       "notes": "Include stationarity tests (ADF) and option to forward/backfill missing data. Provide reproducible preprocessing pipeline with deterministic seeds."
     },
     {
@@ -98,7 +93,7 @@
       "dependencies": [
         "numpy, pandas, scipy, arch (for GARCH), statsmodels (optional)"
       ],
-      "expected_runtime_estimate": "Parametric/Historical VaR: < 0.1 s; Monte Carlo (10k sims, 10 assets): ~0.5–2 s; GARCH fit (per series): 0.1–1 s",
+      "expected_runtime_estimate": "Parametric/Historical VaR: < 0.1 s; Monte Carlo (10k sims, 10 assets): ~0.5-2 s; GARCH fit (per series): 0.1-1 s",
       "notes": "Return standardized outputs with explanation fields for provenance (method, sample_size, seed)."
     },
     {
@@ -135,7 +130,7 @@
       "dependencies": [
         "qiskit, qiskit-aer, numpy, scipy, joblib (for parallel sims)"
       ],
-      "expected_runtime_estimate": "QAE on simulator for modest circuits (8–12 qubits): ~seconds–minutes per estimation depending on number of amplitude estimation iterations; QGAN training: minutes–hours (simulator)",
+      "expected_runtime_estimate": "QAE on simulator for modest circuits (8-12 qubits): ~seconds-minutes per estimation depending on number of amplitude estimation iterations; QGAN training: minutes-hours (simulator)",
       "notes": "Quantum outputs must include reproducibility metadata (seed, simulator version). Use classical fallback if quantum backend unavailable."
     },
     {
@@ -172,7 +167,7 @@
       "dependencies": [
         "cvxpy (or OSQP / scipopt), numpy, pandas"
       ],
-      "expected_runtime_estimate": "10 assets: 0.05–0.5 s per solve (Markowitz); CVaR LP: 0.1–1 s depending on solver",
+      "expected_runtime_estimate": "10 assets: 0.05-0.5 s per solve (Markowitz); CVaR LP: 0.1-1 s depending on solver",
       "notes": "Provide deterministic solver settings; include warm-start options for repeated solves in backtest."
     },
     {
@@ -207,7 +202,7 @@
       "dependencies": [
         "qiskit, numpy, dimod / dwave-ocean (if annealer), scipy"
       ],
-      "expected_runtime_estimate": "QAOA p=1–3 on simulator for 10 assets: ~seconds–minutes per run depending on optimization loop; annealer runs vary by cloud queue time",
+      "expected_runtime_estimate": "QAOA p=1-3 on simulator for 10 assets: ~seconds-minutes per run depending on optimization loop; annealer runs vary by cloud queue time",
       "notes": "Map continuous weights to discrete representation carefully. Provide classical fallback and hybrid schemes: use quantum to propose seeds for classical solver."
     },
     {
@@ -246,7 +241,7 @@
       "dependencies": [
         "numpy, pandas"
       ],
-      "expected_runtime_estimate": "Milliseconds–seconds per candidate, depends on number of correction iterations",
+      "expected_runtime_estimate": "Milliseconds-seconds per candidate, depends on number of correction iterations",
       "notes": "This is the decision-making last-mile. Always produce explainable logs for research reproducibility."
     },
     {
@@ -285,7 +280,7 @@
       "dependencies": [
         "numpy, pandas"
       ],
-      "expected_runtime_estimate": "Milliseconds–seconds",
+      "expected_runtime_estimate": "Milliseconds-seconds",
       "notes": "Typical hybrid strategies: (A) quantum seed → classical refine, (B) ensemble avg weighted by confidence, (C) select best by risk metric."
     },
     {
@@ -320,7 +315,7 @@
       "dependencies": [
         "pandas, numpy"
       ],
-      "expected_runtime_estimate": "10 assets × 10 years daily, monthly rebalancing: ~0.5–3 s for a full run; daily rebalancing: ~1–8 s",
+      "expected_runtime_estimate": "10 assets x 10 years daily, monthly rebalancing: ~0.5-3 s for a full run; daily rebalancing: ~1-8 s",
       "notes": "Ensure deterministic order execution model for reproducibility. Include slippage and liquidity models when needed."
     },
     {
@@ -427,7 +422,7 @@
       "quantum_only_for_discrete_constraints: use QUBO for cardinality then classical optimize continuous weights"
     ],
     "performance_assumptions": {
-      "hardware_baseline": "Standard research server: 4–8 vCPUs, 16–32 GB RAM, SSD",
+      "hardware_baseline": "Standard research server: 4-8 vCPUs, 16-32 GB RAM, SSD",
       "quantum_simulator": "Qiskit Aer running locally or in clouds; hardware runs subject to queue times"
     }
   }
