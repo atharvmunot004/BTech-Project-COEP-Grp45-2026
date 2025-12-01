@@ -1,0 +1,156 @@
+{
+    "risk_assessment": [
+        {
+            "name": "Variance-Covariance Value-at-Risk (Parametric VaR)",
+            "type": "classical"
+        },
+        {
+            "name": "Monte Carlo Simulation for VaR / CVaR",
+            "type": "classical"
+        },
+        {
+            "name": "GARCH(1,1) Volatility Forecasting",
+            "type": "classical"
+        },
+        {
+            "name": "Extreme Value Theory (EVT) - Peaks Over Threshold",
+            "type": "classical"
+        },
+        {
+            "name": "Quantum Amplitude Estimation (QAE) for CVaR",
+            "type": "quantum"
+        },
+        {
+            "name": "Quantum Approximate Optimization Algorithm (QAOA) for CVaR-based Portfolio Optimization",
+            "type": "quantum"
+        },
+        {
+            "name": "Quantum Generative Adversarial Network (QGAN) for Scenario Generation",
+            "type": "quantum"
+        },
+        {
+            "name": "Quantum PCA (qPCA) for Factor Risk Analysis",
+            "type": "quantum"
+        }
+    ],
+    "price_prediction": [
+        {
+            "name": "ARIMA (AutoRegressive Integrated Moving Average)",
+            "type": "classical"
+        },
+        {
+            "name": "LSTM (Long Short-Term Memory) Neural Network",
+            "type": "classical"
+        },
+        {
+            "name": "Random Forest / Gradient Boosted Trees (e.g., XGBoost)",
+            "type": "classical"
+        },
+        {
+            "name": "Support Vector Regression (SVR)",
+            "type": "classical"
+        },
+        {
+            "name": "Quantum Support Vector Machine (QSVM)",
+            "type": "quantum"
+        },
+        {
+            "name": "Quantum Boltzmann Machine (QBM)",
+            "type": "quantum"
+        },
+        {
+            "name": "Quantum Long Short-Term Memory (Q-LSTM)",
+            "type": "quantum"
+        },
+        {
+            "name": "Quantum Amplitude Estimation (QAE) for Expected Return",
+            "type": "quantum"
+        }
+    ],
+    "market_regime_detection": [
+        {
+            "name": "Hidden Markov Model (HMM)",
+            "type": "classical"
+        },
+        {
+            "name": "Gaussian Mixture Model (GMM)",
+            "type": "classical"
+        },
+        {
+            "name": "Regime-Switching GARCH",
+            "type": "classical"
+        },
+        {
+            "name": "PCA + K-Means",
+            "type": "classical"
+        },
+        {
+            "name": "Quantum k-Means / Clustering",
+            "type": "quantum"
+        },
+        {
+            "name": "Quantum Neural Network (QNN)",
+            "type": "quantum"
+        },
+        {
+            "name": "Quantum Boltzmann Machine (QBM) for Market Regime Detection",
+            "type": "quantum"
+        }
+    ],
+    "portfolio_construction_and_optimization": [
+        {
+            "name": "Black-Litterman",
+            "type": "classical"
+        },
+        {
+            "name": "Risk Parity / ERC",
+            "type": "classical"
+        },
+        {
+            "name": "CVaR Optimization",
+            "type": "classical"
+        },
+        {
+            "name": "Quantum Mean-Variance Optimization (QMV / QUBO Formulation)",
+            "type": "quantum"
+        },
+        {
+            "name": "Quantum Annealing for Multi-Objective Portfolio Construction",
+            "type": "quantum"
+        }
+    ],
+    "trading_strategies": [
+        {
+            "name": "Markowitz Mean-Variance",
+            "type": "classical"
+        },
+        {
+            "name": "Pairs Trading (Statistical Arbitrage)",
+            "type": "classical"
+        },
+        {
+            "name": "Momentum Strategy",
+            "type": "classical"
+        },
+        {
+            "name": "Reinforcement Learning (RL) Trading Agent",
+            "type": "classical"
+        },
+        {
+            "name": "Quantum Reinforcement Learning (QRL)",
+            "type": "quantum"
+        },
+        {
+            "name": "Quantum Mean-Variance Optimization (QMV)",
+            "type": "quantum"
+        },
+        {
+            "name": "Quantum Amplitude Estimation (QAE) for Expected Return and Risk",
+            "type": "quantum"
+        },
+        {
+            "name": "Quantum Boltzmann Machine (QBM) for Market Regime Detection",
+            "type": "quantum"
+        }
+    ]
+}
