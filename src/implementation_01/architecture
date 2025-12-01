@@ -1,0 +1,35 @@
+                ┌───────────────────────────┐
+                │       Data Layer           │
+                │ (Stocks, Benchmarks, ETF) │
+                └──────────────┬────────────┘
+                               │
+                ┌──────────────▼──────────────┐
+                │  Data Preprocessing Engine   │
+                │  - cleaning, alignment       │
+                │  - returns, log-returns      │
+                └──────────────┬──────────────┘
+                               │
+        ┌───────────────┬──────┼───────────────┬─────────────────┐
+        │               │      │               │                  │
+┌───────▼────────┐ ┌────▼──────▼─────┐ ┌───────▼────────┐ ┌──────▼─────────┐
+│ Classical Risk │ │ Quantum Risk     │ │ Quantum Opt.    │ │ Classical Opt. │
+│ (MC, Hist,     │ │ (QAE for VaR/    │ │ (QAOA/QUBO)     │ │ (QP, BL, RP)   │
+│ Parametric)    │ │  CVaR Estim.)    │ │ Mean-Variance   │ │ CVaR Opt, etc. │
+└───────┬────────┘ └─────────┬────────┘ └────────┬────────┘ └────────┬──────┘
+        │                    │                   │                    │
+        └──────────────┬─────┴────────────┬──────┴────────────┬──────┘
+                       │                  │                    │
+         ┌─────────────▼──────────┐ ┌──────▼──────────────┐
+         │  Classical Optimizer    │ │ Hybrid Integration   │
+         │ (QP, Heuristics, CVaR)  │ │ (Result Combiner)    │
+         └─────────────┬──────────┘ └──────┬──────────────┘
+                       │                   │
+             ┌─────────▼──────────┐  ┌────▼─────────────────┐
+             │ Backtesting Engine │  │ Reporting & Research  │
+             │ (Walk-forward)     │  │ Metrics Dashboard     │
+             └─────────┬──────────┘  └──────────┬───────────┘
+                       │                        │
+             ┌─────────▼──────────┐  ┌──────────▼───────────┐
+             │ Server Deployment   │  │ Research Paper Notes  │
+             │ API/Front-end       │  │ (Plots + Results)     │
+             └─────────────────────┘  └──────────────────────┘

@@ -1,0 +1,434 @@
+{
+  "system": "Hybrid Quantum–Classical Portfolio & Risk Engine",
+  "description": "Unified architecture for classical + quantum risk assessment, classical + quantum portfolio optimization, and integrated backtesting. Designed for 10 stocks × 10 years dataset, extensible to larger universes and quantum simulators / hardware.",
+  "blocks": [
+    {
+      "name": "Data Layer",
+      "purpose": "Persistent raw data storage and serving; canonical source of truth for OHLCV and metadata.",
+      "components": [
+        "DB (Postgres/TimescaleDB or file store)",
+        "data_api.py (endpoint for pulls)",
+        "data_ingest_workers (periodic fetchers)",
+        "raw_data_store (parquet/csv)"
+      ],
+      "input": {
+        "source": "Exchange data providers / internal server feed / CSV uploads",
+        "format": "OHLCV records (Date, Symbol, Open, High, Low, Close, Volume, Adjusted Close, corporate_action_flags)",
+        "frequency": "daily (can be extended to intraday)",
+        "notes": "Data should be adjusted for corporate actions. Timestamps in ISO 8601 (YYYY-MM-DD)."
+      },
+      "output": {
+        "destination": "Data Preprocessing Engine",
+        "format": "Parquet/CSV or in-memory pandas DataFrame; index = date, columns = symbols, values = close (and OHLCV if needed)",
+        "access": "via DB/API calls (REST or direct DB client) or filesystem path"
+      },
+      "dependencies": [],
+      "expected_runtime_estimate": "Data retrieval: milliseconds–seconds depending on range; initial full-load (10 years × 10 symbols): < 1s–3s on local SSD",
+      "notes": "Ensure timezones normalized and data adjusted. Provide sample schema file (data/schema.json) describing column types."
+    },
+    {
+      "name": "Data Preprocessing Engine",
+      "purpose": "Clean, align, and convert raw OHLCV into analysis-ready matrices (returns, log-returns, filled missing values).",
+      "components": [
+        "data/clean_data.py",
+        "data/align_data.py",
+        "data/feature_gen.py",
+        "data/cache.py (optional)"
+      ],
+      "input": {
+        "source": "Data Layer (raw OHLCV)",
+        "format": "pandas DataFrame or parquet file, index=date, columns per symbol",
+        "requirements": "Adjusted prices, consistent trading calendar"
+      },
+      "output": {
+        "destination": [
+          "Classical Risk",
+          "Quantum Risk (distribution builder)",
+          "Classical Optimization",
+          "Quantum Optimization",
+          "Backtesting Engine"
+        ],
+        "format": {
+          "prices_df": "pandas DataFrame (date x symbol) with Close and optionally OHLCV columns",
+          "returns_df": "pandas DataFrame (date x symbol) with simple_pct_change or log_returns",
+          "covariance_matrix": "numpy.ndarray (N x N) or pandas.DataFrame",
+          "standardized_features": "pandas DataFrame (date x feature columns)"
+        }
+      },
+      "dependencies": [
+        "psycopg2/sqlalchemy (if DB)",
+        "pandas, numpy"
+      ],
+      "expected_runtime_estimate": "Ten years × 10 symbols: < 1 second to compute returns/cov on a standard server",
+      "notes": "Include stationarity tests (ADF) and option to forward/backfill missing data. Provide reproducible preprocessing pipeline with deterministic seeds."
+    },
+    {
+      "name": "Classical Risk",
+      "purpose": "Compute classical risk metrics (Parametric VaR, Historical VaR, Monte Carlo VaR, CVaR, GARCH volatility forecasts, EVT tail estimates).",
+      "components": [
+        "risk/parametric_var.py",
+        "risk/historical_var.py",
+        "risk/monte_carlo.py",
+        "risk/cvar.py",
+        "risk/garch_forecast.py (uses 'arch' library)",
+        "risk/evt_pot.py"
+      ],
+      "input": {
+        "source": "Data Preprocessing Engine",
+        "format": {
+          "returns_df": "pandas DataFrame (date x symbol)",
+          "covariance_matrix": "numpy.ndarray",
+          "policy": "JSON/dict containing alpha (confidence), horizon, portfolio weights (optional)"
+        }
+      },
+      "output": {
+        "destination": [
+          "Classical Optimization",
+          "Backtesting Engine",
+          "Hybrid Integration",
+          "Reporting & Research"
+        ],
+        "format": {
+          "VaR": "float (per portfolio / per asset) with metadata {alpha, horizon, method}",
+          "CVaR": "float (expected shortfall) with metadata",
+          "GARCH_vol_forecast": "pandas Series (forecasted vol per date)",
+          "EVT_tail_params": "JSON (threshold, xi, beta, exceedances)"
+        }
+      },
+      "dependencies": [
+        "numpy, pandas, scipy, arch (for GARCH), statsmodels (optional)"
+      ],
+      "expected_runtime_estimate": "Parametric/Historical VaR: < 0.1 s; Monte Carlo (10k sims, 10 assets): ~0.5–2 s; GARCH fit (per series): 0.1–1 s",
+      "notes": "Return standardized outputs with explanation fields for provenance (method, sample_size, seed)."
+    },
+    {
+      "name": "Quantum Risk",
+      "purpose": "Estimate tail-risk metrics using quantum algorithms (QAE for VaR/CVaR; QGAN for scenario generation; qPCA for factor risk). Runs primarily on Qiskit simulators and optionally on cloud quantum hardware.",
+      "components": [
+        "quantum/qae_var.py",
+        "quantum/qae_cvar.py",
+        "quantum/qgan_scenarios.py",
+        "quantum/qpca.py",
+        "quantum/quantum_utils.py"
+      ],
+      "input": {
+        "source": "Data Preprocessing Engine (distribution / returns) and Classical Risk (for comparisons)",
+        "format": {
+          "empirical_distribution": "histogram/bin edges + probabilities OR samples array (numpy.ndarray)",
+          "loss_function_spec": "JSON/dict describing loss threshold mapping",
+          "qconfig": "quantum config object (n_qubits, shots, backend)"
+        }
+      },
+      "output": {
+        "destination": [
+          "Hybrid Integration",
+          "Backtesting Engine",
+          "Reporting & Research"
+        ],
+        "format": {
+          "quantum_VaR_est": "float with error bounds and n_qubits/shots metadata",
+          "quantum_CVaR_est": "float with credible interval",
+          "qgan_scenarios": "numpy.ndarray (simulated scenario matrix)",
+          "qpca_components": "numpy.ndarray / dict (eigenvalues, eigenvectors)"
+        }
+      },
+      "dependencies": [
+        "qiskit, qiskit-aer, numpy, scipy, joblib (for parallel sims)"
+      ],
+      "expected_runtime_estimate": "QAE on simulator for modest circuits (8–12 qubits): ~seconds–minutes per estimation depending on number of amplitude estimation iterations; QGAN training: minutes–hours (simulator)",
+      "notes": "Quantum outputs must include reproducibility metadata (seed, simulator version). Use classical fallback if quantum backend unavailable."
+    },
+    {
+      "name": "Classical Optimization",
+      "purpose": "Traditional portfolio construction algorithms (convex and linear programming): Markowitz (QP), CVaR LP, Black-Litterman, Risk Parity / ERC, and constraint handling (budget, sector caps, cardinality via heuristics).",
+      "components": [
+        "portfolio/markowitz.py",
+        "portfolio/cvar_lp.py",
+        "portfolio/black_litterman.py",
+        "portfolio/risk_parity.py",
+        "portfolio/heuristic_cardinality.py"
+      ],
+      "input": {
+        "source": "Data Preprocessing Engine (mu, Sigma), Classical Risk (risk caps), user Policy config",
+        "format": {
+          "mu": "numpy.ndarray (N, ) expected returns",
+          "Sigma": "numpy.ndarray (N x N) covariance",
+          "policy": "JSON/dict (constraints: min/max weights, sum_to_one, sector_caps, turnover_limit, risk_caps)"
+        }
+      },
+      "output": {
+        "destination": [
+          "Classical Optimizer (or directly backtesting if single-run)",
+          "Hybrid Integration",
+          "Backtesting Engine",
+          "Reporting & Research"
+        ],
+        "format": {
+          "weights": "numpy.ndarray (N, ) summing to 1 or complying with policy",
+          "objective_value": "float (return - lambda * risk or CVaR objective)",
+          "solver_stats": "dict (solve_status, runtime, iterations)"
+        }
+      },
+      "dependencies": [
+        "cvxpy (or OSQP / scipopt), numpy, pandas"
+      ],
+      "expected_runtime_estimate": "10 assets: 0.05–0.5 s per solve (Markowitz); CVaR LP: 0.1–1 s depending on solver",
+      "notes": "Provide deterministic solver settings; include warm-start options for repeated solves in backtest."
+    },
+    {
+      "name": "Quantum Optimization",
+      "purpose": "QUBO / QAOA-based portfolio formulations for constrained and combinatorial optimization (cardinality, discrete weights, sparse allocations), and QMV experimental implementations.",
+      "components": [
+        "quantum/qaoa_opt.py",
+        "quantum/qubo_mapper.py",
+        "quantum/qmv.py",
+        "quantum/qaoa_utils.py"
+      ],
+      "input": {
+        "source": "Data Preprocessing Engine (mu, Sigma), Classical Optimization (for baselines), user Policy config (discrete constraints)",
+        "format": {
+          "qubo_matrix": "numpy.ndarray (N_bits x N_bits) or dict specifying QUBO coefficients",
+          "hamiltonian_spec": "structured object (cost & mixer operators)",
+          "quantum_params": "p (depth), initial_angles, n_shots, backend"
+        }
+      },
+      "output": {
+        "destination": [
+          "Hybrid Integration",
+          "Backtesting Engine",
+          "Reporting & Research"
+        ],
+        "format": {
+          "discrete_solution": "binary vector or integer vector mapping to asset selection/weights",
+          "decoded_weights": "numpy.ndarray (N,) normalized according to policy",
+          "qsolver_stats": "dict (samples, objective_values, runtime, p, angles)"
+        }
+      },
+      "dependencies": [
+        "qiskit, numpy, dimod / dwave-ocean (if annealer), scipy"
+      ],
+      "expected_runtime_estimate": "QAOA p=1–3 on simulator for 10 assets: ~seconds–minutes per run depending on optimization loop; annealer runs vary by cloud queue time",
+      "notes": "Map continuous weights to discrete representation carefully. Provide classical fallback and hybrid schemes: use quantum to propose seeds for classical solver."
+    },
+    {
+      "name": "Classical Optimizer (Integrator)",
+      "purpose": "A runtime orchestration module that accepts candidate weight proposals, applies policy & risk caps, runs local adjustments (scaling, re-weighting), and outputs deployable allocation vectors.",
+      "components": [
+        "orchestrator/optimizer_service.py",
+        "orchestrator/risk_enforcer.py",
+        "orchestrator/weight_transformers.py"
+      ],
+      "input": {
+        "source": [
+          "Classical Optimization (weights)",
+          "Quantum Optimization (decoded weights)",
+          "Classical Risk and Quantum Risk metrics",
+          "policy"
+        ],
+        "format": {
+          "candidate_weights": "numpy.ndarray (N,)",
+          "risk_metrics": "dict (VaR, CVaR, sigma_p)",
+          "policy": "dict"
+        }
+      },
+      "output": {
+        "destination": [
+          "Backtesting Engine",
+          "Order Engine (paper/live)",
+          "Reporting & Research"
+        ],
+        "format": {
+          "final_allocations": "numpy.ndarray (N,) compliant with constraints",
+          "adjustments_log": "list/dict explaining scaling or changes",
+          "compliance_flag": "boolean (true if safe to deploy)"
+        }
+      },
+      "dependencies": [
+        "numpy, pandas"
+      ],
+      "expected_runtime_estimate": "Milliseconds–seconds per candidate, depends on number of correction iterations",
+      "notes": "This is the decision-making last-mile. Always produce explainable logs for research reproducibility."
+    },
+    {
+      "name": "Hybrid Integration (Result Combiner)",
+      "purpose": "Compare, reconcile and combine outputs from classical and quantum paths. Implements policies for hybrid usage: ensemble averaging, quantum-as-proposal, or classical-as-validator.",
+      "components": [
+        "integration/comparator.py",
+        "integration/ensemble_strategies.py",
+        "integration/hybrid_policy.py"
+      ],
+      "input": {
+        "source": [
+          "Classical Optimizer outputs",
+          "Quantum Optimization outputs",
+          "Classical Risk outputs",
+          "Quantum Risk outputs"
+        ],
+        "format": {
+          "classical_weights": "numpy.ndarray",
+          "quantum_weights": "numpy.ndarray",
+          "risk_metrics": "dict",
+          "hybrid_policy": "dict (rules for combining)"
+        }
+      },
+      "output": {
+        "destination": [
+          "Classical Optimizer (for final adjustments)",
+          "Backtesting Engine",
+          "Reporting & Research"
+        ],
+        "format": {
+          "hybrid_weights": "numpy.ndarray",
+          "combination_report": "JSON (weights_comparison, selected_method, reason)"
+        }
+      },
+      "dependencies": [
+        "numpy, pandas"
+      ],
+      "expected_runtime_estimate": "Milliseconds–seconds",
+      "notes": "Typical hybrid strategies: (A) quantum seed → classical refine, (B) ensemble avg weighted by confidence, (C) select best by risk metric."
+    },
+    {
+      "name": "Backtesting Engine",
+      "purpose": "Walk-forward simulation engine that replays historical data, calls optimizer/risk modules at each rebalance, computes PnL, risk statistics, and logs trades for analysis.",
+      "components": [
+        "backtest/backtester.py",
+        "backtest/metrics.py",
+        "backtest/transaction_costs.py",
+        "backtest/rebalancer.py"
+      ],
+      "input": {
+        "source": "Data Preprocessing Engine (prices, returns), Final allocations (from Classical Optimizer / Hybrid Integration), policy (rebalance frequency), transaction cost model",
+        "format": {
+          "prices_df": "pandas DataFrame",
+          "allocations_time_series": "sequence of weight vectors (date-indexed)",
+          "start_capital": "float",
+          "cost_model": "dict (fixed_fee, pct_fee, slippage_model)"
+        }
+      },
+      "output": {
+        "destination": [
+          "Reporting & Research",
+          "Server Deployment (endpoints for results)"
+        ],
+        "format": {
+          "equity_curve": "pandas Series (date -> portfolio value)",
+          "performance_metrics": "dict (CAGR, Sharpe, MaxDrawdown, Volatility, VaR breaches, turnover)",
+          "trade_log": "DataFrame (date, symbol, side, qty, price, cost)"
+        }
+      },
+      "dependencies": [
+        "pandas, numpy"
+      ],
+      "expected_runtime_estimate": "10 assets × 10 years daily, monthly rebalancing: ~0.5–3 s for a full run; daily rebalancing: ~1–8 s",
+      "notes": "Ensure deterministic order execution model for reproducibility. Include slippage and liquidity models when needed."
+    },
+    {
+      "name": "Reporting & Research",
+      "purpose": "Generate research-ready outputs: plots, tables, LaTeX-ready tables, statistical tests, and reproducible experiment records for the paper.",
+      "components": [
+        "research/figures.py",
+        "research/tables.py",
+        "research/statistics.py",
+        "research/export_latex.py",
+        "notebooks/analysis.ipynb"
+      ],
+      "input": {
+        "source": "Backtesting Engine outputs, Classical & Quantum risk/optimization outputs, Hybrid Integration reports",
+        "format": {
+          "equity_curve": "pandas Series",
+          "metrics": "dict",
+          "scenarios": "numpy.ndarray",
+          "q_results": "dict"
+        }
+      },
+      "output": {
+        "destination": "Research Paper, Figures folder, Dashboard",
+        "format": {
+          "plots": "PNG/SVG/Matplotlib objects",
+          "tables": "CSV / LaTeX tabular",
+          "statistical_test_results": "JSON/dict (p-values, effect sizes)",
+          "experiment_manifest": "JSON (inputs, code versions, seeds, runtimes)"
+        }
+      },
+      "dependencies": [
+        "matplotlib, seaborn (or plotly), pandas, scipy, statsmodels"
+      ],
+      "expected_runtime_estimate": "Plotting & export: seconds per figure; generation of full research artifacts: minutes",
+      "notes": "Automate figure reproducibility: embed metadata (git commit hash, qiskit version, timestamp)."
+    },
+    {
+      "name": "Server Deployment (API / Front-end)",
+      "purpose": "Expose endpoints to run optimization/risk/backtest jobs, retrieve results, and optionally host a dashboard for interactive analysis.",
+      "components": [
+        "server/app.py (FastAPI / Flask)",
+        "api/run_optimization",
+        "api/run_risk",
+        "api/run_backtest",
+        "web_dashboard (optional)"
+      ],
+      "input": {
+        "source": "User requests (HTTP), scheduled jobs (cron), internal orchestrator",
+        "format": {
+          "request_payload": "JSON (symbols, start, end, method, policy)",
+          "auth": "API token / OAuth"
+        }
+      },
+      "output": {
+        "destination": "Clients (browser, notebooks), Research artifacts folder",
+        "format": {
+          "response": "JSON with job_id, status, result_url",
+          "result_url": "link to artifacts (plots, CSVs, JSON)"
+        }
+      },
+      "dependencies": [
+        "FastAPI / Flask, uvicorn, gunicorn, nginx (optional)"
+      ],
+      "expected_runtime_estimate": "API response time for immediate runs: seconds; queued jobs may take minutes depending on complexity",
+      "notes": "Implement job queue (Celery / RQ) for heavy quantum simulations. Secure endpoints and rate-limit experimental heavy runs."
+    },
+    {
+      "name": "Research Paper Notes / Experiment Manifest",
+      "purpose": "Store reproducible experiment metadata used for the paper: dataset version, preprocessing steps, parameter grids, solver versions, quantum backend metadata.",
+      "components": [
+        "research/manifest.json",
+        "research/README_experiments.md",
+        "research/citation_list.bib"
+      ],
+      "input": {
+        "source": "All modules (manifests auto-generated after runs)",
+        "format": {
+          "manifest": "JSON (git_hash, date, qiskit_version, seeds, data_checksum, parameter_grid)"
+        }
+      },
+      "output": {
+        "destination": "Research folder; included as appendix in paper",
+        "format": {
+          "manifest.json": "JSON",
+          "repro_instructions.md": "Markdown",
+          "notebooks": "ipynb"
+        }
+      },
+      "dependencies": [],
+      "expected_runtime_estimate": "Negligible (writing metadata)",
+      "notes": "This is critical for submission & peer review. Include DOIs for external datasets if used."
+    }
+  ],
+  "global_notes": {
+    "data_format_standards": {
+      "dates": "ISO8601 (YYYY-MM-DD)",
+      "numerics": "float64",
+      "missing_data_policy": "flag missing and forward-fill only where appropriate; document imputation"
+    },
+    "reproducibility": "Every run must log a manifest (git commit, code versions, seeds, backend config). Quantum runs must log simulator/hardware name and shots.",
+    "hybrid_strategies_examples": [
+      "quantum_seed_then_classical_refine: use QAOA solution to initialize classical QP solver",
+      "ensemble_avg_by_confidence: weight classical and quantum proposals inversely by estimated risk error",
+      "quantum_only_for_discrete_constraints: use QUBO for cardinality then classical optimize continuous weights"
+    ],
+    "performance_assumptions": {
+      "hardware_baseline": "Standard research server: 4–8 vCPUs, 16–32 GB RAM, SSD",
+      "quantum_simulator": "Qiskit Aer running locally or in clouds; hardware runs subject to queue times"
+    }
+  }
+}
