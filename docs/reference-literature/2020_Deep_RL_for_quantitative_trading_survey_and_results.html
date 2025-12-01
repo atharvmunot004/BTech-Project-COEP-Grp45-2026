@@ -1,0 +1,596 @@
+	<!DOCTYPE html>
+<html lang="en-US" xml:lang="en-US">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>
+		Neuron Interaction Based Representation Composition for Neural Machine Translation
+							| Proceedings of the AAAI Conference on Artificial Intelligence
+			</title>
+
+	
+<meta name="generator" content="Open Journal Systems 3.2.1.1">
+<link rel="schema.DC" href="http://purl.org/dc/elements/1.1/" />
+<meta name="DC.Creator.PersonalName" content="Jian Li"/>
+<meta name="DC.Creator.PersonalName" content="Xing Wang"/>
+<meta name="DC.Creator.PersonalName" content="Baosong Yang"/>
+<meta name="DC.Creator.PersonalName" content="Shuming Shi"/>
+<meta name="DC.Creator.PersonalName" content="Michael R. Lyu"/>
+<meta name="DC.Creator.PersonalName" content="Zhaopeng Tu"/>
+<meta name="DC.Date.created" scheme="ISO8601" content="2020-04-03"/>
+<meta name="DC.Date.dateSubmitted" scheme="ISO8601" content="2020-04-16"/>
+<meta name="DC.Date.issued" scheme="ISO8601" content="2020-06-16"/>
+<meta name="DC.Date.modified" scheme="ISO8601" content="2020-06-29"/>
+<meta name="DC.Description" xml:lang="en" content="Recent NLP studies reveal that substantial linguistic information can be attributed to single neurons, i.e., individual dimensions of the representation vectors. We hypothesize that modeling strong interactions among neurons helps to better capture complex information by composing the linguistic properties embedded in individual neurons. Starting from this intuition, we propose a novel approach to compose representations learned by different components in neural machine translation (e.g., multi-layer networks or multi-head attention), based on modeling strong interactions among neurons in the representation vectors. Specifically, we leverage bilinear pooling to model pairwise multiplicative interactions among individual neurons, and a low-rank approximation to make the model computationally feasible. We further propose extended bilinear pooling to incorporate first-order representations. Experiments on WMT14 English⇒German and English⇒French translation tasks show that our model consistently improves performances over the SOTA Transformer baseline. Further analyses demonstrate that our approach indeed captures more syntactic and semantic information as expected."/>
+<meta name="DC.Format" scheme="IMT" content="application/pdf"/>
+<meta name="DC.Identifier" content="6334"/>
+<meta name="DC.Identifier.pageNumber" content="8204-8211"/>
+<meta name="DC.Identifier.DOI" content="10.1609/aaai.v34i05.6334"/>
+<meta name="DC.Identifier.URI" content="https://ojs.aaai.org/index.php/AAAI/article/view/6334"/>
+<meta name="DC.Language" scheme="ISO639-1" content="en"/>
+<meta name="DC.Rights" content="Copyright (c) 2020 Association for the Advancement of Artificial Intelligence"/>
+<meta name="DC.Rights" content=""/>
+<meta name="DC.Source" content="Proceedings of the AAAI Conference on Artificial Intelligence"/>
+<meta name="DC.Source.ISSN" content="2374-3468"/>
+<meta name="DC.Source.Issue" content="05"/>
+<meta name="DC.Source.Volume" content="34"/>
+<meta name="DC.Source.URI" content="https://ojs.aaai.org/index.php/AAAI"/>
+<meta name="DC.Title" content="Neuron Interaction Based Representation Composition for Neural Machine Translation"/>
+<meta name="DC.Type" content="Text.Serial.Journal"/>
+<meta name="DC.Type.articleType" content="AAAI Technical Track: Natural Language Processing"/>
+<meta name="gs_meta_revision" content="1.1"/>
+<meta name="citation_journal_title" content="Proceedings of the AAAI Conference on Artificial Intelligence"/>
+<meta name="citation_journal_abbrev" content="AAAI"/>
+<meta name="citation_issn" content="2374-3468"/> 
+<meta name="citation_author" content="Jian Li"/>
+<meta name="citation_author_institution" content="The Chinese University of Hong Kong"/>
+<meta name="citation_author" content="Xing Wang"/>
+<meta name="citation_author_institution" content="Tencent AI Lab"/>
+<meta name="citation_author" content="Baosong Yang"/>
+<meta name="citation_author_institution" content="University of Macau"/>
+<meta name="citation_author" content="Shuming Shi"/>
+<meta name="citation_author_institution" content="Tencent AI Lab"/>
+<meta name="citation_author" content="Michael R. Lyu"/>
+<meta name="citation_author_institution" content="The Chinese University of Hong Kong"/>
+<meta name="citation_author" content="Zhaopeng Tu"/>
+<meta name="citation_author_institution" content="Tencent AI Lab"/>
+<meta name="citation_title" content="Neuron Interaction Based Representation Composition for Neural Machine Translation"/>
+<meta name="citation_language" content="en"/>
+<meta name="citation_date" content="2020/04/03"/>
+<meta name="citation_volume" content="34"/>
+<meta name="citation_issue" content="05"/>
+<meta name="citation_firstpage" content="8204"/>
+<meta name="citation_lastpage" content="8211"/>
+<meta name="citation_doi" content="10.1609/aaai.v34i05.6334"/>
+<meta name="citation_abstract_html_url" content="https://ojs.aaai.org/index.php/AAAI/article/view/6334"/>
+<meta name="citation_pdf_url" content="https://ojs.aaai.org/index.php/AAAI/article/download/6334/6190"/>
+<link rel="alternate" type="application/atom+xml" href="https://ojs.aaai.org/index.php/AAAI/gateway/plugin/WebFeedGatewayPlugin/atom">
+<link rel="alternate" type="application/rdf+xml" href="https://ojs.aaai.org/index.php/AAAI/gateway/plugin/WebFeedGatewayPlugin/rss">
+<link rel="alternate" type="application/rss+xml" href="https://ojs.aaai.org/index.php/AAAI/gateway/plugin/WebFeedGatewayPlugin/rss2">
+	<link rel="stylesheet" href="https://ojs.aaai.org/index.php/AAAI/$$$call$$$/page/page/css?name=stylesheet" type="text/css" /><link rel="stylesheet" href="//fonts.googleapis.com/css?family=Noto+Sans:400,400italic,700,700italic" type="text/css" /><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css?v=3.2.1.1" type="text/css" /><link rel="stylesheet" href="https://ojs.aaai.org/public/journals/2/styleSheet.css?v=3.2.1.1" type="text/css" />
+</head>
+<body class="pkp_page_article pkp_op_view" dir="ltr">
+
+	<div class="pkp_structure_page">
+
+				<header class="pkp_structure_head" id="headerNavigationContainer" role="banner">
+						 <nav class="cmp_skip_to_content" aria-label="Jump to content links">
+	<a href="#pkp_content_main">Skip to main content</a>
+	<a href="#siteNav">Skip to main navigation menu</a>
+		<a href="#pkp_content_footer">Skip to site footer</a>
+</nav>
+
+			<div class="pkp_head_wrapper">
+
+				<div class="pkp_site_name_wrapper">
+					<button class="pkp_site_nav_toggle">
+						<span>Open Menu</span>
+					</button>
+										<div class="pkp_site_name">
+																<a href="						https://ojs.aaai.org/index.php/AAAI/index
+					" class="is_text">Proceedings of the AAAI Conference on Artificial Intelligence</a>
+										</div>
+				</div>
+
+				
+				<nav class="pkp_site_nav_menu" aria-label="Site Navigation">
+					<a id="siteNav"></a>
+					<div class="pkp_navigation_primary_row">
+						<div class="pkp_navigation_primary_wrapper">
+																				<ul id="navigationPrimary" class="pkp_navigation_primary pkp_nav_list">
+								<li class="">
+				<a href="https://ojs.aaai.org/index.php/AAAI/issue/current">
+					Current
+				</a>
+							</li>
+								<li class="">
+				<a href="https://ojs.aaai.org/index.php/AAAI/issue/archive">
+					Archives
+				</a>
+							</li>
+															<li class="">
+				<a href="https://ojs.aaai.org/index.php/AAAI/about">
+					About
+				</a>
+									<ul>
+																					<li class="">
+									<a href="https://ojs.aaai.org/index.php/AAAI/about">
+										About the Journal
+									</a>
+								</li>
+																												<li class="">
+									<a href="https://ojs.aaai.org/index.php/AAAI/about/submissions">
+										Submissions
+									</a>
+								</li>
+																																									<li class="">
+									<a href="https://ojs.aaai.org/index.php/AAAI/about/privacy">
+										Privacy Statement
+									</a>
+								</li>
+																												<li class="">
+									<a href="https://ojs.aaai.org/index.php/AAAI/about/contact">
+										Contact
+									</a>
+								</li>
+																		</ul>
+							</li>
+			</ul>
+
+				
+
+																								
+	<form class="pkp_search pkp_search_desktop" action="https://ojs.aaai.org/index.php/AAAI/search/search" method="get" role="search" aria-label="Article Search">
+		<input type="hidden" name="csrfToken" value="163125e4b720f392f967dae19f627ff8">
+				
+			<input name="query" value="" type="text" aria-label="Search Query">
+		
+
+		<button type="submit">
+			Search
+		</button>
+		<div class="search_controls" aria-hidden="true">
+			<a href="https://ojs.aaai.org/index.php/AAAI/search/search" class="headerSearchPrompt search_prompt" aria-hidden="true">
+				Search
+			</a>
+			<a href="#" class="search_cancel headerSearchCancel" aria-hidden="true"></a>
+			<span class="search_loading" aria-hidden="true"></span>
+		</div>
+	</form>
+													</div>
+					</div>
+					<div class="pkp_navigation_user_wrapper" id="navigationUserWrapper">
+							<ul id="navigationUser" class="pkp_navigation_user pkp_nav_list">
+															<li class="profile">
+				<a href="https://ojs.aaai.org/index.php/AAAI/login">
+					Login
+				</a>
+							</li>
+										</ul>
+
+					</div>
+																		
+	<form class="pkp_search pkp_search_mobile" action="https://ojs.aaai.org/index.php/AAAI/search/search" method="get" role="search" aria-label="Article Search">
+		<input type="hidden" name="csrfToken" value="163125e4b720f392f967dae19f627ff8">
+				
+			<input name="query" value="" type="text" aria-label="Search Query">
+		
+
+		<button type="submit">
+			Search
+		</button>
+		<div class="search_controls" aria-hidden="true">
+			<a href="https://ojs.aaai.org/index.php/AAAI/search/search" class="headerSearchPrompt search_prompt" aria-hidden="true">
+				Search
+			</a>
+			<a href="#" class="search_cancel headerSearchCancel" aria-hidden="true"></a>
+			<span class="search_loading" aria-hidden="true"></span>
+		</div>
+	</form>
+									</nav>
+			</div><!-- .pkp_head_wrapper -->
+		</header><!-- .pkp_structure_head -->
+
+						<div class="pkp_structure_content has_sidebar">
+			<div class="pkp_structure_main" role="main">
+				<a id="pkp_content_main"></a>
+
+<div class="page page_article">
+			<nav class="cmp_breadcrumbs" role="navigation" aria-label="You are here:">
+	<ol>
+		<li>
+			<a href="https://ojs.aaai.org/index.php/AAAI/index">
+				Home
+			</a>
+			<span class="separator">/</span>
+		</li>
+		<li>
+			<a href="https://ojs.aaai.org/index.php/AAAI/issue/archive">
+				Archives
+			</a>
+			<span class="separator">/</span>
+		</li>
+					<li>
+				<a href="https://ojs.aaai.org/index.php/AAAI/issue/view/253">
+					Vol. 34 No. 05: AAAI-20 Technical Tracks 5
+				</a>
+				<span class="separator">/</span>
+			</li>
+				<li class="current" aria-current="page">
+			<span aria-current="page">
+									AAAI Technical Track: Natural Language Processing
+							</span>
+		</li>
+	</ol>
+</nav>
+	
+			<article class="obj_article_details">
+
+		
+	<h1 class="page_title">
+		Neuron Interaction Based Representation Composition for Neural Machine Translation
+	</h1>
+
+	
+	<div class="row">
+		<div class="main_entry">
+
+							<section class="item authors">
+					<h2 class="pkp_screen_reader">Authors</h2>
+					<ul class="authors">
+											<li>
+							<span class="name">
+								Jian Li
+							</span>
+															<span class="affiliation">
+									The Chinese University of Hong Kong
+								</span>
+																				</li>
+											<li>
+							<span class="name">
+								Xing Wang
+							</span>
+															<span class="affiliation">
+									Tencent AI Lab
+								</span>
+																				</li>
+											<li>
+							<span class="name">
+								Baosong Yang
+							</span>
+															<span class="affiliation">
+									University of Macau
+								</span>
+																				</li>
+											<li>
+							<span class="name">
+								Shuming Shi
+							</span>
+															<span class="affiliation">
+									Tencent AI Lab
+								</span>
+																				</li>
+											<li>
+							<span class="name">
+								Michael R. Lyu
+							</span>
+															<span class="affiliation">
+									The Chinese University of Hong Kong
+								</span>
+																				</li>
+											<li>
+							<span class="name">
+								Zhaopeng Tu
+							</span>
+															<span class="affiliation">
+									Tencent AI Lab
+								</span>
+																				</li>
+										</ul>
+				</section>
+			
+																												<section class="item doi">
+						<h2 class="label">
+														DOI:
+						</h2>
+						<span class="value">
+							<a href="https://doi.org/10.1609/aaai.v34i05.6334">
+								https://doi.org/10.1609/aaai.v34i05.6334
+							</a>
+						</span>
+					</section>
+							
+						
+										<section class="item abstract">
+					<h2 class="label">Abstract</h2>
+					<p>Recent NLP studies reveal that substantial linguistic information can be attributed to single neurons, i.e., individual dimensions of the representation vectors. We hypothesize that modeling strong interactions among neurons helps to better capture complex information by composing the linguistic properties embedded in individual neurons. Starting from this intuition, we propose a novel approach to compose representations learned by different components in neural machine translation (e.g., multi-layer networks or multi-head attention), based on modeling strong interactions among neurons in the representation vectors. Specifically, we leverage bilinear pooling to model pairwise multiplicative interactions among individual neurons, and a low-rank approximation to make the model computationally feasible. We further propose extended bilinear pooling to incorporate first-order representations. Experiments on WMT14 English⇒German and English⇒French translation tasks show that our model consistently improves performances over the SOTA Transformer baseline. Further analyses demonstrate that our approach indeed captures more syntactic and semantic information as expected.</p>
+				</section>
+			
+			
+
+																																																						
+						
+		</div><!-- .main_entry -->
+
+		<div class="entry_details">
+
+										<div class="item cover_image">
+					<div class="sub_item">
+													<a href="https://ojs.aaai.org/index.php/AAAI/issue/view/253">
+								<img src="https://ojs.aaai.org/public/journals/2/cover_issue_253_en_US.jpg" alt="AAAI-20 Proceedings Cover">
+							</a>
+											</div>
+				</div>
+			
+										<div class="item galleys">
+					<h2 class="pkp_screen_reader">
+						Downloads
+					</h2>
+					<ul class="value galleys_links">
+													<li>
+								
+	
+							
+
+<a class="obj_galley_link pdf" href="https://ojs.aaai.org/index.php/AAAI/article/view/6334/6190">
+
+		
+	PDF
+
+	</a>
+							</li>
+											</ul>
+				</div>
+						
+						<div class="item published">
+				<section class="sub_item">
+					<h2 class="label">
+						Published
+					</h2>
+					<div class="value">
+																			<span>2020-04-03</span>
+																	</div>
+				</section>
+							</div>
+			
+										<div class="item citation">
+					<section class="sub_item citation_display">
+						<h2 class="label">
+							How to Cite
+						</h2>
+						<div class="value">
+							<div id="citationOutput" role="region" aria-live="polite">
+								<div class="csl-bib-body">
+  <div class="csl-entry">Li, J., Wang, X., Yang, B., Shi, S., Lyu, M. R., &#38; Tu, Z. (2020). Neuron Interaction Based Representation Composition for Neural Machine Translation. <i>Proceedings of the AAAI Conference on Artificial Intelligence</i>, <i>34</i>(05), 8204-8211. https://doi.org/10.1609/aaai.v34i05.6334</div>
+</div>
+							</div>
+							<div class="citation_formats">
+								<button class="cmp_button citation_formats_button" aria-controls="cslCitationFormats" aria-expanded="false" data-csl-dropdown="true">
+									More Citation Formats
+								</button>
+								<div id="cslCitationFormats" class="citation_formats_list" aria-hidden="true">
+									<ul class="citation_formats_styles">
+																					<li>
+												<a
+													aria-controls="citationOutput"
+													href="https://ojs.aaai.org/index.php/AAAI/citationstylelanguage/get/acm-sig-proceedings?submissionId=6334&amp;publicationId=4700"
+													data-load-citation
+													data-json-href="https://ojs.aaai.org/index.php/AAAI/citationstylelanguage/get/acm-sig-proceedings?submissionId=6334&amp;publicationId=4700&amp;return=json"
+												>
+													ACM
+												</a>
+											</li>
+																					<li>
+												<a
+													aria-controls="citationOutput"
+													href="https://ojs.aaai.org/index.php/AAAI/citationstylelanguage/get/acs-nano?submissionId=6334&amp;publicationId=4700"
+													data-load-citation
+													data-json-href="https://ojs.aaai.org/index.php/AAAI/citationstylelanguage/get/acs-nano?submissionId=6334&amp;publicationId=4700&amp;return=json"
+												>
+													ACS
+												</a>
+											</li>
+																					<li>
+												<a
+													aria-controls="citationOutput"
+													href="https://ojs.aaai.org/index.php/AAAI/citationstylelanguage/get/apa?submissionId=6334&amp;publicationId=4700"
+													data-load-citation
+													data-json-href="https://ojs.aaai.org/index.php/AAAI/citationstylelanguage/get/apa?submissionId=6334&amp;publicationId=4700&amp;return=json"
+												>
+													APA
+												</a>
+											</li>
+																					<li>
+												<a
+													aria-controls="citationOutput"
+													href="https://ojs.aaai.org/index.php/AAAI/citationstylelanguage/get/associacao-brasileira-de-normas-tecnicas?submissionId=6334&amp;publicationId=4700"
+													data-load-citation
+													data-json-href="https://ojs.aaai.org/index.php/AAAI/citationstylelanguage/get/associacao-brasileira-de-normas-tecnicas?submissionId=6334&amp;publicationId=4700&amp;return=json"
+												>
+													ABNT
+												</a>
+											</li>
+																					<li>
+												<a
+													aria-controls="citationOutput"
+													href="https://ojs.aaai.org/index.php/AAAI/citationstylelanguage/get/chicago-author-date?submissionId=6334&amp;publicationId=4700"
+													data-load-citation
+													data-json-href="https://ojs.aaai.org/index.php/AAAI/citationstylelanguage/get/chicago-author-date?submissionId=6334&amp;publicationId=4700&amp;return=json"
+												>
+													Chicago
+												</a>
+											</li>
+																					<li>
+												<a
+													aria-controls="citationOutput"
+													href="https://ojs.aaai.org/index.php/AAAI/citationstylelanguage/get/harvard-cite-them-right?submissionId=6334&amp;publicationId=4700"
+													data-load-citation
+													data-json-href="https://ojs.aaai.org/index.php/AAAI/citationstylelanguage/get/harvard-cite-them-right?submissionId=6334&amp;publicationId=4700&amp;return=json"
+												>
+													Harvard
+												</a>
+											</li>
+																					<li>
+												<a
+													aria-controls="citationOutput"
+													href="https://ojs.aaai.org/index.php/AAAI/citationstylelanguage/get/ieee?submissionId=6334&amp;publicationId=4700"
+													data-load-citation
+													data-json-href="https://ojs.aaai.org/index.php/AAAI/citationstylelanguage/get/ieee?submissionId=6334&amp;publicationId=4700&amp;return=json"
+												>
+													IEEE
+												</a>
+											</li>
+																					<li>
+												<a
+													aria-controls="citationOutput"
+													href="https://ojs.aaai.org/index.php/AAAI/citationstylelanguage/get/modern-language-association?submissionId=6334&amp;publicationId=4700"
+													data-load-citation
+													data-json-href="https://ojs.aaai.org/index.php/AAAI/citationstylelanguage/get/modern-language-association?submissionId=6334&amp;publicationId=4700&amp;return=json"
+												>
+													MLA
+												</a>
+											</li>
+																					<li>
+												<a
+													aria-controls="citationOutput"
+													href="https://ojs.aaai.org/index.php/AAAI/citationstylelanguage/get/turabian-fullnote-bibliography?submissionId=6334&amp;publicationId=4700"
+													data-load-citation
+													data-json-href="https://ojs.aaai.org/index.php/AAAI/citationstylelanguage/get/turabian-fullnote-bibliography?submissionId=6334&amp;publicationId=4700&amp;return=json"
+												>
+													Turabian
+												</a>
+											</li>
+																					<li>
+												<a
+													aria-controls="citationOutput"
+													href="https://ojs.aaai.org/index.php/AAAI/citationstylelanguage/get/vancouver?submissionId=6334&amp;publicationId=4700"
+													data-load-citation
+													data-json-href="https://ojs.aaai.org/index.php/AAAI/citationstylelanguage/get/vancouver?submissionId=6334&amp;publicationId=4700&amp;return=json"
+												>
+													Vancouver
+												</a>
+											</li>
+																			</ul>
+																			<div class="label">
+											Download Citation
+										</div>
+										<ul class="citation_formats_styles">
+																							<li>
+													<a href="https://ojs.aaai.org/index.php/AAAI/citationstylelanguage/download/ris?submissionId=6334&amp;publicationId=4700">
+														<span class="fa fa-download"></span>
+														Endnote/Zotero/Mendeley (RIS)
+													</a>
+												</li>
+																							<li>
+													<a href="https://ojs.aaai.org/index.php/AAAI/citationstylelanguage/download/bibtex?submissionId=6334&amp;publicationId=4700">
+														<span class="fa fa-download"></span>
+														BibTeX
+													</a>
+												</li>
+																					</ul>
+																	</div>
+							</div>
+						</div>
+					</section>
+				</div>
+			
+										<div class="item issue">
+
+											<section class="sub_item">
+							<h2 class="label">
+								Issue
+							</h2>
+							<div class="value">
+								<a class="title" href="https://ojs.aaai.org/index.php/AAAI/issue/view/253">
+									Vol. 34 No. 05: AAAI-20 Technical Tracks 5
+								</a>
+							</div>
+						</section>
+					
+											<section class="sub_item">
+							<h2 class="label">
+								Section
+							</h2>
+							<div class="value">
+								AAAI Technical Track: Natural Language Processing
+							</div>
+						</section>
+									</div>
+			
+															
+						
+			
+
+		</div><!-- .entry_details -->
+	</div><!-- .row -->
+
+</article>
+
+	
+
+</div><!-- .page -->
+
+	</div><!-- pkp_structure_main -->
+
+									<div class="pkp_structure_sidebar left" role="complementary" aria-label="Sidebar">
+				<div class="pkp_block block_information">
+	<h2 class="title">Information</h2>
+	<div class="content">
+		<ul>
+							<li>
+					<a href="https://ojs.aaai.org/index.php/AAAI/information/readers">
+						For Readers
+					</a>
+				</li>
+										<li>
+					<a href="https://ojs.aaai.org/index.php/AAAI/information/authors">
+						For Authors
+					</a>
+				</li>
+										<li>
+					<a href="https://ojs.aaai.org/index.php/AAAI/information/librarians">
+						For Librarians
+					</a>
+				</li>
+					</ul>
+	</div>
+</div>
+<div class="pkp_block block_hosted_by">
+	<div class="content">
+		<ul><li>
+			<a href="https://pkpservices.sfu.ca/" id="hostedByLogo" target="_blank"><img src="https://ojs.aaai.org/plugins/blocks/hostedBy/icons/pkpps.svg" style="border: 0; margin-bottom: 8px; width: 80%"/></a>
+			<p>
+				Part of the<br />
+				<a href="https://pkpservices.sfu.ca/" id="hostedBy" target="_blank">PKP Publishing Services Network</a>
+			</p>
+		</li></ul>
+</div>
+</div>
+
+			</div><!-- pkp_sidebar.left -->
+			</div><!-- pkp_structure_content -->
+
+<div class="pkp_structure_footer_wrapper" role="contentinfo">
+	<a id="pkp_content_footer"></a>
+
+	<div class="pkp_structure_footer">
+
+					<div class="pkp_footer_content">
+				<p>Copyright © 2024, Association for the Advancement of Artificial Intelligence</p>
+			</div>
+		
+		<div class="pkp_brand_footer" role="complementary">
+			<a href="https://ojs.aaai.org/index.php/AAAI/about/aboutThisPublishingSystem">
+				<img alt="More information about the publishing system, Platform and Workflow by OJS/PKP." src="https://ojs.aaai.org/templates/images/ojs_brand.png">
+			</a>
+		</div>
+	</div>
+</div><!-- pkp_structure_footer_wrapper -->
+
+</div><!-- pkp_structure_page -->
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js?v=3.2.1.1" type="text/javascript"></script><script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.12.0/jquery-ui.min.js?v=3.2.1.1" type="text/javascript"></script><script src="https://ojs.aaai.org/lib/pkp/js/lib/jquery/plugins/jquery.tag-it.js?v=3.2.1.1" type="text/javascript"></script><script src="https://ojs.aaai.org/plugins/themes/default/js/lib/popper/popper.js?v=3.2.1.1" type="text/javascript"></script><script src="https://ojs.aaai.org/plugins/themes/default/js/lib/bootstrap/util.js?v=3.2.1.1" type="text/javascript"></script><script src="https://ojs.aaai.org/plugins/themes/default/js/lib/bootstrap/dropdown.js?v=3.2.1.1" type="text/javascript"></script><script src="https://ojs.aaai.org/plugins/themes/default/js/main.js?v=3.2.1.1" type="text/javascript"></script><script src="https://ojs.aaai.org/plugins/generic/citationStyleLanguage/js/articleCitation.js?v=3.2.1.1" type="text/javascript"></script>
+
+
+</body>
+</html>

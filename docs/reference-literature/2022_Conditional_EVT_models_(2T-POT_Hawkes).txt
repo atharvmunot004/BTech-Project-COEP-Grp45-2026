@@ -1,0 +1,8 @@
+Paper Title: Conditional EVT models (2T-POT Hawkes)
+Authors: Tomlinson et al.
+Year: 2022
+Source: None
+URL: None
+
+Note: This paper could not be downloaded automatically.
+Please download it manually using the information above.

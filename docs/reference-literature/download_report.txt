@@ -1,0 +1,1010 @@
+================================================================================
+PAPER DOWNLOAD REPORT
+================================================================================
+Generated on: 2025-11-30 10:32:09
+Total papers in database: 105
+
+SUMMARY
+--------------------------------------------------------------------------------
+Successfully downloaded: 55
+Failed downloads: 45
+No URL provided: 5
+Missing files (unexpected): 0
+
+================================================================================
+SUCCESSFULLY DOWNLOADED PAPERS
+================================================================================
+Total: 55
+
+[2] Efficient CVaR estimation using importance-sampling Monte Carlo
+     Authors: Jiang et al.
+     Year: 2025
+     Source: arXiv
+     File: 2025_Efficient_CVaR_estimation_using_importance-sampling_Monte_Carlo.pdf (4,826,759 bytes, PDF document)
+     URL: https://arxiv.org/abs/2502.04562
+
+[3] Quantum generative modeling for financial time series with temporal correlations
+     Authors: Dechant et al.
+     Year: 2025
+     Source: arXiv
+     File: 2025_Quantum_generative_modeling_for_financial_time_series_with_temporal_correlations.pdf (1,423,665 bytes, PDF document)
+     URL: https://arxiv.org/abs/2507.22035
+
+[4] Integrated GARCH-GRU in Financial Volatility Forecasting
+     Authors: None
+     Year: 2025
+     Source: arXiv
+     File: 2025_Integrated_GARCH-GRU_in_Financial_Volatility_Forecasting.pdf (1,603,500 bytes, PDF document)
+     URL: https://arxiv.org/abs/2504.09380
+
+[5] Quantum Subgradient Estimation for Conditional Value-at-Risk Optimization
+     Authors: None
+     Year: 2025
+     Source: arXiv
+     File: 2025_Quantum_Subgradient_Estimation_for_Conditional_Value-at-Risk_Optimization.pdf (621,078 bytes, PDF document)
+     URL: https://arxiv.org/abs/2510.04736
+
+[6] Benchmarking Quantum Solvers in Noisy Digital Simulations for Financial Portfolio Optimization
+     Authors: None
+     Year: 2025
+     Source: arXiv
+     File: 2025_Benchmarking_Quantum_Solvers_in_Noisy_Digital_Simulations_for_Financial_Portfolio_Optimization.pdf (3,246,375 bytes, PDF document)
+     URL: https://arxiv.org/abs/2508.21123
+
+[7] Quantum Risk Analysis of Financial Derivatives
+     Authors: Stamatopoulos, Clader, Woerner, Zeng
+     Year: 2024
+     Source: arXiv
+     File: 2024_Quantum_Risk_Analysis_of_Financial_Derivatives.pdf (963,584 bytes, PDF document)
+     URL: https://arxiv.org/pdf/2404.10088
+
+[13] Quantum Monte Carlo Integration for Simulation-Based Optimization
+     Authors: None
+     Year: 2024
+     Source: arXiv
+     File: 2024_Quantum_Monte_Carlo_Integration_for_Simulation-Based_Optimization.pdf (1,288,972 bytes, PDF document)
+     URL: https://arxiv.org/abs/2410.03926
+
+[14] Hybrid quantum–classical Monte Carlo VaR
+     Authors: Zhang et al.
+     Year: 2023
+     Source: IEEE Trans. Quantum Engineering
+     File: 2023_Hybrid_quantum–classical_Monte_Carlo_VaR.html (50,787 bytes, HTML document)
+     URL: https://ieeexplore.ieee.org/document/10090514
+
+[18] Real quantum amplitude estimation
+     Authors: None
+     Year: 2023
+     Source: EPJ Quantum Technology
+     File: 2023_Real_quantum_amplitude_estimation.html (386,715 bytes, HTML document)
+     URL: https://epjquantumtechnology.springeropen.com/articles/10.1140/epjqt/s40507-023-00159-0
+
+[19] Q-LSTM for financial time series forecasting
+     Authors: Zlokapa et al.
+     Year: 2022
+     Source: arXiv
+     File: 2022_Q-LSTM_for_financial_time_series_forecasting.pdf (432,458 bytes, PDF document)
+     URL: https://arxiv.org/abs/2206.02426
+
+[23] Quantum Risk Analysis: Beyond (Conditional) Value-at-Risk
+     Authors: Laudagé & Turkalj
+     Year: 2022
+     Source: arXiv
+     File: 2022_Quantum_Risk_Analysis_Beyond_(Conditional)_Value-at-Risk.pdf (1,186,747 bytes, PDF document)
+     URL: https://arxiv.org/pdf/2211.04456
+
+[24] Quantum computing for financial risk measurement
+     Authors: None
+     Year: 2022
+     Source: SpringerLink
+     File: 2022_Quantum_computing_for_financial_risk_measurement.html (540,472 bytes, HTML document)
+     URL: https://link.springer.com/article/10.1007/s11128-022-03777-2
+
+[25] Benchmarking the performance of portfolio optimization with QAOA
+     Authors: None
+     Year: 2022
+     Source: SpringerLink
+     File: 2022_Benchmarking_the_performance_of_portfolio_optimization_with_QAOA.html (431,224 bytes, HTML document)
+     URL: https://link.springer.com/article/10.1007/s11128-022-03766-5
+
+[26] QBM for financial data generation
+     Authors: Zoufal et al.
+     Year: 2021
+     Source: arXiv
+     File: 2021_QBM_for_financial_data_generation.pdf (1,106,484 bytes, PDF document)
+     URL: https://arxiv.org/abs/2006.06004
+
+[27] Simultaneous quantum estimation of multiple moments
+     Authors: Zhao et al.
+     Year: 2021
+     Source: arXiv
+     File: 2021_Simultaneous_quantum_estimation_of_multiple_moments.pdf (4,618,854 bytes, PDF document)
+     URL: https://arxiv.org/abs/2103.09230
+
+[30] Quantum recurrent neural networks
+     Authors: Kyriienko et al.
+     Year: 2021
+     Source: Quantum Sci. Technol.
+     File: 2021_Quantum_recurrent_neural_networks.html (14,426 bytes, HTML document)
+     URL: https://iopscience.iop.org/article/10.1088/2058-9565/ac1ab9
+
+[31] Quantum kernel methods for financial datasets
+     Authors: Kusumoto et al.
+     Year: 2021
+     Source: arXiv
+     File: 2021_Quantum_kernel_methods_for_financial_datasets.pdf (12,525,928 bytes, PDF document)
+     URL: https://arxiv.org/abs/2108.04534
+
+[32] An evolving objective function for improved variational quantum optimisation
+     Authors: Kolotouros et al.
+     Year: 2021
+     Source: arXiv
+     File: 2021_An_evolving_objective_function_for_improved_variational_quantum_optimisation.pdf (2,105,317 bytes, PDF document)
+     URL: https://arxiv.org/abs/2105.11766
+
+[33] Quantum RL with quantum circuits
+     Authors: Jerbi et al.
+     Year: 2021
+     Source: Quantum Sci. Technol.
+     File: 2021_Quantum_RL_with_quantum_circuits.html (14,426 bytes, HTML document)
+     URL: https://iopscience.iop.org/article/10.1088/2058-9565/ac1d78
+
+[35] QBM for financial regime detection
+     Authors: Herr et al.
+     Year: 2021
+     Source: arXiv
+     File: 2021_QBM_for_financial_regime_detection.pdf (1,428,559 bytes, PDF document)
+     URL: https://arxiv.org/abs/2103.10953
+
+[36] Multi-objective portfolio optimization on D-Wave
+     Authors: Fung et al.
+     Year: 2021
+     Source: arXiv
+     File: 2021_Multi-objective_portfolio_optimization_on_D-Wave.pdf (645,882 bytes, PDF document)
+     URL: https://arxiv.org/abs/2103.15912
+
+[37] Scenario generation for market risk models using generative neural networks
+     Authors: Flaig & Junike
+     Year: 2021
+     Source: arXiv
+     File: 2021_Scenario_generation_for_market_risk_models_using_generative_neural_networks.pdf (1,297,005 bytes, PDF document)
+     URL: https://arxiv.org/pdf/2109.10072
+
+[38] Mean-Variance-VaR portfolios: MIQP formulation and performance analysis
+     Authors: Cesarone et al.
+     Year: 2021
+     Source: arXiv
+     File: 2021_Mean-Variance-VaR_portfolios_MIQP_formulation_and_performance_analysis.pdf (5,521,669 bytes, PDF document)
+     URL: https://arxiv.org/abs/2111.09773
+
+[39] Deep RL for quantitative trading: survey and results
+     Authors: Zhang et al.
+     Year: 2020
+     Source: AAAI
+     File: 2020_Deep_RL_for_quantitative_trading_survey_and_results.html (26,043 bytes, HTML document)
+     URL: https://ojs.aaai.org/index.php/AAAI/article/view/6334
+
+[40] Quantum algorithms for Monte Carlo pricing
+     Authors: Stamatopoulos et al.
+     Year: 2020
+     Source: arXiv
+     File: 2020_Quantum_algorithms_for_Monte_Carlo_pricing.pdf (4,270,306 bytes, PDF document)
+     URL: https://arxiv.org/abs/2006.11382
+
+[41] Quantum algorithms for Monte Carlo finance
+     Authors: Stamatopoulos et al.
+     Year: 2020
+     Source: arXiv
+     File: 2020_Quantum_algorithms_for_Monte_Carlo_finance.pdf (538,142 bytes, PDF document)
+     URL: https://arxiv.org/abs/2009.03842
+
+[45] Quantum-enhanced SARSA
+     Authors: Lockwood & Meier
+     Year: 2020
+     Source: arXiv
+     File: 2020_Quantum-enhanced_SARSA.pdf (2,085,822 bytes, PDF document)
+     URL: https://arxiv.org/abs/2008.02823
+
+[46] A Low Complexity Quantum Principal Component Analysis Algorithm
+     Authors: He et al.
+     Year: 2020
+     Source: arXiv
+     File: 2020_A_Low_Complexity_Quantum_Principal_Component_Analysis_Algorithm.pdf (581,956 bytes, PDF document)
+     URL: https://arxiv.org/abs/2010.00831
+
+[48] Hybrid quantum-classical LSTM networks
+     Authors: Chen et al.
+     Year: 2020
+     Source: arXiv
+     File: 2020_Hybrid_quantum-classical_LSTM_networks.pdf (1,751,758 bytes, PDF document)
+     URL: https://arxiv.org/abs/2009.01783
+
+[49] QAOA for portfolio optimization on NISQ devices
+     Authors: Barkoutsos et al.
+     Year: 2020
+     Source: Quantum
+     File: 2020_QAOA_for_portfolio_optimization_on_NISQ_devices.html (153,160 bytes, HTML document)
+     URL: https://quantum-journal.org/papers/q-2020-07-06-291/
+
+[50] Improving Variational Quantum Optimization using CVaR
+     Authors: None
+     Year: 2020
+     Source: Quantum
+     File: 2020_Improving_Variational_Quantum_Optimization_using_CVaR.html (138,844 bytes, HTML document)
+     URL: https://quantum-journal.org/papers/q-2020-04-20-256/
+
+[51] Quantum optimization for finance with QUBO mappings
+     Authors: Venturelli et al.
+     Year: 2019
+     Source: Front. Phys.
+     File: 2019_Quantum_optimization_for_finance_with_QUBO_mappings.html (472,464 bytes, HTML document)
+     URL: https://www.frontiersin.org/articles/10.3389/fphy.2019.00031/full
+
+[55] Quantum generative models for learning distributions
+     Authors: Khoshaman et al.
+     Year: 2019
+     Source: npj Quantum Info
+     File: 2019_Quantum_generative_models_for_learning_distributions.html (400,940 bytes, HTML document)
+     URL: https://www.nature.com/articles/s41534-019-0187-2
+
+[56] q-means: quantum algorithm for unsupervised learning
+     Authors: Kerenidis et al.
+     Year: 2019
+     Source: arXiv
+     File: 2019_q-means_quantum_algorithm_for_unsupervised_learning.pdf (736,607 bytes, PDF document)
+     URL: https://arxiv.org/abs/1904.02260
+
+[57] Portfolio rebalancing with QAOA
+     Authors: Hodson et al.
+     Year: 2019
+     Source: arXiv
+     File: 2019_Portfolio_rebalancing_with_QAOA.pdf (2,894,825 bytes, PDF document)
+     URL: https://arxiv.org/abs/1911.06259
+
+[58] Supervised learning with quantum-enhanced feature spaces
+     Authors: Havlíček et al.
+     Year: 2019
+     Source: Nature
+     File: 2019_Supervised_learning_with_quantum-enhanced_feature_spaces.html (343,532 bytes, HTML document)
+     URL: https://www.nature.com/articles/s41586-019-0980-2
+
+[59] Parameterized quantum circuits as generative models
+     Authors: Benedetti et al.
+     Year: 2019
+     Source: Quantum Sci. Technol.
+     File: 2019_Parameterized_quantum_circuits_as_generative_models.html (14,426 bytes, HTML document)
+     URL: https://iopscience.iop.org/article/10.1088/2058-9565/ab4eb5
+
+[60] Quantum risk analysis
+     Authors: None
+     Year: 2019
+     Source: IBM Research
+     File: 2019_Quantum_risk_analysis.html (35,316 bytes, HTML document)
+     URL: https://research.ibm.com/publications/quantum-risk-analysis
+
+[64] Classification with quantum neural networks
+     Authors: Farhi & Neven
+     Year: 2018
+     Source: arXiv
+     File: 2018_Classification_with_quantum_neural_networks.pdf (387,425 bytes, PDF document)
+     URL: https://arxiv.org/abs/1802.06002
+
+[66] Deep RL for multi-step cryptocurrency portfolio allocation
+     Authors: Jiang et al.
+     Year: 2017
+     Source: arXiv
+     File: 2017_Deep_RL_for_multi-step_cryptocurrency_portfolio_allocation.pdf (783,141 bytes, PDF document)
+     URL: https://arxiv.org/abs/1706.10059
+
+[67] Portfolio rebalancing on D-Wave
+     Authors: Rosenberg et al.
+     Year: 2016
+     Source: arXiv
+     File: 2016_Portfolio_rebalancing_on_D-Wave.pdf (2,162,386 bytes, PDF document)
+     URL: https://arxiv.org/abs/1604.05718
+
+[70] Quantum principal component analysis
+     Authors: Lloyd, Mohseni & Rebentrost
+     Year: 2014
+     Source: Nature Physics
+     File: 2014_Quantum_principal_component_analysis.html (318,212 bytes, HTML document)
+     URL: https://www.nature.com/articles/nphys3029
+
+[71] Quantum algorithms for clustering via distance estimation
+     Authors: Lloyd et al.
+     Year: 2013
+     Source: arXiv
+     File: 2013_Quantum_algorithms_for_clustering_via_distance_estimation.pdf (156,138 bytes, PDF document)
+     URL: https://arxiv.org/abs/1304.7827
+
+[74] On the efficiency of risk measures for funds of hedge funds
+     Authors: Laube et al.
+     Year: 2011
+     Source: SpringerLink
+     File: 2011_On_the_efficiency_of_risk_measures_for_funds_of_hedge_funds.html (360,898 bytes, HTML document)
+     URL: https://link.springer.com/article/10.1057/jdhf.2011.3
+
+[81] Principal Component Analysis
+     Authors: Jolliffe
+     Year: 2002
+     Source: Springer
+     File: 2002_Principal_Component_Analysis.html (223,705 bytes, HTML document)
+     URL: https://link.springer.com/book/10.1007/978-1-4757-1904-8
+
+[82] Original amplitude estimation algorithm
+     Authors: Brassard et al.
+     Year: 2002
+     Source: Contemporary Mathematics
+     File: 2002_Original_amplitude_estimation_algorithm.pdf (295,305 bytes, PDF document)
+     URL: https://arxiv.org/abs/quant-ph/0005055
+
+[86] Random Forests
+     Authors: Breiman
+     Year: 2001
+     Source: Machine Learning
+     File: 2001_Random_Forests.html (220,416 bytes, HTML document)
+     URL: https://link.springer.com/article/10.1023/A:1010933404324
+
+[88] Finite Mixture Models
+     Authors: McLachlan & Peel
+     Year: 2000
+     Source: Wiley
+     File: 2000_Finite_Mixture_Models.html (243,222 bytes, HTML document)
+     URL: https://www.wiley.com/en-us/Finite+Mixture+Models-p-9780471006268
+
+[90] Long Short-Term Memory
+     Authors: Hochreiter & Schmidhuber
+     Year: 1997
+     Source: Neural Computation
+     File: 1997_Long_Short-Term_Memory.pdf (396,938 bytes, PDF document)
+     URL: https://www.bioinf.jku.at/publications/older/2604.pdf
+
+[91] The Nature of Statistical Learning Theory
+     Authors: Vapnik
+     Year: 1995
+     Source: Springer
+     File: 1995_The_Nature_of_Statistical_Learning_Theory.html (246,675 bytes, HTML document)
+     URL: https://link.springer.com/book/10.1007/978-1-4757-2440-0
+
+[97] Time Series Analysis: Forecasting and Control
+     Authors: Box & Jenkins
+     Year: 1976
+     Source: Wiley
+     File: 1976_Time_Series_Analysis_Forecasting_and_Control.html (276,534 bytes, HTML document)
+     URL: https://www.wiley.com/en-us/Time+Series+Analysis%3A+Forecasting+and+Control%2C+5th+Edition-p-9781118675021
+
+[99] Value at Risk, GARCH Modelling and the Forecasting
+     Authors: Füss
+     Year: None
+     Source: SpringerLink
+     File: Value_at_Risk,_GARCH_Modelling_and_the_Forecasting.html (312,850 bytes, HTML document)
+     URL: https://link.springer.com/chapter/10.1057/9781137554178_5
+
+[101] Parametric Method in Value at Risk (VaR): Definition and Examples
+     Authors: None
+     Year: None
+     Source: Investopedia
+     File: Parametric_Method_in_Value_at_Risk_(VaR)_Definition_and_Examples.html (564,665 bytes, HTML document)
+     URL: https://www.investopedia.com/ask/answers/041715/what-variancecovariance-matrix-or-parametric-method-value-risk-var.asp
+
+[103] Portfolio Optimization - Qiskit Finance
+     Authors: None
+     Year: None
+     Source: Qiskit Community GitHub
+     File: Portfolio_Optimization_-_Qiskit_Finance.html (58,649 bytes, HTML document)
+     URL: https://qiskit-community.github.io/qiskit-finance/tutorials/01_portfolio_optimization.html
+
+[104] Improving Variational Quantum Optimization using CVaR - Qiskit Tutorial
+     Authors: None
+     Year: None
+     Source: Qiskit Optimization
+     File: Improving_Variational_Quantum_Optimization_using_CVaR_-_Qiskit_Tutorial.html (76,500 bytes, HTML document)
+     URL: https://qiskit-community.github.io/qiskit-optimization/tutorials/08_cvar_optimization.html
+
+================================================================================
+FAILED DOWNLOADS
+================================================================================
+Total: 45
+
+
+Reason: Download failed - placeholder file created
+--------------------------------------------------------------------------------
+[1] Self-Adaptive Quantum Kernel Principal Component Analysis
+     Authors: Wang et al.
+     Year: 2025
+     Source: Advanced Science
+     URL: https://advanced.onlinelibrary.wiley.com/doi/10.1002/advs.202411573
+
+[8] Enhancing Financial Time Series Prediction with Quantum-Enhanced Synthetic Data Generation: A Case Study on the S&P 500 Using a Quantum Wasserstein GAN
+     Authors: Orlandi, Barbierato & Gatti
+     Year: 2024
+     Source: MDPI
+     URL: https://www.mdpi.com/2079-9292/13/11/2158
+
+[9] Forecasting conditional volatility based on hybrid GARCH
+     Authors: Huang et al.
+     Year: 2024
+     Source: ScienceDirect
+     URL: https://www.sciencedirect.com/science/article/abs/pii/S1062940824000731
+
+[10] Assessing risk forecasting models: Monte Carlo and machine learning approaches
+     Authors: Giot & Laurent
+     Year: 2024
+     Source: ScienceDirect
+     URL: https://www.sciencedirect.com/science/article/abs/pii/S1057521924000152
+
+[12] Robust estimation of the range-based GARCH model
+     Authors: None
+     Year: 2024
+     Source: ScienceDirect
+     URL: https://www.sciencedirect.com/science/article/pii/S026499932400244X
+
+[17] Monte Carlo and copula-based VaR in turbulent markets
+     Authors: Aziz & Nadarajah
+     Year: 2023
+     Source: SpringerLink
+     URL: https://link.springer.com/article/10.1007/s10479-023-05176-4
+
+[21] Hybrid quantum-classical policy gradient methods
+     Authors: Skolik et al.
+     Year: 2022
+     Source: Quantum
+     URL: https://quantum-journal.org/papers/q-2022-02-24-651/
+
+[22] Generative Adversarial Networks Applied to Synthetic Financial Scenarios Generation
+     Authors: Rizzato et al.
+     Year: 2022
+     Source: ressources-actuarielles.net
+     URL: https://www.ressources-actuarielles.net/...
+
+[28] Transformational Approach to Analytical Value-at-Risk
+     Authors: Prakash et al.
+     Year: 2021
+     Source: MDPI
+     URL: https://www.mdpi.com/1911-8074/14/2/51
+
+[29] Toward pricing financial derivatives with an IBM quantum computer
+     Authors: Martin, Candelas et al.
+     Year: 2021
+     Source: Physical Review Research
+     URL: https://link.aps.org/doi/10.1103/PhysRevResearch.3.013167
+
+[34] ARIMA models - Forecasting: Principles and Practice
+     Authors: Hyndman & Athanasopoulos
+     Year: 2021
+     Source: OTexts
+     URL: https://otexts.com/fpp3/arima.html
+
+[42] Financial time series forecasting with deep learning: A systematic literature review
+     Authors: Sezer et al.
+     Year: 2020
+     Source: Expert Systems
+     URL: https://onlinelibrary.wiley.com/doi/abs/10.1111/exsy.12302
+
+[43] Practical limitations / hybrid approaches
+     Authors: Schuld
+     Year: 2020
+     Source: Quantum Inf. Process.
+     URL: https://link.springer.com/article/10.1007/s11128-020-02974-x
+
+[44] Transfer learning in hybrid quantum/classical models
+     Authors: Mari et al.
+     Year: 2020
+     Source: Quantum
+     URL: https://quantum-journal.org/papers/q-2020-03-09-248/
+
+[47] Empirical Asset Pricing via Machine Learning
+     Authors: Gu et al.
+     Year: 2020
+     Source: Review of Financial Studies
+     URL: https://academic.oup.com/rfs/article/33/5/2223/5731311
+
+[52] Quantum feature maps for machine learning
+     Authors: Schuld & Killoran
+     Year: 2019
+     Source: PRL
+     URL: https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.122.040504
+
+[53] Quantum circuits as universal approximators
+     Authors: Schuld & Killoran
+     Year: 2019
+     Source: PRL
+     URL: https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.122.040801
+
+[54] Deep Reinforcement Learning for Portfolio Management (DeepTrader)
+     Authors: Li et al.
+     Year: 2019
+     Source: AAAI
+     URL: https://aaai.org/ojs/index.php/AAAI/article/view/3809
+
+[61] Quantum algorithms for portfolio optimization
+     Authors: Rebentrost et al.
+     Year: 2018
+     Source: Phys. Rev. A
+     URL: https://journals.aps.org/pra/abstract/10.1103/PhysRevA.98.022321
+
+[62] Deep learning with long short-term memory networks for financial market predictions
+     Authors: Fischer & Krauss
+     Year: 2018
+     Source: Journal of Forecasting
+     URL: https://onlinelibrary.wiley.com/doi/abs/10.1002/for.2473
+
+[63] Reinforcement Learning in finance: challenges and practical considerations
+     Authors: Fischer
+     Year: 2018
+     Source: SSRN
+     URL: https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3128246
+
+[65] Quantum Boltzmann machine learning
+     Authors: Amin et al.
+     Year: 2018
+     Source: PRX
+     URL: https://journals.aps.org/prx/abstract/10.1103/PhysRevX.8.021050
+
+[68] XGBoost: A Scalable Tree Boosting System
+     Authors: Chen & Guestrin
+     Year: 2016
+     Source: KDD
+     URL: https://dl.acm.org/doi/10.1145/2939672.2939785
+
+[69] Quantum speedup of Monte Carlo methods
+     Authors: Montanaro
+     Year: 2015
+     Source: Proc. Roy. Soc. A
+     URL: https://royalsocietypublishing.org/doi/10.1098/rspa.2015.0301
+
+[72] Value and Momentum Everywhere
+     Authors: Asness et al.
+     Year: 2013
+     Source: Journal of Finance
+     URL: https://onlinelibrary.wiley.com/doi/abs/10.1111/jofi.12068
+
+[73] Time series momentum
+     Authors: Moskowitz et al.
+     Year: 2012
+     Source: Journal of Financial Economics
+     URL: https://www.sciencedirect.com/science/article/pii/S0304407612000286
+
+[75] The Properties of Equally Weighted Risk Contribution Portfolios
+     Authors: Maillard et al.
+     Year: 2010
+     Source: Journal of Portfolio Management
+     URL: https://jpm.pm-research.com/content/36/4/60
+
+[76] Pairs Trading: Performance of a Relative-Value Arbitrage Rule
+     Authors: Gatev et al.
+     Year: 2006
+     Source: Review of Financial Studies
+     URL: https://academic.oup.com/rfs/article/19/3/797/1599809
+
+[77] Using ARIMA model to forecast stock price
+     Authors: Pai & Lin
+     Year: 2005
+     Source: ScienceDirect
+     URL: https://www.sciencedirect.com/science/article/pii/S0305054805000081
+
+[78] Pairs Trading
+     Authors: Elliott et al.
+     Year: 2005
+     Source: Quantitative Finance
+     URL: https://www.tandfonline.com/doi/abs/10.1080/14697680500149370
+
+[79] Honey, I Shrunk the Sample Covariance Matrix
+     Authors: Ledoit & Wolf
+     Year: 2004
+     Source: Journal of Portfolio Management
+     URL: https://www.jstor.org/stable/4485060
+
+[80] Conditional value-at-risk for general loss distributions
+     Authors: Krokhmal et al.
+     Year: 2002
+     Source: Journal of Banking & Finance
+     URL: https://www.sciencedirect.com/science/article/pii/S0378426602001042
+
+[83] International Asset Allocation with Regime Shifts
+     Authors: Ang & Bekaert
+     Year: 2002
+     Source: Review of Financial Studies
+     URL: https://academic.oup.com/rfs/article/15/4/1137/1586418
+
+[84] Application of support vector machines in financial time series forecasting
+     Authors: Tay & Cao
+     Year: 2001
+     Source: Expert Systems
+     URL: https://www.sciencedirect.com/science/article/pii/S0957417401000841
+
+[85] Recurrent Reinforcement Learning for trading
+     Authors: Moody & Saffell
+     Year: 2001
+     Source: Neural Networks
+     URL: https://doi.org/10.1016/S0893-6080(01)00040-1
+
+[87] Optimization of Conditional Value-at-Risk
+     Authors: Rockafellar & Uryasev
+     Year: 2000
+     Source: Journal of Risk
+     URL: https://www.jstor.org/stable/2586997
+
+[89] Quantum annealing and Boltzmann machines
+     Authors: Kadowaki & Nishimori
+     Year: 1998
+     Source: PRE
+     URL: https://journals.aps.org/pre/abstract/10.1103/PhysRevE.58.5355
+
+[92] Autoregressive conditional heteroskedasticity and changes in regime
+     Authors: Hamilton & Susmel
+     Year: 1994
+     Source: Journal of Econometrics
+     URL: https://www.sciencedirect.com/science/article/pii/0304407694900208
+
+[93] Returns to Buying Winners and Selling Losers
+     Authors: Jegadeesh & Titman
+     Year: 1993
+     Source: Journal of Finance
+     URL: https://www.jstor.org/stable/2328882
+
+[94] Global Portfolio Optimization
+     Authors: Black & Litterman
+     Year: 1992
+     Source: Financial Analysts Journal
+     URL: https://www.jstor.org/stable/4479577
+
+[95] The Markowitz Optimization Enigma: Is 'Optimized' Optimal?
+     Authors: Michaud
+     Year: 1989
+     Source: Financial Analysts Journal
+     URL: https://www.jstor.org/stable/4479057
+
+[96] A New Approach to the Economic Analysis of Nonstationary Time Series
+     Authors: Hamilton
+     Year: 1989
+     Source: Econometrica
+     URL: https://www.jstor.org/stable/1912559
+
+[98] Portfolio Selection
+     Authors: Markowitz
+     Year: 1952
+     Source: Journal of Finance
+     URL: https://www.jstor.org/stable/2327556
+
+[105] Improved Quantum Approximate Optimization Algorithm based on Conditional Value-at-Risk for Portfolio Optimization
+     Authors: None
+     Year: None
+     Source: ResearchGate
+     URL: https://www.researchgate.net/publication/388016183
+
+
+Reason: Invalid file format
+--------------------------------------------------------------------------------
+[102] Forecasting hedge funds volatility: a Markov regime-switching GARCH
+     Authors: None
+     Year: None
+     Source: SSRN
+     URL: https://papers.ssrn.com/sol3/Delivery.cfm/SSRN_ID1768864_code639897.pdf
+
+================================================================================
+PAPERS WITH NO URL
+================================================================================
+Total: 5
+
+[11] Dynamic threshold exceedance models and extreme risk forecasting
+     Authors: Candia et al.
+     Year: 2024
+     Source: None
+
+[15] Efficient Estimation in Extreme Value Regression Models
+     Authors: Hambuckers et al.
+     Year: 2023
+     Source: None
+
+[16] Threshold selection and tail risk estimation
+     Authors: Benito et al.
+     Year: 2023
+     Source: None
+
+[20] Conditional EVT models (2T-POT Hawkes)
+     Authors: Tomlinson et al.
+     Year: 2022
+     Source: None
+
+[100] Realized Peaks Over Threshold (Realized POT)
+     Authors: Bee et al.
+     Year: None
+     Source: None
+
+================================================================================
+STATISTICS BY SOURCE
+================================================================================
+AAAI:
+  Total: 2
+  Downloaded: 1 (50.0%)
+  Failed: 1
+  No URL: 0
+
+Advanced Science:
+  Total: 1
+  Downloaded: 0 (0.0%)
+  Failed: 1
+  No URL: 0
+
+Contemporary Mathematics:
+  Total: 1
+  Downloaded: 1 (100.0%)
+  Failed: 0
+  No URL: 0
+
+EPJ Quantum Technology:
+  Total: 1
+  Downloaded: 1 (100.0%)
+  Failed: 0
+  No URL: 0
+
+Econometrica:
+  Total: 1
+  Downloaded: 0 (0.0%)
+  Failed: 1
+  No URL: 0
+
+Expert Systems:
+  Total: 2
+  Downloaded: 0 (0.0%)
+  Failed: 2
+  No URL: 0
+
+Financial Analysts Journal:
+  Total: 2
+  Downloaded: 0 (0.0%)
+  Failed: 2
+  No URL: 0
+
+Front. Phys.:
+  Total: 1
+  Downloaded: 1 (100.0%)
+  Failed: 0
+  No URL: 0
+
+IBM Research:
+  Total: 1
+  Downloaded: 1 (100.0%)
+  Failed: 0
+  No URL: 0
+
+IEEE Trans. Quantum Engineering:
+  Total: 1
+  Downloaded: 1 (100.0%)
+  Failed: 0
+  No URL: 0
+
+Investopedia:
+  Total: 1
+  Downloaded: 1 (100.0%)
+  Failed: 0
+  No URL: 0
+
+Journal of Banking & Finance:
+  Total: 1
+  Downloaded: 0 (0.0%)
+  Failed: 1
+  No URL: 0
+
+Journal of Econometrics:
+  Total: 1
+  Downloaded: 0 (0.0%)
+  Failed: 1
+  No URL: 0
+
+Journal of Finance:
+  Total: 3
+  Downloaded: 0 (0.0%)
+  Failed: 3
+  No URL: 0
+
+Journal of Financial Economics:
+  Total: 1
+  Downloaded: 0 (0.0%)
+  Failed: 1
+  No URL: 0
+
+Journal of Forecasting:
+  Total: 1
+  Downloaded: 0 (0.0%)
+  Failed: 1
+  No URL: 0
+
+Journal of Portfolio Management:
+  Total: 2
+  Downloaded: 0 (0.0%)
+  Failed: 2
+  No URL: 0
+
+Journal of Risk:
+  Total: 1
+  Downloaded: 0 (0.0%)
+  Failed: 1
+  No URL: 0
+
+KDD:
+  Total: 1
+  Downloaded: 0 (0.0%)
+  Failed: 1
+  No URL: 0
+
+MDPI:
+  Total: 2
+  Downloaded: 0 (0.0%)
+  Failed: 2
+  No URL: 0
+
+Machine Learning:
+  Total: 1
+  Downloaded: 1 (100.0%)
+  Failed: 0
+  No URL: 0
+
+Nature:
+  Total: 1
+  Downloaded: 1 (100.0%)
+  Failed: 0
+  No URL: 0
+
+Nature Physics:
+  Total: 1
+  Downloaded: 1 (100.0%)
+  Failed: 0
+  No URL: 0
+
+Neural Computation:
+  Total: 1
+  Downloaded: 1 (100.0%)
+  Failed: 0
+  No URL: 0
+
+Neural Networks:
+  Total: 1
+  Downloaded: 0 (0.0%)
+  Failed: 1
+  No URL: 0
+
+OTexts:
+  Total: 1
+  Downloaded: 0 (0.0%)
+  Failed: 1
+  No URL: 0
+
+PRE:
+  Total: 1
+  Downloaded: 0 (0.0%)
+  Failed: 1
+  No URL: 0
+
+PRL:
+  Total: 2
+  Downloaded: 0 (0.0%)
+  Failed: 2
+  No URL: 0
+
+PRX:
+  Total: 1
+  Downloaded: 0 (0.0%)
+  Failed: 1
+  No URL: 0
+
+Phys. Rev. A:
+  Total: 1
+  Downloaded: 0 (0.0%)
+  Failed: 1
+  No URL: 0
+
+Physical Review Research:
+  Total: 1
+  Downloaded: 0 (0.0%)
+  Failed: 1
+  No URL: 0
+
+Proc. Roy. Soc. A:
+  Total: 1
+  Downloaded: 0 (0.0%)
+  Failed: 1
+  No URL: 0
+
+Qiskit Community GitHub:
+  Total: 1
+  Downloaded: 1 (100.0%)
+  Failed: 0
+  No URL: 0
+
+Qiskit Optimization:
+  Total: 1
+  Downloaded: 1 (100.0%)
+  Failed: 0
+  No URL: 0
+
+Quantitative Finance:
+  Total: 1
+  Downloaded: 0 (0.0%)
+  Failed: 1
+  No URL: 0
+
+Quantum:
+  Total: 4
+  Downloaded: 2 (50.0%)
+  Failed: 2
+  No URL: 0
+
+Quantum Inf. Process.:
+  Total: 1
+  Downloaded: 0 (0.0%)
+  Failed: 1
+  No URL: 0
+
+Quantum Sci. Technol.:
+  Total: 3
+  Downloaded: 3 (100.0%)
+  Failed: 0
+  No URL: 0
+
+ResearchGate:
+  Total: 1
+  Downloaded: 0 (0.0%)
+  Failed: 1
+  No URL: 0
+
+Review of Financial Studies:
+  Total: 3
+  Downloaded: 0 (0.0%)
+  Failed: 3
+  No URL: 0
+
+SSRN:
+  Total: 2
+  Downloaded: 0 (0.0%)
+  Failed: 2
+  No URL: 0
+
+ScienceDirect:
+  Total: 4
+  Downloaded: 0 (0.0%)
+  Failed: 4
+  No URL: 0
+
+Springer:
+  Total: 2
+  Downloaded: 2 (100.0%)
+  Failed: 0
+  No URL: 0
+
+SpringerLink:
+  Total: 5
+  Downloaded: 4 (80.0%)
+  Failed: 1
+  No URL: 0
+
+Unknown:
+  Total: 5
+  Downloaded: 0 (0.0%)
+  Failed: 0
+  No URL: 5
+
+Wiley:
+  Total: 2
+  Downloaded: 2 (100.0%)
+  Failed: 0
+  No URL: 0
+
+arXiv:
+  Total: 28
+  Downloaded: 28 (100.0%)
+  Failed: 0
+  No URL: 0
+
+npj Quantum Info:
+  Total: 1
+  Downloaded: 1 (100.0%)
+  Failed: 0
+  No URL: 0
+
+ressources-actuarielles.net:
+  Total: 1
+  Downloaded: 0 (0.0%)
+  Failed: 1
+  No URL: 0
