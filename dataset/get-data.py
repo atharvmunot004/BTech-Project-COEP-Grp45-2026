@@ -2,7 +2,7 @@ import yfinance as yf
 import pandas as pd
 
 # TCS NSE ticker
-ticker = "TCS.NS"
+ticker = "NTPC.NS"
 
 # Download 10 years of daily data
 data = yf.download(
@@ -13,7 +13,7 @@ data = yf.download(
 )
 
 # Save to CSV
-output_file = "TCS_10yr_daily.csv"
+output_file = "NTPC_10yr_daily.csv"
 data.to_csv(output_file)
 
 print(f"Downloaded {len(data)} rows for {ticker}")
