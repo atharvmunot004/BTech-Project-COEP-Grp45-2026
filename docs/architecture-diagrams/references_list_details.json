@@ -22,7 +22,148 @@
       ],
       "tools-used-in": [
         "Quantum-PCA-(qPCA)-for-Factor-Risk-Analysis"
-      ]
+      ],
+      "paper-details": {
+        "algorithms": {
+          "SAQK_PCA": {
+            "name": "Self-Adaptive Quantum Kernel PCA",
+            "purpose": "Enhance dimensionality reduction by mapping classical data into a quantum covariant space using adaptive variational circuits.",
+            "components": {
+              "feature_map": {
+                "type": "Pauli-Z feature map",
+                "operation": "Encodes each classical feature x_i into rotation Rz(x_i) on each qubit.",
+                "effect": "Maps classical input into a quantum state that preserves structured relationships."
+              },
+              "variational_layer": {
+                "type": "Trainable Rx rotations",
+                "operation": "Applies Uθ_V(x) = Π Rx(x_i * θ_i) to adapt feature mapping.",
+                "goal": "Align encoded data with group structures and optimize kernel expressivity."
+              },
+              "kernel_estimation": {
+                "method": "Quantum fidelity estimation",
+                "definition": "K(x_i, x_j) = Fidelity(ρ_i, ρ_j)",
+                "effect": "Measures similarity between quantum-encoded data.",
+                "implementation": "Qiskit sampling circuits estimate state fidelity."
+              }
+            },
+            "procedure": [
+              "Preprocess classical input vector x (standardize).",
+              "Encode x using Pauli-Z map: apply Rz(x_i) on qubits.",
+              "Apply adaptive Rx layer with trainable parameters.",
+              "Generate quantum states ρ_i and ρ_j for all data pairs.",
+              "Compute pairwise fidelity to form quantum kernel matrix K.",
+              "Apply PCA on quantum kernel matrix (same math as kernel PCA)."
+            ],
+            "output": "Low-dimensional quantum-enhanced feature representation.",
+            "advantages": [
+              "Captures nonlinear & group-structured patterns.",
+              "Produces low-redundancy kernel matrices.",
+              "Better information retention in low dimensions."
+            ]
+          },
+      
+          "Quantum_PCA": {
+            "name": "Quantum Kernel PCA (qPCA)",
+            "purpose": "Dimensionality reduction in quantum-defined feature space.",
+            "kernel_function": {
+              "definition": "Φ(x) = K(·, x)",
+              "similarity": "Fidelity between quantum states."
+            },
+            "procedure": [
+              "Obtain quantum kernel matrix using fidelity: K_ij = F(ρ_i, ρ_j).",
+              "Center and normalize the kernel matrix.",
+              "Compute covariance matrix in kernel space.",
+              "Solve eigenvalue problem C·v = λ·v.",
+              "Select top k eigenvectors.",
+              "Project data into reduced quantum feature space."
+            ],
+            "output": "Quantum principal components."
+          },
+      
+          "Classical_Kernel_PCA": {
+            "name": "Classical RBF Kernel PCA",
+            "purpose": "Dimensionality reduction using Gaussian RBF kernel.",
+            "kernel_function": {
+              "definition": "K(x_i, x_j) = exp(-||x_i - x_j||² / 2σ²)",
+              "properties": [
+                "Captures nonlinear similarity.",
+                "Introduces redundancy when data is noisy or correlated."
+              ]
+            },
+            "procedure": [
+              "Compute RBF kernel matrix for all samples.",
+              "Center the kernel matrix.",
+              "Compute covariance matrix using kernel trick.",
+              "Solve eigenvalue decomposition C·v = λ·v.",
+              "Select eigenvectors with largest eigenvalues.",
+              "Project data to reduced k-dimensional space."
+            ],
+            "limitations": [
+              "Preserves linear-like patterns well.",
+              "Loses finer group-structured or high-order nonlinear patterns."
+            ]
+          },
+      
+          "TSNE": {
+            "name": "t-SNE (Visualization Only)",
+            "purpose": "Visualize high-dimensional PCA output in 2D.",
+            "procedure": [
+              "Model high-dimensional similarities using Gaussian distribution.",
+              "Model low-dimensional similarities using Student-t distribution.",
+              "Minimize KL-divergence between high- and low-dimensional similarities.",
+              "Produce 2D embeddings revealing cluster structure."
+            ],
+            "role_in_paper": "Used to compare separability of cPCA vs SAQK qPCA."
+          },
+      
+          "ML_Models": {
+            "purpose": "Evaluate quality of compressed data.",
+            "categories": {
+              "linear_models": {
+                "LR": "Logistic regression uses sigmoid-based decision boundaries.",
+                "L-SVM": "Support vector machine with linear kernel."
+              },
+              "nonlinear_models": {
+                "RBF-SVM": "SVM with Gaussian kernel to model nonlinear boundaries.",
+                "KNN": "Classifies based on nearest neighbors in reduced space.",
+                "NB": "Probabilistic classifier assuming feature independence.",
+                "MLP": "Feedforward neural network with nonlinear activations."
+              },
+              "ensemble_learning": {
+                "RF": "Random forest builds many decision trees using bagging.",
+                "ET": "Extremely randomized trees with random splits.",
+                "GBC": "Gradient boosting decision trees.",
+                "XGB": "Optimized gradient boosting algorithm."
+              }
+            },
+            "role_in_paper": "Used purely for benchmarking information retention."
+          },
+      
+          "Low_Entropy_Synthetic_Data": {
+            "name": "Artificial Linear & Nonlinear Data Generation",
+            "purpose": "Validate algorithms on controlled low-entropy scenarios.",
+            "linear_data": {
+              "formula": "y = w·X + ε",
+              "generation_steps": [
+                "Sample features X from Gaussian distribution.",
+                "Sample weights w from Gaussian distribution.",
+                "Add noise ε sampled from N(0, σ²).",
+                "Label samples using threshold (y > 0 → class 1, else class 0)."
+              ]
+            },
+            "nonlinear_data": {
+              "formula": "y = sin(w·X) + cos(w·X) + exp(-w·X) + ln(|X| + 1) + ε",
+              "purpose": "Inject strong nonlinear structure.",
+              "properties": [
+                "Low entropy with structured relationships.",
+                "Designed to test how kernels preserve complex shapes."
+              ]
+            },
+            "standardization": "All features normalized using StandardScaler.",
+            "role_in_paper": "SAQK PCA performed better than cPCA especially in nonlinear cases."
+          }
+        }
+      }
     },
     {
       "id": 2,
