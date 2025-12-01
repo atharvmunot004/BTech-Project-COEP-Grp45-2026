@@ -281,7 +281,7 @@
       "authors": "Candia et al.",
       "year": 2024,
       "source": null,
-      "url": null,
+      "url": "https://www.sciencedirect.com/science/article/abs/pii/S0927539824000239",
       "performance-metrics": [],
       "tools-used-in": [
         "Extreme-Value-Theory-(EVT)–Peaks-Over-Threshold"
@@ -329,7 +329,7 @@
       "authors": "Hambuckers et al.",
       "year": 2023,
       "source": null,
-      "url": null,
+      "url": "https://arxiv.org/abs/2304.06950",
       "performance-metrics": [],
       "tools-used-in": [
         "Extreme-Value-Theory-(EVT)–Peaks-Over-Threshold"
@@ -388,8 +388,8 @@
       "title": "Conditional EVT models (2T-POT Hawkes)",
       "authors": "Tomlinson et al.",
       "year": 2022,
-      "source": null,
-      "url": null,
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/2202.01043",
       "performance-metrics": [],
       "tools-used-in": [
         "Extreme-Value-Theory-(EVT)–Peaks-Over-Threshold"
@@ -1354,7 +1354,7 @@
       "authors": "Bee et al.",
       "year": null,
       "source": null,
-      "url": null,
+      "url": "https://academic.oup.com/jfec/article/17/2/254/5369812",
       "performance-metrics": [],
       "tools-used-in": [
         "Extreme-Value-Theory-(EVT)–Peaks-Over-Threshold"
