@@ -5,7 +5,7 @@
       "id": 1,
       "title": "Self-Adaptive Quantum Kernel Principal Component Analysis",
       "paper-link": "\\docs\\reference-literature\\Advanced Science - 2025 - Wang - Self-Adaptive Quantum Kernel Principal Component Analysis for Compact Readout of.pdf",
-      "paper-explaination-link": "",
+      "paper-explaination-link": "\\docs\\reference-literature\\Advanced Science - 2025 - Wang - Self-Adaptive Quantum Kernel Principal Component Analysis for Compact Readout of.json",
       "authors": "Wang et al.",
       "year": 2025,
       "source": "Advanced Science",
@@ -25,6 +25,7 @@
       "tools-used-in": [
         "Quantum-PCA-(qPCA)-for-Factor-Risk-Analysis"
       ],
+      "function": ["risk assessment", "market regime detection"],
       "paper-details": {
         "algorithms": {
           "SAQK_PCA": {
