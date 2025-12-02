@@ -191,6 +191,7 @@
       "tools-used-in": [
         "Monte-Carlo-Simulation-for-VAR-CVAR"
       ],
+      "function": ["risk assessment"],
       "paper-details": {
         "algorithms": {
           "IS_MonteCarlo_for_CVaR": {
@@ -318,6 +319,7 @@
       "tools-used-in": [
         "Quantum-Generative-Adversarial-Network-(QGAN)-for-Scenario-Generation"
       ],
+      "function": ["risk assessment"],
       "paper-details": {
         "algorithms": {
           "Quantum_Generative_Model": {
@@ -449,6 +451,7 @@
       "tools-used-in": [
         "GARCH-1-1-Volatility-Forecasting"
       ],
+      "function": ["risk assessment"],
       "paper-details": {
         "algorithms": {
           "Integrated_GARCH_GRU_Model": {
@@ -584,6 +587,7 @@
       "tools-used-in": [
         "Quantum-Amplitude-Estimation-(QAE)-for-CVaR"
       ],
+      "function": ["risk assessment", "portfolio construction and optimization"],
       "paper-details": {
         "algorithms": {
           "Quantum_CVaR_Subgradient": {
@@ -719,6 +723,7 @@
       "tools-used-in": [
         "Quantum-Approximate-Optimization-Algorithm-(QAOA)-for-CVaR-based-Portfolio-Optimization"
       ],
+      "function": ["risk assessment, portfolio construction and optimization"],
       "paper-details": {
         "algorithms": {
           "Quantum_Solver_Benchmarking_Framework": {
@@ -883,6 +888,7 @@
       "tools-used-in": [
         "Quantum-Amplitude-Estimation-(QAE)-for-CVaR"
       ],
+      "function": ["risk assessment", "portfolio construction and optimization"],
       "paper-details": {
         "algorithms": {
           "Quantum_Risk_Analysis_Framework": {
@@ -1020,6 +1026,7 @@
       "tools-used-in": [
         "Quantum-Generative-Adversarial-Network-(QGAN)-for-Scenario-Generation"
       ],
+      "function": ["risk assessment"],
       "paper-details": {
         "algorithms": {
           "Quantum_Wasserstein_GAN": {
@@ -1166,6 +1173,7 @@
       "tools-used-in": [
         "GARCH-1-1-Volatility-Forecasting"
       ],
+      "function": ["risk assessment"],
       "paper-details": {
         "algorithms": {
           "Hybrid_GARCH_Model": {
@@ -1326,6 +1334,7 @@
       "tools-used-in": [
         "Monte-Carlo-Simulation-for-VAR-CVAR"
       ],
+      "function": ["risk assessment"],
       "paper-details": {
         "algorithms": {
           "MonteCarlo_RiskForecasting": {
@@ -1481,6 +1490,7 @@
       "tools-used-in": [
         "Extreme-Value-Theory-(EVT)–Peaks-Over-Threshold"
       ],
+      "function": ["risk assessment"],
       "paper-details": {
         "algorithms": {
           "Dynamic_Threshold_Exceedance_Model": {
@@ -1626,6 +1636,7 @@
       "tools-used-in": [
         "GARCH-1-1-Volatility-Forecasting"
       ],
+      "function": ["risk assessment"],
       "paper-details": {
         "algorithms": {
           "Range_Based_GARCH_Model": {
@@ -1753,6 +1764,7 @@
       "tools-used-in": [
         "Quantum-Amplitude-Estimation-(QAE)-for-CVaR"
       ],
+      "function": ["risk assessment", "portfolio construction and optimization"],
       "paper-details": {
         "algorithms": {
           "Quantum_Monte_Carlo_Integration": {
@@ -1890,6 +1902,7 @@
       "tools-used-in": [
         "Monte-Carlo-Simulation-for-VAR-CVAR"
       ],
+      "function": ["risk assessment"],
       "paper-details": {
         "algorithms": {
           "Hybrid_Quantum_Classical_MC_VaR": {
@@ -2031,6 +2044,7 @@
       "tools-used-in": [
         "Extreme-Value-Theory-(EVT)–Peaks-Over-Threshold"
       ],
+      "function": ["risk assessment"],
       "paper-details": {
         "algorithms": {
           "Extreme_Value_Regression_Model": {
@@ -2191,6 +2205,7 @@
       "tools-used-in": [
         "Extreme-Value-Theory-(EVT)–Peaks-Over-Threshold"
       ],
+      "function": ["risk assessment"],
       "paper-details": {
         "algorithms": {
           "Threshold_Selection_Methods": {
@@ -2327,6 +2342,7 @@
       "tools-used-in": [
         "Monte-Carlo-Simulation-for-VAR-CVAR"
       ],
+      "function": ["risk assessment"],
       "paper-details": {
         "algorithms": {
           "Copula_Based_VaR_Model": {
@@ -2481,6 +2497,7 @@
       "tools-used-in": [
         "Quantum-Amplitude-Estimation-(QAE)-for-CVaR"
       ],
+      "function": ["risk assessment", "portfolio construction and optimization"],
       "paper-details": {
         "algorithms": {
           "Real_Quantum_Amplitude_Estimation": {
@@ -2592,6 +2609,7 @@
       "tools-used-in": [
         "Quantum-LSTM-(Q-LSTM)"
       ],
+      "function": ["price prediction"],
       "paper-details": {
         "algorithms": {
           "Quantum_LSTM_Model": {
@@ -2737,6 +2755,7 @@
       "tools-used-in": [
         "Extreme-Value-Theory-(EVT)–Peaks-Over-Threshold"
       ],
+      "function": ["risk assessment"],
       "paper-details": {
         "algorithms": {
           "TwoThreshold_POT_Model": {
@@ -2893,6 +2912,7 @@
       "tools-used-in": [
         "Quantum-Reinforcement-Learning-(QRL)"
       ],
+      "function": ["trading strategies"],
       "paper-details": {
         "algorithms": {
           "Hybrid_Quantum_Classical_Policy_Gradient": {
@@ -3041,6 +3061,7 @@
       "tools-used-in": [
         "Quantum-Generative-Adversarial-Network-(QGAN)-for-Scenario-Generation"
       ],
+      "function": ["risk assessment"],
       "paper-details": {
         "algorithms": {
           "GAN_for_Financial_Scenarios": {
@@ -3186,6 +3207,7 @@
       "tools-used-in": [
         "Quantum-Amplitude-Estimation-(QAE)-for-CVaR"
       ],
+      "function": ["risk assessment", "portfolio construction and optimization"],
       "paper-details": {
         "algorithms": {
           "Quantum_Risk_Analysis_Framework": {
@@ -3345,6 +3367,7 @@
       "tools-used-in": [
         "Quantum-Amplitude-Estimation-(QAE)-for-CVaR"
       ],
+      "function": ["risk assessment", "portfolio construction and optimization"],
       "paper-details": {
         "algorithms": {
           "Quantum_Risk_Measurement_Framework": {
@@ -3522,6 +3545,7 @@
       "tools-used-in": [
         "Quantum-Approximate-Optimization-Algorithm-(QAOA)-for-CVaR-based-Portfolio-Optimization"
       ],
+      "function": ["risk assessment, portfolio construction and optimization"],
       "paper-details": {
         "algorithms": {
           "QAOA_for_Portfolio_Optimization": {
@@ -3679,6 +3703,7 @@
       "tools-used-in": [
         "Quantum-Boltzmann-Machine-(QBM)"
       ],
+      "function": ["price prediction"],
       "paper-details": {
         "algorithms": {
           "Quantum_Boltzmann_Machine": {
@@ -3813,6 +3838,7 @@
       "tools-used-in": [
         "Quantum-Amplitude-Estimation-for-Expected-Return-and-Risk"
       ],
+      "function": ["trading strategies"],
       "paper-details": {
         "algorithms": {
           "Simultaneous_Moment_Estimation_Framework": {
@@ -3957,6 +3983,7 @@
       "tools-used-in": [
         "Variance-Covariance-Value-at-Risk"
       ],
+      "function": ["risk assessment"],
       "paper-details": {
         "algorithms": {
           "Transformational_Analytical_VaR": {
@@ -4102,6 +4129,7 @@
       "tools-used-in": [
         "Quantum-PCA-(qPCA)-for-Factor-Risk-Analysis"
       ],
+      "function": ["risk assessment", "market regime detection"],
       "paper-details": {
         "algorithms": {
           "Quantum_Derivative_Pricing_Framework": {
@@ -4256,6 +4284,7 @@
       "tools-used-in": [
         "Quantum-LSTM-(Q-LSTM)"
       ],
+      "function": ["price prediction"],
       "paper-details": {
         "algorithms": {
           "Quantum_Recurrent_Neural_Network": {
@@ -4420,6 +4449,7 @@
       "tools-used-in": [
         "Quantum-Support-Vector-Machine-(QSVM)"
       ],
+      "function": ["price prediction"],
       "paper-details": {
         "algorithms": {
           "Quantum_Kernel_Methods": {
@@ -4570,6 +4600,7 @@
       "tools-used-in": [
         "Quantum-Approximate-Optimization-Algorithm-(QAOA)-for-CVaR-based-Portfolio-Optimization"
       ],
+      "function": ["risk assessment, portfolio construction and optimization"],
       "paper-details": {
         "algorithms": {
           "Evolving_Objective_Function": {
@@ -4723,6 +4754,7 @@
       "tools-used-in": [
         "Quantum-Reinforcement-Learning-(QRL)"
       ],
+      "function": ["trading strategies"],
       "paper-details": {
         "algorithms": {
           "Quantum_Policy_Networks": {
@@ -4883,6 +4915,7 @@
       "tools-used-in": [
         "ARIMA-(AutoRegressive-Integrated-Moving-Average)"
       ],
+      "function": ["price prediction"],
       "paper-details": {
         "algorithms": {
           "ARIMA": {
@@ -4972,6 +5005,7 @@
       "tools-used-in": [
         "Quantum-Boltzmann-Machine-for-Market-Regime-Detection"
       ],
+      "function": ["trading strategies", "market regime detection"],
       "paper-details": {
         "algorithms": {
           "Quantum_Boltzmann_Machine_for_Regime_Detection": {
@@ -5061,6 +5095,7 @@
       "tools-used-in": [
         "Quantum-Annealing-for-Multi-Objective-Portfolio-Construction"
       ],
+      "function": ["portfolio construction and optimization"],
       "paper-details": {
         "algorithms": {
           "Quantum_Annealing_Multi_Objective_Portfolio": {
@@ -5149,6 +5184,7 @@
       "tools-used-in": [
         "Quantum-Generative-Adversarial-Network-(QGAN)-for-Scenario-Generation"
       ],
+      "function": ["risk assessment"],
       "paper-details": {
         "algorithms": {
           "Generative_Neural_Network_for_Scenario_Generation": {
@@ -5238,6 +5274,7 @@
       "tools-used-in": [
         "Variance-Covariance-Value-at-Risk"
       ],
+      "function": ["risk assessment"],
       "paper-details": {
         "algorithms": {
           "Mean_Variance_VaR_MIQP_Formulation": {
@@ -5328,6 +5365,7 @@
       "tools-used-in": [
         "Reinforcement-Learning-Trading-Agent"
       ],
+      "function": ["trading strategies"],
       "paper-details": {
         "algorithms": {
           "Deep_RL_for_Trading": {
@@ -5417,6 +5455,7 @@
       "tools-used-in": [
         "Quantum-Amplitude-Estimation-for-Expected-Return"
       ],
+      "function": ["price prediction"],
       "paper-details": {
         "algorithms": {
           "Quantum_Monte_Carlo_Pricing": {
@@ -5503,6 +5542,7 @@
       "tools-used-in": [
         "Quantum-Amplitude-Estimation-for-Expected-Return-and-Risk"
       ],
+      "function": ["trading strategies"],
       "paper-details": {
         "algorithms": {
           "Quantum_Monte_Carlo_Risk_Return": {
@@ -5568,7 +5608,7 @@
         }
       }
     }, 
-    
+
     {
       "id": 42,
       "title": "Financial time series forecasting with deep learning: A systematic literature review",
@@ -5591,6 +5631,7 @@
       "tools-used-in": [
         "LSTM-(Long-Short-Term-Memory)-Neural-Network"
       ],
+      "function": ["price prediction"],
       "paper-details": {
         "algorithms": {
           "Deep_Learning_for_Time_Series_Forecasting": {
@@ -5680,6 +5721,7 @@
       "tools-used-in": [
         "Quantum-k-Means-Clustering"
       ],
+      "function": ["market regime detection"],
       "paper-details": {
         "algorithms": {
           "Hybrid_Quantum_kMeans": {
@@ -5771,6 +5813,7 @@
       "tools-used-in": [
         "Quantum-Neural-Network-(QNN)"
       ],
+      "function": ["market regime detection"],
       "paper-details": {
         "algorithms": {
           "Hybrid_Quantum_Classical_Transfer_Learning": {
@@ -5859,6 +5902,7 @@
       "tools-used-in": [
         "Quantum-Reinforcement-Learning-(QRL)"
       ],
+      "function": ["trading strategies"],
       "paper-details": {
         "algorithms": {
           "Quantum_Enhanced_SARSA": {
@@ -5951,6 +5995,7 @@
       "tools-used-in": [
         "Quantum-PCA-(qPCA)-for-Factor-Risk-Analysis"
       ],
+      "function": ["risk assessment", "market regime detection"],
       "paper-details": {
         "algorithms": {
           "Low_Complexity_qPCA": {
@@ -6043,6 +6088,7 @@
       "tools-used-in": [
         "Random-Forest-Gradient-Boosted-Trees-(XGBoost)"
       ],
+      "function": ["price prediction"],
       "paper-details": {
         "algorithms": {
           "Machine_Learning_for_Asset_Pricing": {
@@ -6134,6 +6180,7 @@
       "tools-used-in": [
         "Quantum-LSTM-(Q-LSTM)"
       ],
+      "function": ["price prediction"],
       "paper-details": {
         "algorithms": {
           "Hybrid_Quantum_Classical_LSTM": {
@@ -6230,6 +6277,7 @@
       "tools-used-in": [
         "Quantum-Mean-Variance-Optimization-(QMV)"
       ],
+      "function": ["trading strategies"],
       "paper-details": {
         "algorithms": {
           "QAOA_for_Portfolio_Optimization": {
@@ -6323,6 +6371,7 @@
       "tools-used-in": [
         "Quantum-Approximate-Optimization-Algorithm-(QAOA)-for-CVaR-based-Portfolio-Optimization"
       ],
+      "function": ["risk assessment, portfolio construction and optimization"],
       "paper-details": {
         "algorithms": {
           "CVaR_Based_Variational_Optimization": {
@@ -6417,6 +6466,7 @@
         "Quantum-Annealing-for-Multi-Objective-Portfolio-Construction",
         "Quantum-Mean-Variance-Optimization-(QUBO-Formulation)"
       ],
+      "function": ["portfolio construction and optimization"],
       "paper-details": {
         "algorithms": {
           "QUBO_Mapping_for_Portfolio_Optimization": {
@@ -6502,6 +6552,7 @@
       "tools-used-in": [
         "Quantum-Support-Vector-Machine-(QSVM)"
       ],
+      "function": ["price prediction"],
       "paper-details": {
         "algorithms": {
           "Quantum_Feature_Map": {
@@ -6590,6 +6641,7 @@
       "tools-used-in": [
         "Quantum-Neural-Network-(QNN)"
       ],
+      "function": ["market regime detection"],
       "paper-details": {
         "algorithms": {
           "Quantum_Circuit_Universal_Approximation": {
@@ -6682,6 +6734,7 @@
       "tools-used-in": [
         "Reinforcement-Learning-Trading-Agent"
       ],
+      "function": ["trading strategies"],
       "paper-details": {
         "algorithms": {
           "DeepTrader_RL_Framework": {
@@ -6777,6 +6830,7 @@
       "tools-used-in": [
         "Quantum-Boltzmann-Machine-for-Market-Regime-Detection"
       ],
+      "function": ["trading strategies", "market regime detection"],
       "paper-details": {
         "algorithms": {
           "Quantum_Generative_Model": {
@@ -6893,6 +6947,7 @@
       "tools-used-in": [
         "Quantum-k-Means-Clustering"
       ],
+      "function": ["market regime detection"],
       "paper-details": {
         "algorithms": {
           "Quantum_k_Means": {
@@ -6997,6 +7052,7 @@
         "Quantum-Mean-Variance-Optimization-(QMV)",
         "Quantum-Mean-Variance-Optimization-(QUBO-Formulation)"
       ],
+      "function": ["trading strategies", "portfolio construction and optimization"],
       "paper-details": {
         "algorithms": {
           "QAOA_for_Portfolio_Rebalancing": {
@@ -7104,6 +7160,7 @@
       "tools-used-in": [
         "Quantum-Support-Vector-Machine-(QSVM)"
       ],
+      "function": ["price prediction"],
       "paper-details": {
         "algorithms": {
           "Quantum_Enhanced_Feature_Map": {
@@ -7206,6 +7263,7 @@
         "Quantum-Boltzmann-Machine-(QBM)",
         "Quantum-Boltzmann-Machine-for-Market-Regime-Detection"
       ],
+      "function": ["price prediction", "trading strategies", "market regime detection"],
       "paper-details": {
         "algorithms": {
           "Parameterized_Quantum_Circuit_Generative_Model": {
@@ -7311,6 +7369,7 @@
       "tools-used-in": [
         "Quantum-Amplitude-Estimation-(QAE)-for-CVaR"
       ],
+      "function": ["risk assessment", "portfolio construction and optimization"],
       "paper-details": {
         "algorithms": {
           "Quantum_Amplitude_Estimation_for_Risk": {
@@ -7412,6 +7471,7 @@
       "tools-used-in": [
         "Quantum-Mean-Variance-Optimization-(QMV)"
       ],
+      "function": ["trading strategies"],
       "paper-details": {
         "algorithms": {
           "Quantum_Mean_Variance_Optimization": {
@@ -7513,6 +7573,7 @@
       "tools-used-in": [
         "LSTM-(Long-Short-Term-Memory)-Neural-Network"
       ],
+      "function": ["price prediction"],
       "paper-details": {
         "algorithms": {
           "LSTM_Model_for_Market_Prediction": {
@@ -7607,6 +7668,7 @@
       "tools-used-in": [
         "Reinforcement-Learning-Trading-Agent"
       ],
+      "function": ["trading strategies"],
       "paper-details": {
         "algorithms": {
           "Reinforcement_Learning_Framework_for_Finance": {
@@ -7717,6 +7779,7 @@
       "tools-used-in": [
         "Quantum-Neural-Network-(QNN)"
       ],
+      "function": ["market regime detection"],
       "paper-details": {
         "algorithms": {
           "Quantum_Neural_Network": {
@@ -7809,6 +7872,7 @@
       "tools-used-in": [
         "Quantum-Boltzmann-Machine-(QBM)"
       ],
+      "function": ["price prediction"],
       "paper-details": {
         "algorithms": {
           "Quantum_Boltzmann_Machine": {
@@ -7902,6 +7966,7 @@
       "tools-used-in": [
         "Reinforcement-Learning-Trading-Agent"
       ],
+      "function": ["trading strategies"],
       "paper-details": {
         "algorithms": {
           "Deep_RL_Portfolio_Allocation": {
@@ -7999,6 +8064,7 @@
         "Quantum-Annealing-for-Multi-Objective-Portfolio-Construction",
         "Quantum-Mean-Variance-Optimization-(QUBO-Formulation)"
       ],
+      "function": ["portfolio construction and optimization"],
       "paper-details": {
         "algorithms": {
           "Quantum_Annealing_for_Portfolio_Rebalancing": {
@@ -8098,6 +8164,7 @@
       "tools-used-in": [
         "Random-Forest-Gradient-Boosted-Trees-(XGBoost)"
       ],
+      "function": ["price prediction"],
       "paper-details": {
         "algorithms": {
           "XGBoost": {
@@ -8198,6 +8265,7 @@
         "Quantum-Amplitude-Estimation-for-Expected-Return",
         "Quantum-Amplitude-Estimation-for-Expected-Return-and-Risk"
       ],
+      "function": ["trading strategies", "price prediction"],
       "paper-details": {
         "algorithms": {
           "Quantum_Monte_Carlo_Speedup": {
@@ -8292,6 +8360,7 @@
       "tools-used-in": [
         "Quantum-PCA-(qPCA)-for-Factor-Risk-Analysis"
       ],
+      "function": ["risk assessment", "market regime detection"],
       "paper-details": {
         "algorithms": {
           "Quantum_PCA": {
@@ -8377,6 +8446,7 @@
       "tools-used-in": [
         "Quantum-k-Means-Clustering"
       ],
+      "function": ["market regime detection"],
       "paper-details": {
         "algorithms": {
           "Quantum_Distance_Estimation": {
@@ -8486,6 +8556,7 @@
       "tools-used-in": [
         "Momentum-Strategy"
       ],
+      "function": ["trading strategies"],
       "paper-details": {
         "algorithms": {
           "Value_Factor": {
@@ -8608,6 +8679,7 @@
       "tools-used-in": [
         "Momentum-Strategy"
       ],
+      "function": ["trading strategies"],
       "paper-details": {
         "algorithms": {
           "Time_Series_Momentum": {
@@ -8708,6 +8780,7 @@
       "tools-used-in": [
         "Variance-Covariance-Value-at-Risk"
       ],
+      "function": ["risk assessment"],
       "paper-details": {
         "algorithms": {
           "Variance_Covariance_VaR": {
@@ -8812,6 +8885,7 @@
       "tools-used-in": [
         "Risk-Parity-ERC"
       ],
+      "function": ["portfolio construction and optimization"],
       "paper-details": {
         "algorithms": {
           "Equal_Risk_Contribution": {
@@ -8910,6 +8984,7 @@
       "tools-used-in": [
         "Pairs-Trading-(Statistical-Arbitrage)"
       ],
+      "function": ["trading strategies"],
       "paper-details": {
         "algorithms": {
           "Pairs_Trading_Strategy": {
@@ -9009,6 +9084,7 @@
       "tools-used-in": [
         "ARIMA-(AutoRegressive-Integrated-Moving-Average)"
       ],
+      "function": ["price prediction"],
       "paper-details": {
         "algorithms": {
           "ARIMA_Model": {
@@ -9098,6 +9174,7 @@
       "tools-used-in": [
         "Pairs-Trading-(Statistical-Arbitrage)"
       ],
+      "function": ["trading strategies"],
       "paper-details": {
         "algorithms": {
           "Stochastic_Spread_Model": {
@@ -9204,6 +9281,7 @@
       "tools-used-in": [
         "Markowitz-Mean–Variance"
       ],
+      "function": ["portfolio construction and optimization", "trading strategies"],
       "paper-details": {
         "algorithms": {
           "Shrinkage_Covariance_Estimator": {
@@ -9310,6 +9388,7 @@
       "tools-used-in": [
         "CVaR-Optimization"
       ],
+      "function": ["portfolio construction and optimization"],
       "paper-details": {
         "algorithms": {
           "CVaR_Definition_and_Estimation": {
@@ -9421,6 +9500,7 @@
       "tools-used-in": [
         "PCA-K-Means"
       ],
+      "function": ["market regime detection"],
       "paper-details": {
         "algorithms": {
           "Principal_Component_Analysis": {
@@ -9529,6 +9609,7 @@
       "tools-used-in": [
         "Quantum-Amplitude-Estimation-for-Expected-Return"
       ],
+      "function": ["price prediction"],
       "paper-details": {
         "algorithms": {
           "Amplitude_Estimation": {
@@ -9620,6 +9701,7 @@
       "tools-used-in": [
         "Hidden-Markov-Model-(HMM)"
       ],
+      "function": ["market regime detection"],
       "paper-details": {
         "algorithms": {
           "Hidden_Markov_Model": {
@@ -9725,6 +9807,7 @@
       "tools-used-in": [
         "Support-Vector-Regression-(SVR)"
       ],
+      "function": ["price prediction"],
       "paper-details": {
         "algorithms": {
           "Support_Vector_Regression": {
@@ -9819,6 +9902,7 @@
       "tools-used-in": [
         "Reinforcement-Learning-Trading-Agent"
       ],
+      "function": ["trading strategies"],
       "paper-details": {
         "algorithms": {
           "Recurrent_Reinforcement_Learning": {
@@ -9921,6 +10005,7 @@
       "tools-used-in": [
         "Random-Forest-Gradient-Boosted-Trees-(XGBoost)"
       ],
+      "function": ["price prediction"],
       "paper-details": {
         "algorithms": {
           "Random_Forest": {
@@ -10028,6 +10113,7 @@
       "tools-used-in": [
         "CVaR-Optimization"
       ],
+      "function": ["portfolio construction and optimization"],
       "paper-details": {
         "algorithms": {
           "Rockafellar_Uryasev_CVaR_Optimization": {
@@ -10122,6 +10208,7 @@
       "tools-used-in": [
         "Gaussian-Mixture-Model-(GMM)"
       ],
+      "function": ["market regime detection"],
       "paper-details": {
         "algorithms": {
           "Finite_Mixture_Model": {
@@ -10226,6 +10313,7 @@
       "tools-used-in": [
         "Quantum-Boltzmann-Machine-(QBM)"
       ],
+      "function": ["price prediction"],
       "paper-details": {
         "algorithms": {
           "Quantum_Annealing": {
@@ -10327,6 +10415,7 @@
       "tools-used-in": [
         "LSTM-(Long-Short-Term-Memory)-Neural-Network"
       ],
+      "function": ["price prediction"],
       "paper-details": {
         "algorithms": {
           "LSTM": {
@@ -10436,6 +10525,7 @@
       "tools-used-in": [
         "Support-Vector-Regression-(SVR)"
       ],
+      "function": ["price prediction"],
       "paper-details": {
         "algorithms": {
           "Statistical_Learning_Theory": {
@@ -10548,6 +10638,7 @@
       "tools-used-in": [
         "Regime-Switching-GARCH"
       ],
+      "function": ["market regime detection"],
       "paper-details": {
         "algorithms": {
           "Regime_Switching_GARCH": {
@@ -10643,6 +10734,7 @@
       "tools-used-in": [
         "Momentum-Strategy"
       ],
+      "function": ["trading strategies"],
       "paper-details": {
         "algorithms": {
           "Cross_Sectional_Momentum": {
@@ -10731,6 +10823,7 @@
       "tools-used-in": [
         "Black–Litterman"
       ],
+      "function": ["portfolio construction and optimization"],
       "paper-details": {
         "algorithms": {
           "Black_Litterman_Model": {
@@ -10834,6 +10927,7 @@
       "tools-used-in": [
         "Markowitz-Mean–Variance"
       ],
+      "function": ["portfolio construction and optimization", "trading strategies"],
       "paper-details": {
         "algorithms": {
           "Resampled_Efficient_Frontier": {
@@ -10937,6 +11031,7 @@
       "tools-used-in": [
         "Hidden-Markov-Model-(HMM)"
       ],
+      "function": ["market regime detection"],
       "paper-details": {
         "algorithms": {
           "Markov_Switching_Model": {
@@ -11045,6 +11140,7 @@
       "tools-used-in": [
         "ARIMA-(AutoRegressive-Integrated-Moving-Average)"
       ],
+      "function": ["price prediction"],
       "paper-details": {
         "algorithms": {
           "Box_Jenkins_ARIMA": {
@@ -11170,6 +11266,7 @@
       "tools-used-in": [
         "Markowitz-Mean–Variance"
       ],
+      "function": ["portfolio construction and optimization", "trading strategies"],
       "paper-details": {
         "algorithms": {
           "Mean_Variance_Optimization": {
@@ -11260,6 +11357,7 @@
       "tools-used-in": [
         "GARCH-1-1-Volatility-Forecasting"
       ],
+      "function": ["risk assessment"],
       "paper-details": {
         "algorithms": {
           "GARCH_1_1_Model": {
@@ -11373,6 +11471,7 @@
       "tools-used-in": [
         "Extreme-Value-Theory-(EVT)–Peaks-Over-Threshold"
       ],
+      "function": ["risk assessment"],
       "paper-details": {
         "algorithms": {
           "Realized_POT_Model": {
@@ -11480,6 +11579,7 @@
       "tools-used-in": [
         "Variance-Covariance-Value-at-Risk"
       ],
+      "function": ["risk assessment"],
       "paper-details": {
         "algorithms": {
           "Parametric_VaR_Method": {
@@ -11578,6 +11678,7 @@
       "tools-used-in": [
         "GARCH-1-1-Volatility-Forecasting"
       ],
+      "function": ["risk assessment"],
       "paper-details": {
         "algorithms": {
           "Markov_Regime_Switching_GARCH": {
@@ -11683,6 +11784,7 @@
       "tools-used-in": [
         "Quantum-Approximate-Optimization-Algorithm-(QAOA)-for-CVaR-based-Portfolio-Optimization"
       ],
+      "function": ["risk assessment, portfolio construction and optimization"],
       "paper-details": {
         "algorithms": {
           "Portfolio_Optimization_Hamiltonian": {
@@ -11809,6 +11911,7 @@
       "tools-used-in": [
         "Quantum-Approximate-Optimization-Algorithm-(QAOA)-for-CVaR-based-Portfolio-Optimization"
       ],
+      "function": ["risk assessment, portfolio construction and optimization"],
       "paper-details": {
         "algorithms": {
           "CVaR_Optimization": {
@@ -11927,6 +12030,7 @@
       "tools-used-in": [
         "Quantum-Approximate-Optimization-Algorithm-(QAOA)-for-CVaR-based-Portfolio-Optimization"
       ],
+      "function": ["risk assessment, portfolio construction and optimization"],
       "paper-details": {
         "algorithms": {
           "CVaR_Improved_QAOA": {
