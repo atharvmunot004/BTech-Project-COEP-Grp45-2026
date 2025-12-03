@@ -305,10 +305,10 @@
       "source": "arXiv",
       "url": "https://arxiv.org/abs/2507.22035",
       "performance-metrics": [
-        "Distribution Fidelity (Quantum–Classical Distribution Match)",
+        "Distribution Fidelity (Quantum-Classical Distribution Match)",
         "Temporal Autocorrelation Preservation",
         "Cross-Correlation Reconstruction Accuracy",
-        "Kullback–Leibler Divergence (KL)",
+        "Kullback-Leibler Divergence (KL)",
         "Maximum Mean Discrepancy (MMD)",
         "Wasserstein Distance",
         "Mean Absolute Error of Time-Series Reconstruction",
@@ -365,7 +365,7 @@
             "purpose": "Train quantum generator to match real time-series distribution using adversarial learning.",
             "architecture": {
               "generator": "Quantum circuit producing synthetic time-series samples.",
-              "discriminator": "Classical or hybrid quantum–classical model distinguishing real vs fake samples."
+              "discriminator": "Classical or hybrid quantum-classical model distinguishing real vs fake samples."
             },
             "procedure": [
               "Sample real financial time-series segments.",
@@ -455,7 +455,7 @@
       "paper-details": {
         "algorithms": {
           "Integrated_GARCH_GRU_Model": {
-            "name": "Integrated GARCH–GRU Hybrid Volatility Forecaster",
+            "name": "Integrated GARCH-GRU Hybrid Volatility Forecaster",
             "purpose": "Combine econometric volatility modeling (GARCH) with deep recurrent neural learning (GRU) to capture nonlinear and long-term dependencies in financial volatility.",
             "components": {
               "garch_component": {
@@ -544,7 +544,7 @@
           },
     
           "Loss_Function_and_Training": {
-            "name": "Training Objective for GARCH–GRU Hybrid",
+            "name": "Training Objective for GARCH-GRU Hybrid",
             "purpose": "Optimize network weights and GARCH fusion parameters.",
             "types": {
               "mse_loss": "Minimize (σ²_pred − σ²_true)² for accurate volatility prediction.",
@@ -709,7 +709,7 @@
       "performance-metrics": [
         "Approximation Ratio",
         "Energy Expectation Value",
-        "Portfolio Objective Value (Risk–Return)",
+        "Portfolio Objective Value (Risk-Return)",
         "Constraint Satisfaction Rate",
         "Probability of Optimal Portfolio State",
         "Noise Robustness Score",
@@ -731,7 +731,7 @@
             "purpose": "Evaluate and compare quantum optimization algorithms under noisy digital simulations for portfolio optimization problems.",
             "components": {
               "portfolio_qubo_model": {
-                "definition": "QUBO representation of mean–variance portfolio optimization.",
+                "definition": "QUBO representation of mean-variance portfolio optimization.",
                 "role": "Provides unified benchmark objective across solvers.",
                 "effect": "Ensures all quantum solvers are tested on identical problem instances."
               },
@@ -1017,7 +1017,7 @@
         "Cross-Correlation Preservation",
         "Prediction Accuracy Improvement (RMSE / MAE)",
         "Volatility Pattern Similarity",
-        "Synthetic–Real Statistical Alignment Score",
+        "Synthetic-Real Statistical Alignment Score",
         "Temporal Dependency Preservation Score",
         "Training Stability of Quantum GAN",
         "Mode Collapse Severity Metric",
@@ -1132,7 +1132,7 @@
               "distribution_alignment": [
                 "Wasserstein Distance",
                 "KL Divergence",
-                "Jensen–Shannon Divergence"
+                "Jensen-Shannon Divergence"
               ],
               "temporal_metrics": [
                 "Autocorrelation Similarity",
@@ -1296,7 +1296,7 @@
                 "MAPE"
               ],
               "statistical_tests": [
-                "Ljung–Box test on residuals",
+                "Ljung-Box test on residuals",
                 "ARCH-LM test",
                 "Volatility persistence evaluation"
               ],
@@ -1488,7 +1488,7 @@
         "Tail Index Estimation Error (Shape Parameter ξ)"
       ],
       "tools-used-in": [
-        "Extreme-Value-Theory-(EVT)–Peaks-Over-Threshold"
+        "Extreme-Value-Theory-(EVT)-Peaks-Over-Threshold"
       ],
       "function": ["risk assessment"],
       "paper-details": {
@@ -1641,7 +1641,7 @@
         "algorithms": {
           "Range_Based_GARCH_Model": {
             "name": "Range-Based GARCH Model",
-            "purpose": "Improve volatility estimation by incorporating high–low price range data, which captures more information than open–close returns.",
+            "purpose": "Improve volatility estimation by incorporating high-low price range data, which captures more information than open-close returns.",
             "components": {
               "price_range": {
                 "definition": "Range_t = High_t − Low_t",
@@ -1660,7 +1660,7 @@
               }
             },
             "procedure": [
-              "Collect high–low daily price data for the asset.",
+              "Collect high-low daily price data for the asset.",
               "Compute daily range and use it as the input series.",
               "Estimate GARCH parameters using robust estimation.",
               "Generate volatility forecasts from the estimated model.",
@@ -1733,7 +1733,7 @@
               ],
               "statistical_tests": [
                 "ARCH-LM test",
-                "Ljung–Box test"
+                "Ljung-Box test"
               ]
             },
             "role_in_paper": "Demonstrates superiority of robust range-based GARCH over classical GARCH models."
@@ -1882,7 +1882,7 @@
     
     {
       "id": 14,
-      "title": "Hybrid quantum–classical Monte Carlo VaR",
+      "title": "Hybrid quantum-classical Monte Carlo VaR",
       "authors": "Zhang et al.",
       "year": 2023,
       "source": "IEEE Trans. Quantum Engineering",
@@ -1906,7 +1906,7 @@
       "paper-details": {
         "algorithms": {
           "Hybrid_Quantum_Classical_MC_VaR": {
-            "name": "Hybrid Quantum–Classical Monte Carlo VaR",
+            "name": "Hybrid Quantum-Classical Monte Carlo VaR",
             "purpose": "Improve Value-at-Risk estimation by combining classical Monte Carlo sampling with quantum subroutines for probability estimation and variance reduction.",
             "components": {
               "quantum_probability_estimator": {
@@ -2042,7 +2042,7 @@
         "Robustness to Model Misspecification"
       ],
       "tools-used-in": [
-        "Extreme-Value-Theory-(EVT)–Peaks-Over-Threshold"
+        "Extreme-Value-Theory-(EVT)-Peaks-Over-Threshold"
       ],
       "function": ["risk assessment"],
       "paper-details": {
@@ -2106,7 +2106,7 @@
               "Define estimating equations for GPD/GEV parameters.",
               "Incorporate covariate structure to form regression model.",
               "Construct efficient influence functions to reduce estimator variance.",
-              "Optimize parameters using iterative methods (Newton–Raphson or gradient-based).",
+              "Optimize parameters using iterative methods (Newton-Raphson or gradient-based).",
               "Compute standard errors and asymptotic variance estimates."
             ],
             "advantages": [
@@ -2192,7 +2192,7 @@
       "url": null,
       "performance-metrics": [
         "Threshold Selection Accuracy",
-        "Bias–Variance Tradeoff in Tail Estimates",
+        "Bias-Variance Tradeoff in Tail Estimates",
         "GPD Parameter Estimation Error (ξ, β)",
         "VaR Tail Quantile Estimation Error",
         "CVaR Tail Severity Estimation Error",
@@ -2203,7 +2203,7 @@
         "Coverage Probability for Extreme Quantiles"
       ],
       "tools-used-in": [
-        "Extreme-Value-Theory-(EVT)–Peaks-Over-Threshold"
+        "Extreme-Value-Theory-(EVT)-Peaks-Over-Threshold"
       ],
       "function": ["risk assessment"],
       "paper-details": {
@@ -2300,7 +2300,7 @@
             "methods": {
               "goodness_of_fit": [
                 "QQ-plots",
-                "Kolmogorov–Smirnov test",
+                "Kolmogorov-Smirnov test",
                 "Likelihood-based diagnostics"
               ],
               "stability_criteria": [
@@ -2517,7 +2517,7 @@
               "iterative_sampling_scheme": {
                 "definition": "Use repeated sampling and polynomial-based reconstruction of amplitude.",
                 "role": "Achieves estimator convergence with fewer quantum resources.",
-                "effect": "Balances bias–variance tradeoff without requiring deep circuits."
+                "effect": "Balances bias-variance tradeoff without requiring deep circuits."
               }
             },
             "procedure": [
@@ -2569,7 +2569,7 @@
             ],
             "advantages": [
               "Enables quantum-enhanced Monte Carlo for risk and derivative pricing.",
-              "Suitable for integration with hybrid algorithms (e.g., QMC–QAE hybrids)."
+              "Suitable for integration with hybrid algorithms (e.g., QMC-QAE hybrids)."
             ]
           },
     
@@ -2635,7 +2635,7 @@
             "procedure": [
               "Encode input time-series values into quantum states (angle/amplitude encoding).",
               "Pass encoded inputs through quantum variational circuits acting as gates.",
-              "Update hidden and cell states using hybrid classical–quantum recurrence rules.",
+              "Update hidden and cell states using hybrid classical-quantum recurrence rules.",
               "Generate forecasts via classical output layers.",
               "Train end-to-end using gradient-based optimization and parameter shift rules."
             ],
@@ -2697,7 +2697,7 @@
           },
     
           "Hybrid_Training_Framework": {
-            "name": "Hybrid Classical–Quantum Training Procedure",
+            "name": "Hybrid Classical-Quantum Training Procedure",
             "purpose": "Train Q-LSTM efficiently using gradient-based optimization.",
             "steps": [
               "Compute forward pass with quantum circuits and classical layers.",
@@ -2746,14 +2746,14 @@
         "Hawkes Intensity Estimation Error",
         "VaR Tail Quantile Forecast Accuracy",
         "CVaR Tail Severity Forecast Accuracy",
-        "Bias–Variance Tradeoff Under Conditional EVT",
+        "Bias-Variance Tradeoff Under Conditional EVT",
         "Goodness-of-Fit of GPD Conditional Tail Model",
         "Likelihood Improvement vs Static EVT Models",
         "Out-of-Sample Extreme Risk Forecast Accuracy",
         "Clustering-of-Exceedances Detection Accuracy"
       ],
       "tools-used-in": [
-        "Extreme-Value-Theory-(EVT)–Peaks-Over-Threshold"
+        "Extreme-Value-Theory-(EVT)-Peaks-Over-Threshold"
       ],
       "function": ["risk assessment"],
       "paper-details": {
@@ -2906,7 +2906,7 @@
         "Training Stability",
         "Gradient Estimation Error",
         "Return-to-Variance Ratio",
-        "Exploration–Exploitation Performance",
+        "Exploration-Exploitation Performance",
         "Robustness to Noise in Quantum Circuits"
       ],
       "tools-used-in": [
@@ -2916,7 +2916,7 @@
       "paper-details": {
         "algorithms": {
           "Hybrid_Quantum_Classical_Policy_Gradient": {
-            "name": "Hybrid Quantum–Classical Policy Gradient Method",
+            "name": "Hybrid Quantum-Classical Policy Gradient Method",
             "purpose": "Use parameterized quantum circuits (PQCs) as policy networks within reinforcement learning (RL), trained with classical gradient-based optimization.",
             "components": {
               "quantum_policy_network": {
@@ -3027,7 +3027,7 @@
               "Convergence rate",
               "Sample efficiency",
               "Policy stability",
-              "Exploration–exploitation tradeoff"
+              "Exploration-exploitation tradeoff"
             ],
             "key_findings": [
               "Quantum policies match or outperform classical policies in several environments.",
@@ -3048,7 +3048,7 @@
       "url": "https://www.ressources-actuarielles.net/...",
       "performance-metrics": [
         "Distributional Similarity (Wasserstein Distance)",
-        "Kolmogorov–Smirnov (KS) Test Distance",
+        "Kolmogorov-Smirnov (KS) Test Distance",
         "Mean Absolute Error of Financial Statistics",
         "Return Distribution Matching Error",
         "Volatility Clustering Similarity",
@@ -3112,7 +3112,7 @@
               "Analyze real data stylized facts.",
               "Monitor corresponding metrics during GAN training.",
               "Penalize generator when stylized facts diverge from targets.",
-              "Use statistical tests (KS, Wasserstein, Ljung–Box)."
+              "Use statistical tests (KS, Wasserstein, Ljung-Box)."
             ],
             "advantages": [
               "Ensures realism beyond mere distribution matching.",
@@ -3200,7 +3200,7 @@
         "Sampling Cost Reduction vs Classical MC",
         "Noise Robustness in Risk Estimation",
         "Accuracy of Higher-Order Risk Metrics (beyond VaR/CVaR)",
-        "Bias–Variance Tradeoff of Quantum Estimators",
+        "Bias-Variance Tradeoff of Quantum Estimators",
         "Success Probability of Quantum Risk Estimator",
         "Resource Scaling with Portfolio Dimension"
       ],
@@ -3550,7 +3550,7 @@
         "algorithms": {
           "QAOA_for_Portfolio_Optimization": {
             "name": "Quantum Approximate Optimization Algorithm (QAOA) for Portfolio Optimization",
-            "purpose": "Use QAOA to solve the quadratic unconstrained binary optimization (QUBO) formulation of mean–variance portfolio selection.",
+            "purpose": "Use QAOA to solve the quadratic unconstrained binary optimization (QUBO) formulation of mean-variance portfolio selection.",
             "components": {
               "qubo_formulation": {
                 "definition": "Transform portfolio optimization into minimizing H = −μᵀx + λ xᵀΣx.",
@@ -3578,7 +3578,7 @@
               "Optimize parameters (γ, β) to minimize expected energy.",
               "Decode optimal bitstring into portfolio allocation."
             ],
-            "output": "Portfolio configuration approximating optimal mean–variance tradeoff.",
+            "output": "Portfolio configuration approximating optimal mean-variance tradeoff.",
             "advantages": [
               "Naturally fits binary selection tasks such as constrained portfolios.",
               "Can outperform classical heuristics for certain problem classes.",
@@ -3587,7 +3587,7 @@
           },
     
           "Hamiltonian_Construction_Module": {
-            "name": "Hamiltonian Construction for Portfolio Mean–Variance Model",
+            "name": "Hamiltonian Construction for Portfolio Mean-Variance Model",
             "purpose": "Encode expected returns and risk into a quantum Hamiltonian suitable for QAOA.",
             "components": {
               "return_term": {
@@ -3621,7 +3621,7 @@
               "classical_optimizers": [
                 "COBYLA",
                 "SPSA",
-                "Nelder–Mead",
+                "Nelder-Mead",
                 "BFGS"
               ],
               "landscape_exploration": "Analyze energy landscape sensitivity to γ and β."
@@ -3649,7 +3649,7 @@
             ],
             "advantages": [
               "Works naturally for cardinality-constrained portfolios.",
-              "Allows Monte-Carlo–style sampling of near-optimal portfolios."
+              "Allows Monte-Carlo-style sampling of near-optimal portfolios."
             ]
           },
     
@@ -3690,7 +3690,7 @@
       "url": "https://arxiv.org/abs/2006.06004",
       "performance-metrics": [
         "Log-Likelihood of Generated Data",
-        "Kullback–Leibler (KL) Divergence",
+        "Kullback-Leibler (KL) Divergence",
         "Wasserstein Distance Between Real and Generated Returns",
         "Autocorrelation Structure Preservation",
         "Volatility Clustering Similarity",
@@ -3829,7 +3829,7 @@
         "Estimation Error for Higher-Order Moments",
         "Quantum Query Complexity",
         "Sample Complexity Reduction vs Classical MC",
-        "Bias–Variance Tradeoff Across Estimated Moments",
+        "Bias-Variance Tradeoff Across Estimated Moments",
         "Robustness to Noise and Decoherence",
         "Success Probability of Moment Extraction",
         "Scaling with Number of Moments",
@@ -3973,10 +3973,10 @@
         "Tail Probability Error",
         "Mean Squared Error of VaR Estimate",
         "Deviation from Historical VaR",
-        "Variance–Covariance Matrix Stability",
+        "Variance-Covariance Matrix Stability",
         "Error Sensitivity to Non-Normality",
         "Model Robustness Under Skewness",
-        "Computation Speed vs Classical Delta–Normal VaR",
+        "Computation Speed vs Classical Delta-Normal VaR",
         "Portfolio Aggregation Error",
         "Scenario Transformation Consistency"
       ],
@@ -3993,11 +3993,11 @@
               "distribution_transformation_function": {
                 "definition": "T(X) transforms raw return distribution X into a more Gaussian-like distribution Y = T(X).",
                 "examples": [
-                  "Box–Cox transformation",
+                  "Box-Cox transformation",
                   "Johnson SU transformation",
                   "Log-sinh transformation"
                 ],
-                "role": "Corrects heavy tails and skewness prior to variance–covariance VaR computation."
+                "role": "Corrects heavy tails and skewness prior to variance-covariance VaR computation."
               },
               "variance_covariance_framework": {
                 "definition": "Use mean µ, variance σ², and correlation matrix Σ to compute parametric VaR.",
@@ -4013,7 +4013,7 @@
               "Collect historical return data.",
               "Apply transformation T to reduce skewness and correctly shape tails.",
               "Compute mean vector µ and covariance matrix Σ in transformed space.",
-              "Calculate analytical VaR using parametric variance–covariance method.",
+              "Calculate analytical VaR using parametric variance-covariance method.",
               "Apply inverse transformation to obtain VaR in original scale.",
               "Validate transformed VaR through backtesting and distributional checks."
             ],
@@ -4027,8 +4027,8 @@
           },
     
           "Variance_Covariance_VaR_Module": {
-            "name": "Variance–Covariance VaR Calculation Module",
-            "purpose": "Compute VaR analytically using mean, variance, and covariance matrices (classic delta–normal method).",
+            "name": "Variance-Covariance VaR Calculation Module",
+            "purpose": "Compute VaR analytically using mean, variance, and covariance matrices (classic delta-normal method).",
             "components": {
               "mean_estimation": {
                 "definition": "µ = average return for asset or portfolio."
@@ -4070,16 +4070,16 @@
             "purpose": "Identify appropriate distributional transformation T(x) to optimize VaR accuracy.",
             "criteria": [
               "Reduction of skewness and kurtosis",
-              "Improved normality tests (Shapiro–Wilk, Anderson–Darling)",
+              "Improved normality tests (Shapiro-Wilk, Anderson-Darling)",
               "Improved tail fit",
               "Stability of covariance matrix after transformation",
               "Computational tractability"
             ],
             "procedure": [
-              "Evaluate multiple transformation families (Box–Cox, Johnson, log-sinh).",
+              "Evaluate multiple transformation families (Box-Cox, Johnson, log-sinh).",
               "Select transformation that yields near-Gaussian behavior.",
               "Fit transformation parameters via maximum likelihood.",
-              "Validate using Q–Q plots and distributional tests."
+              "Validate using Q-Q plots and distributional tests."
             ],
             "advantages": [
               "Adaptable to different asset classes.",
@@ -4090,7 +4090,7 @@
     
           "Backtesting_and_Validation": {
             "name": "Backtesting Framework for Analytical Transformed VaR",
-            "purpose": "Evaluate transformed VaR accuracy compared to standard delta–normal VaR.",
+            "purpose": "Evaluate transformed VaR accuracy compared to standard delta-normal VaR.",
             "methods": {
               "exception_ratio": "Compare observed exceedances vs expected exceedances.",
               "Kupiec_test": "Tests unconditional coverage.",
@@ -4209,7 +4209,7 @@
             "name": "Quantum State Preparation for Asset Price Dynamics",
             "purpose": "Construct quantum states representing uncertain terminal prices or stochastic paths.",
             "methods": {
-              "lognormal_distribution_loading": "Encode lognormal density used in Black–Scholes model.",
+              "lognormal_distribution_loading": "Encode lognormal density used in Black-Scholes model.",
               "binomial_tree_encoding": "Map discrete tree nodes into quantum amplitudes.",
               "Gaussian_increment_encoding": "Represent Brownian increments as superpositions."
             },
@@ -4246,7 +4246,7 @@
             "name": "Performance Benchmarking on IBM Quantum Devices",
             "purpose": "Evaluate how well current NISQ hardware supports derivative pricing.",
             "metrics": {
-              "pricing_error": "Difference vs Black–Scholes or high-precision Monte Carlo.",
+              "pricing_error": "Difference vs Black-Scholes or high-precision Monte Carlo.",
               "circuit_depth_vs_accuracy": "Effect of depth on noise accumulation.",
               "hardware_noise_characteristics": "Readout error, decoherence, gate infidelity.",
               "resource_scaling": "Qubits and depth required for multi-factor pricing."
@@ -4695,7 +4695,7 @@
               "optimizers": [
                 "COBYLA",
                 "SPSA",
-                "Nelder–Mead",
+                "Nelder-Mead",
                 "Gradient descent"
               ],
               "staged_training": "Reinitialize optimizer at different λ regions to avoid stagnation."
@@ -4958,7 +4958,7 @@
           },
     
           "Box_Jenkins_Methodology": {
-            "name": "Box–Jenkins Methodology",
+            "name": "Box-Jenkins Methodology",
             "purpose": "Systematically identify, estimate, and validate ARIMA models.",
             "procedure": [
               "Model identification using ACF/PACF analysis.",
@@ -4996,7 +4996,7 @@
         "Convergence rate of QBM-based unsupervised learning",
         "Stability of regime identification over time",
         "Detection sensitivity to transitions between market regimes",
-        "Kullback–Leibler divergence between actual and learned distributions",
+        "Kullback-Leibler divergence between actual and learned distributions",
         "Robustness to market noise and data nonstationarity",
         "Quantum sampling efficiency vs classical methods",
         "Fidelity of state preparation for regime detection",
@@ -5171,7 +5171,7 @@
       "url": "https://arxiv.org/pdf/2109.10072",
       "performance-metrics": [
         "Distributional similarity to historical data (e.g., KL divergence, Wasserstein distance)",
-        "Scenario realism evaluation via statistical tests (e.g., Jarque–Bera, Kolmogorov–Smirnov)",
+        "Scenario realism evaluation via statistical tests (e.g., Jarque-Bera, Kolmogorov-Smirnov)",
         "Tail risk generation accuracy (extreme return coverage)",
         "Volatility clustering preservation",
         "Convergence stability of generative model training",
@@ -5242,7 +5242,7 @@
             "name": "Scenario Validation via Statistical Tests",
             "purpose": "Ensure generated scenarios align with historical and risk-based distribution profiles.",
             "procedure": [
-              "Apply statistical similarity tests (e.g., Kolmogorov–Smirnov, Chi-square).",
+              "Apply statistical similarity tests (e.g., Kolmogorov-Smirnov, Chi-square).",
               "Evaluate tail fit using Extreme Value Theory metrics.",
               "Backtest generated scenarios in risk models."
             ],
@@ -5714,7 +5714,7 @@
         "Scalability with number of data points",
         "Sample complexity efficiency",
         "Execution time vs classical clustering",
-        "Impact of quantum–classical interface latency",
+        "Impact of quantum-classical interface latency",
         "Stability of convergence under hardware noise",
         "Distance estimation precision in hybrid approach"
       ],
@@ -5725,7 +5725,7 @@
       "paper-details": {
         "algorithms": {
           "Hybrid_Quantum_kMeans": {
-            "name": "Hybrid Quantum–Classical k-Means Clustering",
+            "name": "Hybrid Quantum-Classical k-Means Clustering",
             "purpose": "Address practical limitations in quantum clustering by combining quantum subroutines (e.g., distance estimation) with classical optimization to improve feasibility and efficiency.",
             "components": {
               "quantum_distance_estimator": {
@@ -5964,7 +5964,7 @@
             "procedure": [
               "Use quantum circuits for efficient value estimation.",
               "Perform classical reward update rules.",
-              "Cycle through decision–measurement–update steps.",
+              "Cycle through decision-measurement-update steps.",
               "Compare hybrid agent performance vs classical approach."
             ],
             "output": "Hybrid RL agent with potentially reduced computation time and improved learning characteristics."
@@ -6115,12 +6115,12 @@
               "Construct predictive features using past trading and fundamental indicators.",
               "Apply machine learning models (e.g., XGBoost, Random Forest) for return prediction.",
               "Use cross-validation for hyperparameter optimization.",
-              "Rank assets based on predicted returns and form long–short portfolios.",
+              "Rank assets based on predicted returns and form long-short portfolios.",
               "Evaluate model using statistical and economic performance metrics."
             ],
             "output": "ML-predicted stock returns and portfolio construction rules based on model outputs.",
             "advantages": [
-              "Outperforms linear factor models (e.g., Fama–French) in predictive accuracy.",
+              "Outperforms linear factor models (e.g., Fama-French) in predictive accuracy.",
               "Captures nonlinear factor interactions and conditional relationships.",
               "Provides robust predictions using high-dimensional data."
             ],
@@ -6148,7 +6148,7 @@
             "purpose": "Translate model predictions into actionable trading strategies.",
             "procedure": [
               "Sort firms by predicted returns.",
-              "Construct long–short portfolios based on return deciles.",
+              "Construct long-short portfolios based on return deciles.",
               "Backtest strategy under transaction cost assumptions.",
               "Evaluate Sharpe Ratio, information ratio, and drawdowns."
             ],
@@ -6282,11 +6282,11 @@
         "algorithms": {
           "QAOA_for_Portfolio_Optimization": {
             "name": "Quantum Approximate Optimization Algorithm (QAOA) for Portfolio Optimization",
-            "purpose": "Solve the mean–variance portfolio optimization problem using QAOA on near-term quantum hardware by formulating it as a QUBO optimization task.",
+            "purpose": "Solve the mean-variance portfolio optimization problem using QAOA on near-term quantum hardware by formulating it as a QUBO optimization task.",
             "components": {
               "qubo_formulation": {
                 "definition": "Minimize f(x) = xᵀΣx − μᵀx subject to constraints formulated as quadratic penalty terms.",
-                "role": "Represents risk–return tradeoff in QAOA Hamiltonian."
+                "role": "Represents risk-return tradeoff in QAOA Hamiltonian."
               },
               "cost_hamiltonian": {
                 "definition": "H_C = Σ_{i,j} Σ_{ij} Z_i Z_j − Σ_i μ_i Z_i + penalty_terms",
@@ -6300,7 +6300,7 @@
               }
             },
             "procedure": [
-              "Formulate mean–variance optimization as QUBO problem.",
+              "Formulate mean-variance optimization as QUBO problem.",
               "Map QUBO to quantum cost Hamiltonian H_C.",
               "Initialize equal superposition state.",
               "Apply alternating evolution under cost and mixer Hamiltonians using QAOA:",
@@ -6328,7 +6328,7 @@
             "procedure": [
               "Initialize β and γ parameters.",
               "Simulate QAOA circuit and evaluate expectation of H_C.",
-              "Use classical optimizer (e.g., COBYLA, Nelder–Mead) to update parameters.",
+              "Use classical optimizer (e.g., COBYLA, Nelder-Mead) to update parameters.",
               "Repeat until convergence or time constraint limit."
             ],
             "output": "Optimized (β, γ) values providing lowest cost function result."
@@ -6453,7 +6453,7 @@
       "performance-metrics": [
         "Solution quality vs classical solvers (objective value)",
         "Time-to-solution on quantum annealer",
-        "Risk–return tradeoff optimization efficiency",
+        "Risk-return tradeoff optimization efficiency",
         "Constraint satisfaction ratio (budget, volatility, allocation bounds)",
         "Convergence behavior across annealing runs",
         "Impact of QUBO penalty weights on solution feasibility",
@@ -6475,7 +6475,7 @@
             "components": {
               "objective_matrix": {
                 "definition": "Q matrix encodes tradeoff between return maximization and risk minimization.",
-                "role": "Transforms classical mean–variance optimization objective into binary quadratic form."
+                "role": "Transforms classical mean-variance optimization objective into binary quadratic form."
               },
               "penalty_terms": {
                 "definition": "Quadratic penalties introduced for budget, diversification, and regulatory constraints.",
@@ -6584,7 +6584,7 @@
             "advantages": [
               "Allows learning in exponentially large feature spaces.",
               "Enhances ability to capture nonlinear decision boundaries.",
-              "Compatible with hybrid quantum–classical ML workflows."
+              "Compatible with hybrid quantum-classical ML workflows."
             ],
             "limitations": [
               "Quantum advantage depends on circuit depth and proper feature mapping.",
@@ -6817,7 +6817,7 @@
       "url": "https://www.nature.com/articles/s41534-019-0187-2",
       "performance-metrics": [
         "Log-likelihood of learned probability distribution",
-        "Kullback–Leibler (KL) divergence between true and learned distributions",
+        "Kullback-Leibler (KL) divergence between true and learned distributions",
         "Training convergence rate of quantum generative model",
         "Sampling fidelity between model-generated and target samples",
         "Expressibility of quantum circuit used for generative modeling",
@@ -7057,7 +7057,7 @@
         "algorithms": {
           "QAOA_for_Portfolio_Rebalancing": {
             "name": "Quantum Approximate Optimization Algorithm (QAOA) for Portfolio Rebalancing",
-            "purpose": "Solve portfolio optimization problems by encoding mean–variance objective into a QUBO Hamiltonian and using QAOA to approximate the optimal allocation.",
+            "purpose": "Solve portfolio optimization problems by encoding mean-variance objective into a QUBO Hamiltonian and using QAOA to approximate the optimal allocation.",
             "components": {
               "qubo_encoding": {
                 "definition": "Encode portfolio weights as binary decision variables x ∈ {0,1} mapped into QUBO cost function.",
@@ -7078,7 +7078,7 @@
               }
             },
             "procedure": [
-              "Formulate mean–variance optimization as a QUBO problem.",
+              "Formulate mean-variance optimization as a QUBO problem.",
               "Encode QUBO matrix Q into cost Hamiltonian H_C.",
               "Apply p-layer QAOA using alternating unitaries e^{-iγH_C} and e^{-iβH_M}.",
               "Sample output bitstrings representing possible portfolios.",
@@ -7086,7 +7086,7 @@
               "Optimize γ, β using classical machine learning or gradient-based updates.",
               "Select portfolio with lowest quantum energy (best cost)."
             ],
-            "output": "Quantum-generated portfolio allocations approximating mean–variance optimal weights.",
+            "output": "Quantum-generated portfolio allocations approximating mean-variance optimal weights.",
             "advantages": [
               "Quantum-friendly formulation of portfolio optimization.",
               "Potential speedup for large-scale combinatorial financial problems.",
@@ -7102,8 +7102,8 @@
           },
     
           "QUBO_Portfolio_Encoding": {
-            "name": "QUBO Formulation for Mean–Variance Optimization",
-            "purpose": "Translate Markowitz mean–variance problem into binary optimization form suitable for quantum algorithms.",
+            "name": "QUBO Formulation for Mean-Variance Optimization",
+            "purpose": "Translate Markowitz mean-variance problem into binary optimization form suitable for quantum algorithms.",
             "components": {
               "binary_weights": {
                 "definition": "Represent each asset’s weight via multiple binary variables (bit-depth encoding).",
@@ -7116,7 +7116,7 @@
             },
             "procedure": [
               "Discretize portfolio weights into binary representations.",
-              "Construct QUBO matrix with mean–variance objective and penalty terms.",
+              "Construct QUBO matrix with mean-variance objective and penalty terms.",
               "Pass QUBO to QAOA for quantum optimization.",
               "Decode best-performing bitstrings back into portfolio weights."
             ],
@@ -7124,7 +7124,7 @@
           },
     
           "Quantum_Mean_Variance_Optimization": {
-            "name": "Quantum Mean–Variance Optimization (QMV)",
+            "name": "Quantum Mean-Variance Optimization (QMV)",
             "purpose": "Use quantum optimization techniques to minimize portfolio variance while maximizing expected return.",
             "procedure": [
               "Define Markowitz objective function in QUBO format.",
@@ -7249,7 +7249,7 @@
       "url": "https://iopscience.iop.org/article/10.1088/2058-9565/ab4eb5",
       "performance-metrics": [
         "Log-likelihood of generated distribution",
-        "Kullback–Leibler (KL) divergence between target and generated distributions",
+        "Kullback-Leibler (KL) divergence between target and generated distributions",
         "Mode coverage and avoidance of mode collapse",
         "Training convergence stability across circuit depths",
         "Expressibility and entanglement capacity of parameterized circuits",
@@ -7325,7 +7325,7 @@
               "Define QBM Hamiltonian structure.",
               "Use PQC to approximate thermal distribution over states.",
               "Generate samples and compute log-likelihood gradient estimates.",
-              "Perform hybrid classical–quantum parameter optimization.",
+              "Perform hybrid classical-quantum parameter optimization.",
               "Evaluate equilibrium distribution accuracy via divergence metrics."
             ],
             "output": "Approximate quantum Boltzmann distribution encoded in PQC outputs."
@@ -7363,7 +7363,7 @@
         "Estimation error bounds for quantum risk measures",
         "Robustness of quantum circuits to noise during amplitude estimation",
         "Confidence interval tightness for quantum-estimated risk metrics",
-        "Bias–variance tradeoff in QAE under finite sampling",
+        "Bias-variance tradeoff in QAE under finite sampling",
         "Comparison of quantum vs classical risk analytics performance"
       ],
       "tools-used-in": [
@@ -7466,7 +7466,7 @@
         "Approximation error from Hamiltonian simulation in optimization",
         "Variance of quantum-estimated risk measures",
         "Quantum resource requirements (gate depth, qubit count)",
-        "Comparison of portfolio return–risk tradeoff vs classical solver"
+        "Comparison of portfolio return-risk tradeoff vs classical solver"
       ],
       "tools-used-in": [
         "Quantum-Mean-Variance-Optimization-(QMV)"
@@ -7475,8 +7475,8 @@
       "paper-details": {
         "algorithms": {
           "Quantum_Mean_Variance_Optimization": {
-            "name": "Quantum Mean–Variance Optimization (QMV)",
-            "purpose": "Use quantum algorithms—primarily quantum linear system solvers (QLS)—to solve the Markowitz mean–variance optimization problem more efficiently than classical methods.",
+            "name": "Quantum Mean-Variance Optimization (QMV)",
+            "purpose": "Use quantum algorithms—primarily quantum linear system solvers (QLS)—to solve the Markowitz mean-variance optimization problem more efficiently than classical methods.",
             "components": {
               "quantum_state_preparation": {
                 "definition": "Encode mean return vector μ and covariance matrix Σ into quantum states.",
@@ -7623,7 +7623,7 @@
             "purpose": "Convert LSTM model predictions into executable trading decisions and evaluate economic performance.",
             "procedure": [
               "Use LSTM outputs to classify next-day direction (long/short).",
-              "Construct portfolio using long-only or long–short signals.",
+              "Construct portfolio using long-only or long-short signals.",
               "Backtest strategy over out-of-sample period.",
               "Compute Sharpe Ratio, cumulative returns, and drawdowns.",
               "Benchmark against classical machine-learning and linear models."
@@ -7662,7 +7662,7 @@
         "Volatility of returns generated by the agent",
         "Reward convergence speed during training",
         "Action distribution entropy (exploration vs exploitation)",
-        "Transaction cost–adjusted profitability",
+        "Transaction cost-adjusted profitability",
         "Out-of-sample generalization of RL strategy"
       ],
       "tools-used-in": [
@@ -7717,11 +7717,11 @@
           },
     
           "Policy_Gradient_Methods": {
-            "name": "Policy Gradient–Based Reinforcement Learning",
+            "name": "Policy Gradient-Based Reinforcement Learning",
             "purpose": "Directly optimize trading policies by maximizing expected cumulative reward.",
             "procedure": [
               "Sample trajectories using current policy π(a|s).",
-              "Estimate gradient of expected reward via REINFORCE or actor–critic methods.",
+              "Estimate gradient of expected reward via REINFORCE or actor-critic methods.",
               "Update policy parameters in gradient ascent direction.",
               "Incorporate entropy bonuses to encourage exploration.",
               "Evaluate policy stability under stochastic returns."
@@ -7774,7 +7774,7 @@
         "Quantum circuit depth vs classification performance",
         "Training loss reduction across iterations",
         "Fidelity of state preparation in QNN",
-        "Training stability under hybrid quantum–classical optimization"
+        "Training stability under hybrid quantum-classical optimization"
       ],
       "tools-used-in": [
         "Quantum-Neural-Network-(QNN)"
@@ -7784,7 +7784,7 @@
         "algorithms": {
           "Quantum_Neural_Network": {
             "name": "Quantum Neural Network (QNN)",
-            "purpose": "Perform classification tasks using a parameterized quantum circuit trained via hybrid quantum–classical optimization.",
+            "purpose": "Perform classification tasks using a parameterized quantum circuit trained via hybrid quantum-classical optimization.",
             "components": {
               "quantum_feature_encoding": {
                 "definition": "Encode classical input vector x into quantum state |ψ(x)⟩ via data-dependent rotations.",
@@ -7859,7 +7859,7 @@
       "url": "https://journals.aps.org/prx/abstract/10.1103/PhysRevX.8.021050",
       "performance-metrics": [
         "Log-likelihood of learned distribution",
-        "Kullback–Leibler divergence between target and model distributions",
+        "Kullback-Leibler divergence between target and model distributions",
         "Convergence rate of QBM parameter optimization",
         "Quantum Gibbs state fidelity",
         "Energy expectation error during training",
@@ -7996,7 +7996,7 @@
               "Construct state tensor from historical cryptocurrency prices and current allocations.",
               "Define reward signal based on logarithmic portfolio return.",
               "Initialize RL policy network and simulate market interaction.",
-              "Use deep RL algorithm (e.g., policy gradient or actor–critic) to update parameters.",
+              "Use deep RL algorithm (e.g., policy gradient or actor-critic) to update parameters.",
               "Iteratively improve strategy through episodes till convergence.",
               "Backtest agent performance on unseen data."
             ],
@@ -8029,7 +8029,7 @@
     
           "CNN_Based_State_Encoder": {
             "name": "Convolutional Neural Network (CNN) for Market State Encoding",
-            "purpose": "Extract spatial–temporal patterns from cryptocurrency price time-series.",
+            "purpose": "Extract spatial-temporal patterns from cryptocurrency price time-series.",
             "procedure": [
               "Input normalized cryptocurrency price sequence.",
               "Apply convolutional filters to detect market features.",
@@ -8051,7 +8051,7 @@
       "performance-metrics": [
         "Quantum annealer solution quality vs classical solver",
         "Time-to-solution comparison (annealing vs classical optimization)",
-        "Objective function value (risk–return tradeoff) post-rebalancing",
+        "Objective function value (risk-return tradeoff) post-rebalancing",
         "Constraint violation rate (budget, leverage, maximum holdings)",
         "Portfolio turnover and trade optimization efficiency",
         "Annealing convergence success probability",
@@ -8107,7 +8107,7 @@
     
           "QUBO_Formulation_for_Portfolio_Optimization": {
             "name": "QUBO Formulation for Portfolio Optimization",
-            "purpose": "Define a binary quadratic optimization form suitable for both quantum annealing and QAOA-based quantum mean–variance optimization.",
+            "purpose": "Define a binary quadratic optimization form suitable for both quantum annealing and QAOA-based quantum mean-variance optimization.",
             "components": {
               "objective_matrix": {
                 "definition": "Q = λΣ − μμᵀ + penalty_terms",
@@ -8596,7 +8596,7 @@
             "purpose": "Exploit continuation in asset returns across global markets.",
             "components": {
               "momentum_signal": {
-                "definition": "Past 12-month return excluding most recent month (12–1 momentum).",
+                "definition": "Past 12-month return excluding most recent month (12-1 momentum).",
                 "effect": "Captures trend-following behavior observed across asset classes."
               },
               "ranking_mechanism": {
@@ -8605,7 +8605,7 @@
               }
             },
             "procedure": [
-              "Compute 12–1 momentum for each asset.",
+              "Compute 12-1 momentum for each asset.",
               "Rank assets within each asset class.",
               "Go long winners and short losers.",
               "Rebalance at fixed monthly intervals."
@@ -8784,8 +8784,8 @@
       "paper-details": {
         "algorithms": {
           "Variance_Covariance_VaR": {
-            "name": "Variance–Covariance Value-at-Risk (Parametric VaR)",
-            "purpose": "Evaluate risk of hedge fund portfolios under the assumption of normally distributed returns using mean–variance estimation.",
+            "name": "Variance-Covariance Value-at-Risk (Parametric VaR)",
+            "purpose": "Evaluate risk of hedge fund portfolios under the assumption of normally distributed returns using mean-variance estimation.",
             "components": {
               "portfolio_variance": {
                 "definition": "σ_p² = wᵀ Σ w",
@@ -8997,9 +8997,9 @@
                 "role": "Core mechanism for identifying arbitrage opportunities."
               },
               "spread_definition": {
-                "definition": "Spread_t = Price_A(t) – Price_B(t)",
+                "definition": "Spread_t = Price_A(t) - Price_B(t)",
                 "role": "Tracks divergence between paired stocks.",
-                "importance": "Determines when to initiate long–short positions."
+                "importance": "Determines when to initiate long-short positions."
               },
               "trading_thresholds": {
                 "entry_rule": "Enter trade when spread widens beyond historical mean by predefined threshold.",
@@ -9015,7 +9015,7 @@
               "Close position once spread reverts.",
               "Compute profits net of transaction costs."
             ],
-            "output": "Long–short relative-value strategy generating statistically significant abnormal returns.",
+            "output": "Long-short relative-value strategy generating statistically significant abnormal returns.",
             "advantages": [
               "Strong profitability with low market correlation.",
               "Robust across formation and trading horizons.",
@@ -9034,7 +9034,7 @@
             "purpose": "Model divergence and convergence behavior of paired stocks.",
             "components": {
               "ou_process": {
-                "definition": "dS_t = θ(μ – S_t)dt + σ dW_t",
+                "definition": "dS_t = θ(μ - S_t)dt + σ dW_t",
                 "role": "Represents speed and variability of spread reversion.",
                 "importance": "Key to determining holding period and profitability."
               }
@@ -9075,7 +9075,7 @@
         "Root Mean Squared Error (RMSE)",
         "Mean Absolute Percentage Error (MAPE)",
         "Directional Accuracy (up/down prediction accuracy)",
-        "Residual autocorrelation diagnostics (Ljung–Box Q-statistic)",
+        "Residual autocorrelation diagnostics (Ljung-Box Q-statistic)",
         "AIC (Akaike Information Criterion) for model selection",
         "BIC (Bayesian Information Criterion)",
         "Forecast error variance",
@@ -9109,7 +9109,7 @@
               "Difference the series until stationarity is achieved.",
               "Identify p, d, q parameters using ACF and PACF plots.",
               "Estimate ARIMA(p, d, q) parameters using maximum likelihood.",
-              "Diagnose residuals using autocorrelation and Ljung–Box tests.",
+              "Diagnose residuals using autocorrelation and Ljung-Box tests.",
               "Generate forecasts and evaluate forecasting errors."
             ],
             "output": "Short-term stock price forecasts based on the identified ARIMA model.",
@@ -9142,7 +9142,7 @@
             "purpose": "Ensure ARIMA residuals behave like white noise.",
             "procedure": [
               "Compute residual autocorrelation function (ACF).",
-              "Perform Ljung–Box test across multiple lags.",
+              "Perform Ljung-Box test across multiple lags.",
               "Check for remaining patterns or seasonality.",
               "Verify homoskedasticity and independence."
             ],
@@ -9178,7 +9178,7 @@
       "paper-details": {
         "algorithms": {
           "Stochastic_Spread_Model": {
-            "name": "Ornstein–Uhlenbeck (OU) Process Based Spread Model",
+            "name": "Ornstein-Uhlenbeck (OU) Process Based Spread Model",
             "purpose": "Model the price spread between paired assets as a mean-reverting stochastic process to generate trading signals.",
             "components": {
               "ou_process": {
@@ -9200,11 +9200,11 @@
               "Estimate OU process parameters from historical spread data.",
               "Apply Kalman filter to infer hidden spread states.",
               "Compute standardized deviations (z-scores) from equilibrium.",
-              "Enter long–short positions when z-score exceeds threshold.",
+              "Enter long-short positions when z-score exceeds threshold.",
               "Exit when spread reverts to equilibrium value.",
               "Evaluate profitability net of transaction costs."
             ],
-            "output": "Dynamic, mean-reversion–based spread trading signals.",
+            "output": "Dynamic, mean-reversion-based spread trading signals.",
             "advantages": [
               "More rigorous than simple distance-based methods.",
               "Incorporates noise filtering for smoother signals.",
@@ -9249,7 +9249,7 @@
             "purpose": "Determine when to enter or exit positions based on deviation of filtered spread from equilibrium.",
             "procedure": [
               "Compute z-score: (Spread_t − μ) / σ.",
-              "Enter long–short trade when |z| exceeds threshold.",
+              "Enter long-short trade when |z| exceeds threshold.",
               "Reverse or close positions once spread reverts to mean.",
               "Monitor profit trajectory and risk metrics."
             ],
@@ -9272,20 +9272,20 @@
         "Condition number of covariance matrix",
         "Portfolio turnover",
         "Sharpe Ratio improvement versus sample covariance",
-        "Mean–variance efficiency (frontier curvature)",
+        "Mean-variance efficiency (frontier curvature)",
         "Estimation error reduction (Frobenius norm distance)",
         "Eigenvalue dispersion and shrinkage effectiveness",
         "Tracking error of optimized portfolios",
         "Risk-concentration metrics across portfolio weights"
       ],
       "tools-used-in": [
-        "Markowitz-Mean–Variance"
+        "Markowitz-Mean-Variance"
       ],
       "function": ["portfolio construction and optimization", "trading strategies"],
       "paper-details": {
         "algorithms": {
           "Shrinkage_Covariance_Estimator": {
-            "name": "Ledoit–Wolf Shrinkage Estimator",
+            "name": "Ledoit-Wolf Shrinkage Estimator",
             "purpose": "Stabilize covariance matrix estimation by shrinking the noisy sample covariance matrix toward a structured target matrix.",
             "components": {
               "sample_covariance_matrix": {
@@ -9307,9 +9307,9 @@
             "procedure": [
               "Compute sample covariance matrix S from asset returns.",
               "Define shrinkage target matrix T based on identity or constant correlation.",
-              "Estimate optimal shrinkage intensity α using Ledoit–Wolf closed-form formula.",
+              "Estimate optimal shrinkage intensity α using Ledoit-Wolf closed-form formula.",
               "Construct shrunk covariance estimator Σ̂ = αT + (1 − α)S.",
-              "Use Σ̂ in Markowitz mean–variance portfolio optimization."
+              "Use Σ̂ in Markowitz mean-variance portfolio optimization."
             ],
             "output": "Shrunk covariance matrix Σ̂ with improved stability and lower estimation error.",
             "advantages": [
@@ -9326,8 +9326,8 @@
           },
     
           "Markowitz_Optimization_with_Shrinkage": {
-            "name": "Mean–Variance Optimization using Shrunk Covariance Matrix",
-            "purpose": "Construct portfolios with lower realized risk by using the more stable Ledoit–Wolf covariance estimator.",
+            "name": "Mean-Variance Optimization using Shrunk Covariance Matrix",
+            "purpose": "Construct portfolios with lower realized risk by using the more stable Ledoit-Wolf covariance estimator.",
             "components": {
               "objective": {
                 "definition": "Minimize wᵀΣ̂w for given target return or maximize Sharpe Ratio.",
@@ -9425,7 +9425,7 @@
           },
     
           "CVaR_Optimization_Algorithm": {
-            "name": "Rockafellar–Uryasev CVaR Optimization Method",
+            "name": "Rockafellar-Uryasev CVaR Optimization Method",
             "purpose": "Optimize portfolios using CVaR as the objective function through a tractable linear programming formulation.",
             "components": {
               "auxiliary_variable_eta": {
@@ -9729,7 +9729,7 @@
               "Specify number of regimes (typically 2: calm and turbulent).",
               "Estimate regime-dependent means μ_s and covariances Σ_s.",
               "Estimate transition probabilities using maximum likelihood.",
-              "Compute filtered and smoothed state probabilities via the forward–backward algorithm.",
+              "Compute filtered and smoothed state probabilities via the forward-backward algorithm.",
               "Use predicted regime probabilities to allocate assets dynamically.",
               "Backtest portfolio across differing regime conditions."
             ],
@@ -9764,14 +9764,14 @@
             "procedure": [
               "Compute probability of being in each regime at time t using filtered probabilities.",
               "Form expected mean and covariance as weighted averages over regime probabilities.",
-              "Solve mean–variance optimization for dynamic weights.",
+              "Solve mean-variance optimization for dynamic weights.",
               "Rebalance as regime probabilities update."
             ],
             "output": "Time-varying asset weights that adapt to market conditions."
           },
     
           "Forward_Backward_Estimation": {
-            "name": "Forward–Backward Algorithm",
+            "name": "Forward-Backward Algorithm",
             "purpose": "Infer filtered (real-time) and smoothed (historical) probabilities of hidden regimes.",
             "procedure": [
               "Forward step: compute likelihood of states given data up to time t.",
@@ -9870,7 +9870,7 @@
             "name": "Normalization of Input Features",
             "purpose": "Prevent large-scale features from dominating kernel distance computations.",
             "procedure": [
-              "Apply min–max or z-score normalization to input variables.",
+              "Apply min-max or z-score normalization to input variables.",
               "Transform training and testing sets consistently.",
               "Feed normalized data into SVR for stable learning."
             ],
@@ -10117,7 +10117,7 @@
       "paper-details": {
         "algorithms": {
           "Rockafellar_Uryasev_CVaR_Optimization": {
-            "name": "Rockafellar–Uryasev CVaR Optimization Framework",
+            "name": "Rockafellar-Uryasev CVaR Optimization Framework",
             "purpose": "Transform the minimization of Conditional Value-at-Risk (CVaR) into a tractable convex optimization problem using an auxiliary function and linear programming.",
             "components": {
               "auxiliary_function_F": {
@@ -10251,7 +10251,7 @@
           },
     
           "EM_Algorithm": {
-            "name": "Expectation–Maximization (EM) Algorithm for Mixture Models",
+            "name": "Expectation-Maximization (EM) Algorithm for Mixture Models",
             "purpose": "Iteratively estimate component parameters and latent memberships in finite mixture models.",
             "components": {
               "e_step": {
@@ -10543,7 +10543,7 @@
               },
               "structural_risk_minimization": {
                 "definition": "Minimize bound: Empirical Risk + Complexity Penalty.",
-                "role": "Balances bias–variance trade-off using nested hypothesis classes.",
+                "role": "Balances bias-variance trade-off using nested hypothesis classes.",
                 "benefit": "Foundation for SVM regularization."
               }
             },
@@ -10607,7 +10607,7 @@
             "procedure": [
               "Determine VC dimension of hypothesis class.",
               "Estimate empirical risk on training data.",
-              "Apply Vapnik–Chervonenkis inequality to compute bound.",
+              "Apply Vapnik-Chervonenkis inequality to compute bound.",
               "Use bound to guide model selection via SRM."
             ],
             "output": "Statistical guarantees on predictive performance."
@@ -10665,7 +10665,7 @@
               "Initialize parameters for regime-specific GARCH equations.",
               "Estimate transition probabilities using maximum likelihood.",
               "Compute filtered probabilities via forward recursion.",
-              "Compute smoothed probabilities via forward–backward algorithm.",
+              "Compute smoothed probabilities via forward-backward algorithm.",
               "Evaluate model fit and compare with standard GARCH.",
               "Use regime-specific volatility forecasts for risk modeling."
             ],
@@ -10685,7 +10685,7 @@
           },
     
           "Forward_Backward_Algorithm_for_Regimes": {
-            "name": "Hidden Markov Forward–Backward Algorithm",
+            "name": "Hidden Markov Forward-Backward Algorithm",
             "purpose": "Infer filtered and smoothed probabilities of volatility regimes.",
             "procedure": [
               "Forward step: compute state likelihoods p(s_t | y_1:t).",
@@ -10723,13 +10723,13 @@
         "Average monthly momentum return (winner minus loser portfolio)",
         "Sharpe Ratio of momentum strategy",
         "t-statistics for momentum profitability",
-        "Long-horizon return persistence (3–12 month formation)",
+        "Long-horizon return persistence (3-12 month formation)",
         "Autocorrelation of returns across formation periods",
         "Drawdown and crash sensitivity during market reversals",
         "Turnover and transaction-cost adjusted returns",
         "Cross-sectional consistency of momentum profits",
         "Volatility-adjusted return metrics",
-        "Comparison against CAPM and Fama–French alpha"
+        "Comparison against CAPM and Fama-French alpha"
       ],
       "tools-used-in": [
         "Momentum-Strategy"
@@ -10742,12 +10742,12 @@
             "purpose": "Construct portfolios by ranking assets on past returns and exploiting short- to mid-term return continuation.",
             "components": {
               "formation_period": {
-                "definition": "Lookback window of 3–12 months to compute past returns.",
+                "definition": "Lookback window of 3-12 months to compute past returns.",
                 "role": "Identifies recent winners and losers.",
                 "effect": "Determines strength and persistence of momentum."
               },
               "holding_period": {
-                "definition": "Hold long/short positions for 3–12 months after formation.",
+                "definition": "Hold long/short positions for 3-12 months after formation.",
                 "role": "Captures return continuation post-formation."
               },
               "ranking_mechanism": {
@@ -10758,11 +10758,11 @@
             "procedure": [
               "Compute past returns over formation window (e.g., 12 months).",
               "Rank all stocks into deciles based on returns.",
-              "Form WML (Winner–Minus–Loser) portfolio: long top decile, short bottom decile.",
+              "Form WML (Winner-Minus-Loser) portfolio: long top decile, short bottom decile.",
               "Hold portfolio for k months while forming new overlapping portfolios each month.",
               "Evaluate performance using alphas, Sharpe Ratio, and t-stats."
             ],
-            "output": "Winner–Minus–Loser (WML) momentum return series.",
+            "output": "Winner-Minus-Loser (WML) momentum return series.",
             "advantages": [
               "Strong and statistically significant returns across decades.",
               "Simple, rules-based, and robust across markets.",
@@ -10780,7 +10780,7 @@
             "purpose": "Evaluate whether momentum profits persist after controlling for risk factors.",
             "procedure": [
               "Regress WML returns on CAPM beta.",
-              "Extend regression with Fama–French factors (MKT, SMB, HML).",
+              "Extend regression with Fama-French factors (MKT, SMB, HML).",
               "Obtain factor-adjusted alpha.",
               "Assess statistical significance using t-statistics."
             ],
@@ -10793,7 +10793,7 @@
             "procedure": [
               "Separate winners and losers into subgroups based on long-term past returns.",
               "Analyze return behavior beyond holding periods.",
-              "Measure continuation (0–12 months) and long-term reversal (3–5 years)."
+              "Measure continuation (0-12 months) and long-term reversal (3-5 years)."
             ],
             "output": "Attribution of momentum profits to short-run continuation and long-run reversal."
           }
@@ -10821,13 +10821,13 @@
         "Diversification improvement measured via effective number of assets"
       ],
       "tools-used-in": [
-        "Black–Litterman"
+        "Black-Litterman"
       ],
       "function": ["portfolio construction and optimization"],
       "paper-details": {
         "algorithms": {
           "Black_Litterman_Model": {
-            "name": "Black–Litterman Global Portfolio Optimization Model",
+            "name": "Black-Litterman Global Portfolio Optimization Model",
             "purpose": "Blend market equilibrium returns with investor views to generate stable, intuitive, and diversified optimal portfolio weights.",
             "components": {
               "equilibrium_excess_returns": {
@@ -10858,13 +10858,13 @@
               "Specify investor absolute or relative views.",
               "Construct view linking matrix P and uncertainty matrix Ω.",
               "Choose scalar τ to scale prior estimate uncertainty.",
-              "Compute posterior expected returns using Black–Litterman formula.",
-              "Perform mean–variance optimization with updated returns μ*.",
+              "Compute posterior expected returns using Black-Litterman formula.",
+              "Perform mean-variance optimization with updated returns μ*.",
               "Evaluate resulting portfolio for diversification and stability."
             ],
             "output": "Posterior expected returns and optimal portfolio weights consistent with both market equilibrium and investor views.",
             "advantages": [
-              "Mitigates instability and unintuitive weights from mean–variance optimization.",
+              "Mitigates instability and unintuitive weights from mean-variance optimization.",
               "Allows flexible incorporation of subjective information.",
               "Produces well-diversified, stable portfolios.",
               "Reduces sensitivity to noisy expected return estimates.",
@@ -10891,8 +10891,8 @@
           },
     
           "Posterior_Portfolio_Optimization": {
-            "name": "Mean–Variance Optimization Using Posterior Returns",
-            "purpose": "Optimize portfolio using stabilized expected returns generated by the Black–Litterman model.",
+            "name": "Mean-Variance Optimization Using Posterior Returns",
+            "purpose": "Optimize portfolio using stabilized expected returns generated by the Black-Litterman model.",
             "procedure": [
               "Input posterior expected returns μ* and covariance Σ.",
               "Solve quadratic optimization for optimal weights.",
@@ -10925,7 +10925,7 @@
         "Variance of portfolio returns across bootstrap samples"
       ],
       "tools-used-in": [
-        "Markowitz-Mean–Variance"
+        "Markowitz-Mean-Variance"
       ],
       "function": ["portfolio construction and optimization", "trading strategies"],
       "paper-details": {
@@ -10951,7 +10951,7 @@
             },
             "procedure": [
               "Generate many bootstrap samples of historical returns.",
-              "Perform mean–variance optimization for each sample.",
+              "Perform mean-variance optimization for each sample.",
               "Collect optimized weights from all bootstrap runs.",
               "Average weights across runs to obtain resampled portfolio.",
               "Plot resulting resampled efficient frontier.",
@@ -11058,7 +11058,7 @@
               "Initialize Markov transition probabilities.",
               "Estimate regime-dependent parameters μ_s, φ_s using maximum likelihood.",
               "Use forward algorithm to compute filtered probabilities P(s_t | y_1:t).",
-              "Use forward–backward smoothing for historical regime inference.",
+              "Use forward-backward smoothing for historical regime inference.",
               "Forecast future values conditional on predicted regime probabilities.",
               "Evaluate model performance using likelihood-based tests."
             ],
@@ -11091,7 +11091,7 @@
           },
     
           "Smoothing_Algorithm": {
-            "name": "Forward–Backward Smoothing Algorithm",
+            "name": "Forward-Backward Smoothing Algorithm",
             "purpose": "Compute the full-sample posterior probability P(s_t | y_1:T).",
             "procedure": [
               "Run Hamilton filter forward to compute filtered probabilities.",
@@ -11131,7 +11131,7 @@
         "Mean Absolute Percentage Error (MAPE)",
         "Akaike Information Criterion (AIC)",
         "Bayesian Information Criterion (BIC)",
-        "Residual autocorrelation diagnostics (Ljung–Box Q-statistic)",
+        "Residual autocorrelation diagnostics (Ljung-Box Q-statistic)",
         "Forecast error variance",
         "Out-of-sample forecast accuracy",
         "Parameter stability across rolling windows",
@@ -11144,7 +11144,7 @@
       "paper-details": {
         "algorithms": {
           "Box_Jenkins_ARIMA": {
-            "name": "Box–Jenkins ARIMA Modeling Framework",
+            "name": "Box-Jenkins ARIMA Modeling Framework",
             "purpose": "Develop a systematic methodology for identifying, estimating, and forecasting time series using ARIMA, SARIMA, and intervention models.",
             "components": {
               "identification": {
@@ -11264,13 +11264,13 @@
         "Risk-return trade-off metrics across efficient frontier"
       ],
       "tools-used-in": [
-        "Markowitz-Mean–Variance"
+        "Markowitz-Mean-Variance"
       ],
       "function": ["portfolio construction and optimization", "trading strategies"],
       "paper-details": {
         "algorithms": {
           "Mean_Variance_Optimization": {
-            "name": "Markowitz Mean–Variance Optimization",
+            "name": "Markowitz Mean-Variance Optimization",
             "purpose": "Construct optimal portfolios by balancing expected return and risk, formalizing modern portfolio theory.",
             "components": {
               "expected_return_vector": {
@@ -11469,7 +11469,7 @@
         "Likelihood-based comparison of GPD parameterizations"
       ],
       "tools-used-in": [
-        "Extreme-Value-Theory-(EVT)–Peaks-Over-Threshold"
+        "Extreme-Value-Theory-(EVT)-Peaks-Over-Threshold"
       ],
       "function": ["risk assessment"],
       "paper-details": {
@@ -11569,7 +11569,7 @@
         "Backtesting violation frequency vs expected exceedances",
         "Mean squared error of predicted risk vs realized losses",
         "Sensitivity of VaR estimates to changes in volatility",
-        "Accuracy of portfolio variance–covariance estimation",
+        "Accuracy of portfolio variance-covariance estimation",
         "Impact of correlation mis-specification on VaR accuracy",
         "Stability of VaR estimates across rolling windows",
         "Tail loss prediction accuracy under Gaussian assumptions",
@@ -11583,7 +11583,7 @@
       "paper-details": {
         "algorithms": {
           "Parametric_VaR_Method": {
-            "name": "Parametric (Variance–Covariance) VaR Method",
+            "name": "Parametric (Variance-Covariance) VaR Method",
             "purpose": "Compute Value-at-Risk using the assumption that returns follow a known parametric distribution, typically normal, enabling fast and analytical VaR estimation.",
             "components": {
               "expected_return": {
@@ -11623,7 +11623,7 @@
           },
     
           "Portfolio_Variance_Covariance_Calculation": {
-            "name": "Portfolio Variance–Covariance Computation",
+            "name": "Portfolio Variance-Covariance Computation",
             "purpose": "Compute overall portfolio volatility using individual asset variances and correlations.",
             "components": {
               "covariance_matrix": {
@@ -11736,7 +11736,7 @@
           },
     
           "Backward_Smoothing": {
-            "name": "Forward–Backward Smoothing",
+            "name": "Forward-Backward Smoothing",
             "purpose": "Compute full-sample posterior probabilities of regime states for historical inference.",
             "procedure": [
               "Run forward Hamilton filter to get filtered probabilities.",
@@ -11981,7 +11981,7 @@
     
           "Sampling_Based_Energy_Estimation": {
             "name": "Energy Estimation via Measurement Sampling",
-            "purpose": "Provide classical–quantum loop with accurate energy distribution for CVaR.",
+            "purpose": "Provide classical-quantum loop with accurate energy distribution for CVaR.",
             "steps": [
               "Execute quantum circuit multiple times to collect bitstrings.",
               "Evaluate cost Hamiltonian for each result.",
@@ -12072,7 +12072,7 @@
     
           "Standard_QAOA": {
             "name": "Vanilla QAOA for Portfolio Optimization",
-            "purpose": "Serve as a baseline by solving mean–variance optimization without tail-risk adjustments.",
+            "purpose": "Serve as a baseline by solving mean-variance optimization without tail-risk adjustments.",
             "kernel": {
               "cost_layer": "U_C(γ) = exp(-iγH_cost)",
               "mixer_layer": "U_M(β) = exp(-iβH_mix)"
