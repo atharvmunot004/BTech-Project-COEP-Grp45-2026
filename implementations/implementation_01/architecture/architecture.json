@@ -23,11 +23,15 @@
     },
     {
       "name": "Data Preprocessing Engine",
-      "purpose": "Clean, align, and convert raw OHLCV into analysis-ready matrices (returns, log-returns, filled missing values).",
+      "purpose": "Clean, align, and convert raw OHLCV into analysis-ready matrices calculte the daily returns (log returns), daily volatilities, and daily covariances and correlation matrices, and other features. Also, filled missing values.",
       "components": [
         "data/clean_data.py",
         "data/align_data.py",
-        "data/feature_gen.py",
+        "data/fill_missing_values.py",
+        "data/calculate_returns.py",
+        "data/calculate_volatilities.py",
+        "data/calculate_covariances.py",
+        "data/calculate_correlations.py",
         "data/cache.py (optional)"
       ],
       "input": {
