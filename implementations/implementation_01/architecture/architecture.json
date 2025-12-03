@@ -310,7 +310,6 @@
       "output": {
         "destination": [
           "Backtesting Engine",
-          "Order Engine (paper/live)",
           "Reporting & Research"
         ],
         "format": {
@@ -349,7 +348,6 @@
       },
       "output": {
         "destination": [
-          "Classical Optimizer (for final adjustments)",
           "Backtesting Engine",
           "Reporting & Research"
         ],
@@ -384,8 +382,7 @@
       },
       "output": {
         "destination": [
-          "Reporting & Research",
-          "Server Deployment (endpoints for results)"
+          "Reporting & Research"
         ],
         "format": {
           "equity_curve": "pandas Series (date -> portfolio value)",

@@ -1,3 +1,5 @@
+// dot -Tpng architecture.gv -o architecture.png (for PNG)
+// dot -Tsvg architecture.gv -o architecture.svg (for SVG)
 digraph Architecture {
     rankdir=TB;
     node [shape=box, style=rounded, fontname="Arial"];
@@ -28,7 +30,6 @@ digraph Architecture {
         ReportingResearch [label="Reporting & Research\nMetrics Dashboard"];
         
         // Layer 6: Output
-        ServerDeployment [label="Server Deployment\nAPI/Front-end"];
         ResearchPaperNotes [label="Research Paper Notes\n(Plots + Results)"];
     }
     
@@ -42,17 +43,29 @@ digraph Architecture {
     
     ClassicalRisk -> ClassicalOptimizer;
     ClassicalRisk -> HybridIntegration;
-    QuantumRisk -> ClassicalOptimizer;
+    ClassicalRisk -> BacktestingEngine;
+    ClassicalRisk -> ReportingResearch;
+
     QuantumRisk -> HybridIntegration;
-    QuantumOpt -> ClassicalOptimizer;
+    QuantumRisk -> BacktestingEngine;
+    QuantumRisk -> ReportingResearch;
+
     QuantumOpt -> HybridIntegration;
+    QuantumOpt -> BacktestingEngine;
+    QuantumOpt -> ReportingResearch;
+
     ClassicalOpt -> ClassicalOptimizer;
     ClassicalOpt -> HybridIntegration;
+    ClassicalOpt -> BacktestingEngine;
+    ClassicalOpt -> ReportingResearch;
     
     ClassicalOptimizer -> BacktestingEngine;
+    ClassicalOptimizer -> ReportingResearch;
+
     HybridIntegration -> ReportingResearch;
-    
-    BacktestingEngine -> ServerDeployment;
+    HybridIntegration -> BacktestingEngine;
+    HybridIntegration -> ReportingResearch;
+
     BacktestingEngine -> ResearchPaperNotes;
     ReportingResearch -> ResearchPaperNotes;
 }
