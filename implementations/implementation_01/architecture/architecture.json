@@ -55,7 +55,6 @@
         }
       },
       "dependencies": [
-        "psycopg2/sqlalchemy (if DB)",
         "pandas, numpy"
       ],
       "expected_runtime_estimate": "Ten years x 10 symbols: < 1 second to compute returns/cov on a standard server",
@@ -63,6 +62,28 @@
     },
     {
       "name": "Classical Risk",
+      "tools-used": [
+        {
+          "id": 1,
+          "name": "Variance-Covariance Value-at-Risk (Parametric VaR)", 
+          "type": "classical"
+        },
+        {
+          "id": 2,
+          "name": "Monte Carlo Simulation for VaR / CVaR",
+          "type": "classical"
+        },
+        {
+          "id": 3,
+          "name": "GARCH (1,1) Volatility Forecasts",
+          "type": "classical"
+        },
+        {
+          "id": 4,
+          "name": "Extreme Value Theory (EVT) - Peaks Over Threshold",
+          "type": "classical"
+        }
+      ],
       "purpose": "Compute classical risk metrics (Parametric VaR, Historical VaR, Monte Carlo VaR, CVaR, GARCH volatility forecasts, EVT tail estimates).",
       "components": [
         "risk/parametric_var.py",
@@ -102,6 +123,23 @@
     },
     {
       "name": "Quantum Risk",
+      "tools-used": [
+        {
+          "id": 5,
+          "name": "Quantum Amplitude Estimation (QAE) for CVaR",
+          "type": "quantum"
+        },
+        {
+          "id": 7,
+          "name": "Quantum Generative Adversarial Network (QGAN) for Scenario Generation",
+          "type": "quantum"
+        },
+        {
+          "id": 8,
+          "name": "Quantum PCA (qPCA) for Factor Risk Analysis",
+          "type": "quantum"
+        }
+      ],
       "purpose": "Estimate tail-risk metrics using quantum algorithms (QAE for VaR/CVaR; QGAN for scenario generation; qPCA for factor risk). Runs primarily on Qiskit simulators and optionally on cloud quantum hardware.",
       "components": [
         "quantum/qae_var.py",
@@ -139,6 +177,28 @@
     },
     {
       "name": "Classical Optimization",
+      "tools-used": [
+        {
+          "id": 11,
+          "name": "Markowitz Mean-Variance",
+          "type": "classical"
+        },
+        {
+          "id": 17,
+          "name": "CVaR Optimization",
+          "type": "classical"
+        },
+        {
+          "id": 12,
+          "name": "Black-Litterman",
+          "type": "classical"
+        },
+        {
+          "id": 18,
+          "name": "Risk Parity / ERC",
+          "type": "classical"
+        }
+      ],
       "purpose": "Traditional portfolio construction algorithms (convex and linear programming): Markowitz (QP), CVaR LP, Black-Litterman, Risk Parity / ERC, and constraint handling (budget, sector caps, cardinality via heuristics).",
       "components": [
         "portfolio/markowitz.py",
@@ -176,6 +236,23 @@
     },
     {
       "name": "Quantum Optimization",
+      "tools-used": [
+        {
+          "id": 32,
+          "name": "Quantum Mean-Variance Optimization (QMV / QUBO Formulation)",
+          "type": "quantum"
+        },
+        {
+          "id": 33,
+          "name": "Quantum Annealing for Multi-Objective Portfolio Construction",
+          "type": "quantum"
+        },
+        {
+          "id": 6,
+          "name": "Quantum Approximate Optimization Algorithm (QAOA) for CVaR-based Portfolio Optimization",
+          "type": "quantum"
+        }
+      ],
       "purpose": "QUBO / QAOA-based portfolio formulations for constrained and combinatorial optimization (cardinality, discrete weights, sparse allocations), and QMV experimental implementations.",
       "components": [
         "quantum/qaoa_opt.py",
