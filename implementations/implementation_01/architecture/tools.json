@@ -3,84 +3,104 @@
         {   
             "id": 1,
             "name": "Variance-Covariance Value-at-Risk (Parametric VaR)",
-            "type": "classical"
+            "type": "classical",
+            "variables-required": [
+                "Daily or weekly clean returns",
+                "Covariance matrix (Σ)",
+                "Portfolio weights (w)"
+            ]
         },
         {
             "id": 2,
             "name": "Monte Carlo Simulation for VaR / CVaR",
-            "type": "classical"
+            "type": "classical",
+            "variables-required": []
         },
         {
             "id": 3,
             "name": "GARCH(1,1) Volatility Forecasting",
-            "type": "classical"
+            "type": "classical",
+            "variables-required": []
         },
         {
             "id": 4,
             "name": "Extreme Value Theory (EVT) - Peaks Over Threshold",
-            "type": "classical"
+            "type": "classical",
+            "variables-required": []
         },
         {
             "id": 5,
             "name": "Quantum Amplitude Estimation (QAE) for CVaR",
-            "type": "quantum"
+            "type": "quantum",
+            "variables-required": []
         },
         {
             "id": 6,
             "name": "Quantum Approximate Optimization Algorithm (QAOA) for CVaR-based Portfolio Optimization",
-            "type": "quantum"
+            "type": "quantum",
+            "variables-required": []
         },
         {
             "id": 7,
             "name": "Quantum Generative Adversarial Network (QGAN) for Scenario Generation",
-            "type": "quantum"
+            "type": "quantum",
+            "variables-required": []
         },
         {
             "id": 8,
             "name": "Quantum PCA (qPCA) for Factor Risk Analysis",
-            "type": "quantum"
+            "type": "quantum",
+            "variables-required": []
         }
     ],
     "portfolio_construction_and_optimization": [
         {
             "id": 12,
             "name": "Black-Litterman",
-            "type": "classical"
+            "type": "classical",
+            "variables-required": []
         },
         {
             "id": 18,
             "name": "Risk Parity / ERC",
-            "type": "classical"
+            "type": "classical",
+            "variables-required": []
         },
         {
             "id": 17,
             "name": "CVaR Optimization",
-            "type": "classical"
+            "type": "classical",
+            "variables-required": []
         },
         {
             "id": 11,
             "name": "Markowitz Mean-Variance",
-            "type": "classical"
+            "type": "classical",
+            "variables-required": []
         },
         {
             "id": 32,
             "name": "Quantum Mean-Variance Optimization (QMV / QUBO Formulation)",
-            "type": "quantum"
+            "type": "quantum",
+            "variables-required": []
         },
         {
             "id": 33,
             "name": "Quantum Annealing for Multi-Objective Portfolio Construction",
-            "type": "quantum"
+            "type": "quantum",
+            "variables-required": []
         },
         {
             "id": 5,
             "name": "Quantum Amplitude Estimation (QAE) for CVaR",
-            "type": "quantum"
+            "type": "quantum",
+            "variables-required": []
         },
         {
             "id": 6,
             "name": "Quantum Approximate Optimization Algorithm (QAOA) for CVaR-based Portfolio Optimization",
-            "type": "quantum"
+            "type": "quantum",
+            "variables-required": []
         }
     ]
 }
