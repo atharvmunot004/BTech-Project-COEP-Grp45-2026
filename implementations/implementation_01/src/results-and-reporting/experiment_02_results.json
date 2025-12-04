@@ -1,0 +1,172 @@
+{
+  "experiment": "quantum_portfolio_optimization",
+  "timestamp": "2025-12-04T23:42:37.055004",
+  "symbols": [
+    "ASIANPAINT",
+    "BAJFINANCE",
+    "HDFCBANK",
+    "HINDUNILVR",
+    "ICICIBANK"
+  ],
+  "risk_aversion": 2.0,
+  "random_seed": 42,
+  "classical_results": {
+    "markowitz": {
+      "weights": [
+        0.10593858726502016,
+        0.39005554215309485,
+        0.12110052451882951,
+        0.27428448738968064,
+        0.10862085867334362
+      ],
+      "expected_return": 0.20261991687643674,
+      "volatility": 0.21265710621748127,
+      "sharpe_ratio": 0.9528010630842515,
+      "runtime": 0.006006479263305664
+    },
+    "cvar": {
+      "weights": [
+        0.07993478858742296,
+        0.024841358558656934,
+        0.22548840161637854,
+        0.6323361125855682,
+        0.03739933865197335
+      ],
+      "cvar": 0.023275154758516346,
+      "expected_return": 0.0005444402545387181,
+      "volatility": 0.01110586069985568,
+      "sharpe_ratio": 0.04902278799028994,
+      "runtime": 0.04824352264404297
+    }
+  },
+  "quantum_results": {
+    "qaoa_p_1": {
+      "weights": [
+        0.5,
+        0.0,
+        0.5,
+        0.0,
+        0.0
+      ],
+      "expected_return": 0.13742435250465057,
+      "volatility": 0.18881205823858432,
+      "sharpe_ratio": 0.7278367376886499,
+      "runtime": 0.00909733772277832,
+      "p": 1,
+      "n_qubits": 10
+    },
+    "qaoa_p_2": {
+      "weights": [
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "expected_return": 0.29921907008527054,
+      "volatility": 0.36022062418047573,
+      "sharpe_ratio": 0.8306550208389997,
+      "runtime": 0.002017974853515625,
+      "p": 2,
+      "n_qubits": 10
+    },
+    "qaoa_p_3": {
+      "weights": [
+        0.0,
+        0.0,
+        0.6666666666666666,
+        0.3333333333333333,
+        0.0
+      ],
+      "expected_return": 0.13697517777086607,
+      "volatility": 0.18273971463880856,
+      "sharpe_ratio": 0.7495643628512954,
+      "runtime": 0.002048015594482422,
+      "p": 3,
+      "n_qubits": 10
+    }
+  },
+  "comparison": [
+    {
+      "method": "Markowitz",
+      "type": "classical",
+      "expected_return": 0.20261991687643674,
+      "volatility": 0.21265710621748127,
+      "sharpe_ratio": 0.9528010630842515,
+      "runtime": 0.006006479263305664,
+      "n_qubits": NaN,
+      "sharpe_diff": 0.0,
+      "sharpe_diff_pct": 0.0
+    },
+    {
+      "method": "CVaR LP",
+      "type": "classical",
+      "expected_return": 0.0005444402545387181,
+      "volatility": 0.01110586069985568,
+      "sharpe_ratio": 0.04902278799028994,
+      "runtime": 0.04824352264404297,
+      "n_qubits": NaN,
+      "sharpe_diff": -0.9037782750939616,
+      "sharpe_diff_pct": -94.85487685838622
+    },
+    {
+      "method": "QAOA (p=1)",
+      "type": "quantum",
+      "expected_return": 0.13742435250465057,
+      "volatility": 0.18881205823858432,
+      "sharpe_ratio": 0.7278367376886499,
+      "runtime": 0.00909733772277832,
+      "n_qubits": 10.0,
+      "sharpe_diff": -0.22496432539560163,
+      "sharpe_diff_pct": -23.610839042032968
+    },
+    {
+      "method": "QAOA (p=2)",
+      "type": "quantum",
+      "expected_return": 0.29921907008527054,
+      "volatility": 0.36022062418047573,
+      "sharpe_ratio": 0.8306550208389997,
+      "runtime": 0.002017974853515625,
+      "n_qubits": 10.0,
+      "sharpe_diff": -0.12214604224525183,
+      "sharpe_diff_pct": -12.819679466966658
+    },
+    {
+      "method": "QAOA (p=3)",
+      "type": "quantum",
+      "expected_return": 0.13697517777086607,
+      "volatility": 0.18273971463880856,
+      "sharpe_ratio": 0.7495643628512954,
+      "runtime": 0.002048015594482422,
+      "n_qubits": 10.0,
+      "sharpe_diff": -0.20323670023295615,
+      "sharpe_diff_pct": -21.330444319097587
+    }
+  ],
+  "scalability": {
+    "n_5": {
+      "n_assets": 5,
+      "classical_runtime": 0.003999233245849609,
+      "quantum_runtime": 0.0027666091918945312,
+      "speedup": 1.4455360220613582,
+      "classical_sharpe": 0.9528010630842515,
+      "quantum_sharpe": 0.8306550208389997
+    },
+    "n_10": {
+      "n_assets": 10,
+      "classical_runtime": 0.0029976367950439453,
+      "quantum_runtime": 0.001470804214477539,
+      "speedup": 2.038093694277841,
+      "classical_sharpe": 1.046135728075197,
+      "quantum_sharpe": 0.5684070205860831
+    },
+    "n_15": {
+      "n_assets": 15,
+      "classical_runtime": 0.004754066467285156,
+      "quantum_runtime": 0.004576444625854492,
+      "speedup": 1.0388121906746548,
+      "classical_sharpe": 1.046135728075197,
+      "quantum_sharpe": 0.7643775003393793
+    }
+  }
+}
