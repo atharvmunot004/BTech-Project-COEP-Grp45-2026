@@ -1,0 +1,93 @@
+Introduction
+
+Modern financial markets increasingly demand modelling frameworks that remain robust under rapidly shifting market regimes, non-stationary time series characteristics, and high-dimensional dependency structures. Classical portfolio theory began with Markowitz’s formulation of mean–variance optimization, establishing diversification as a mathematically grounded principle for risk-efficient asset allocation [1]. Subsequent advances—such as the Black–Litterman global equilibrium framework [2], resampling-based critiques of overfitting in Markowitz portfolios [3], shrinkage estimators for stable covariance matrices [4], and risk-contribution–based allocations such as risk-parity portfolios [5]—further refined portfolio construction under uncertainty.
+
+While these developments significantly strengthened the foundations of portfolio optimization, modeling *tail risk* and *non-linear downside exposure* remains a critical challenge. Conditional Value-at-Risk (CVaR) emerged as a coherent, optimization-friendly alternative to VaR, with Rockafellar and Uryasev demonstrating that CVaR can be directly embedded into convex optimization programs [6]. Further generalizations to arbitrary loss distributions expanded its applicability to realistic market settings characterized by fat tails and regime shifts [7]. In parallel, classical risk modeling approaches—including parametric VaR [14], Monte Carlo simulation, and GARCH-family volatility models—have been widely used to estimate risk in dynamic environments [15, 16]. Yet these tools face scaling and performance bottlenecks when dealing with high-dimensional portfolios or highly non-linear dependence structures.
+
+Recent progress in quantum computing suggests a potential paradigm shift for risk and portfolio analytics. Foundational methods such as Quantum PCA (qPCA) [8] and its low-complexity variants [9] introduced quantum routines for spectral estimation and dimensionality reduction. Building on these ideas, early conceptual frameworks for quantum risk modelling [10, 11, 12, 13] motivate the use of quantum algorithms—such as amplitude estimation—for accelerating Monte Carlo–style risk evaluation and improving tail-risk estimation precision. Meanwhile, quantum optimization research has explored mapping financial portfolio problems to QUBO formulations suitable for quantum hardware [17], as well as early demonstrations of quantum mean-variance optimization and QAOA-based routines within the Qiskit Finance ecosystem [18]. These developments show promise but require systematic evaluation to determine where quantum advantages may be practical, contextual, or merely theoretical.
+
+At the same time, hybrid AI-based workflows are becoming increasingly relevant for financial simulation and scenario generation. Neural generative models, such as GAN-based synthetic financial scenario generators [19], further highlight the emergence of data-driven risk estimation frameworks that may complement or compete with classical and quantum approaches.
+
+
+Problem Statement
+
+Despite the existence of strong theoretical tools across classical, machine-learning, and quantum paradigms, there is **no unified, comparative architecture** that systematically evaluates how these risk and optimization methods behave under different **market regimes**, **data conditions**, and **computational constraints**.
+Specifically:
+
+* Classical methods face estimation error, instability, and difficulty scaling in non-stationary or high-volatility regimes.
+* ML and generative models provide flexibility but lack interpretability and often violate financial constraints.
+* Quantum algorithms show theoretical asymptotic advantages, yet their *practical* performance relative to classical baselines remains unclear.
+* No existing framework maps **Market Regime → Method Performance → LLM Tool-Selection Reasoning**, which is essential for developing interpretable hybrid AI–quant systems.
+
+
+
+Objectives
+
+This project proposes a **Quantum–Classical Hybrid Hedge Fund Architecture** that is **not a trading bot**, but a **comparative, evaluative test-bed** to study risk assessment and portfolio optimization using classical, ML-based, and quantum techniques.
+
+The key objectives are:
+
+1. Risk Assessment Evaluation:
+
+   * Compare VaR, CVaR, Monte Carlo, GARCH models [14–16], and quantum risk estimators (QAE-based VaR/CVaR, variational quantum risk models) [10–13].
+   * Evaluate accuracy, robustness, and computational efficiency across varying market regimes.
+
+2. Portfolio Construction & Optimization:
+
+   * Benchmark classical MPT [1], Black–Litterman [2], shrinkage-based methods [4], and risk-parity constructions [5].
+   * Compare against ML-based allocation approaches and quantum optimization frameworks (QAOA, QUBO-based mappings, Qiskit Finance implementations) [17–18].
+
+3. Regime-Aware Performance Mapping:
+
+   * Determine which methods perform best under different volatility regimes, correlations structures, and tail-risk conditions.
+
+4. LLM Tool-Selection Reasoning:
+
+   * Build a benchmarking platform where LLM agents explain and justify the tool they select for a given market regime, enhancing interpretability and trust in hybrid AI–quant workflows.
+
+Together, these objectives aim to produce a reproducible (MLflow + TimescaleDB), market-regime-aware evaluation environment that clarifies when classical, ML, or quantum methods are appropriate—bridging theoretical developments with practical financial modeling needs.
+
+References:
+I. INTRODUCTION (19 papers)
+
+
+Classical Foundations of Risk & Portfolio Theory
+
+1. Markowitz, Harry. “Portfolio Selection.” *Journal of Finance*, 1952.
+2. Black, Fischer, and Robert Litterman. “Global Portfolio Optimization.” *Financial Analysts Journal*, 1992.
+3. Michaud, Richard. “The Markowitz Optimization Enigma.” *Financial Analysts Journal*, 1989.
+4. Ledoit, Olivier, and Michael Wolf. “Honey, I Shrunk the Sample Covariance Matrix.” *Journal of Portfolio Management*, 2004.
+5. Maillard, et al. “Equally Weighted Risk Contribution Portfolios.” *Journal of Portfolio Management*, 2010.
+
+Foundational CVaR / Optimization Theory
+
+6. Rockafellar & Uryasev. “Optimization of Conditional Value-at-Risk.” *Journal of Risk*, 2000.
+7. Krokhmal, Pavlo, et al. “Conditional Value-at-Risk for General Loss Distributions.” *Journal of Banking & Finance*, 2002.
+
+Seminal Quantum Theory Papers
+
+8. Lloyd, Seth, et al. “Quantum Principal Component Analysis.” *Nature Physics*, 2014.
+9. He, et al. “Low Complexity Quantum PCA Algorithm.” *arXiv*, 2020.
+
+Conceptual Quantum Finance / Risk Analysis Frameworks
+
+10. “Quantum Risk Analysis.” IBM Research, 2019.
+11. “Quantum Risk Analysis: Beyond (Conditional) Value-at-Risk.” *arXiv*, 2022.
+12. Stamatopoulos, et al. “Quantum Risk Analysis of Financial Derivatives.” *arXiv*, 2024.
+13. “Quantum Computing for Financial Risk Measurement.” *SpringerLink*, 2022.
+
+Introductory Monte Carlo & GARCH Risk Concepts
+
+14. “Parametric Method in Value at Risk (VaR).” *Investopedia*, 2024.
+15. Füss, et al. “Value-at-Risk, GARCH Modelling & Forecasting.” *SpringerLink*.
+16. Laube, et al. “Efficiency of Risk Measures for Hedge Funds.” *SpringerLink*, 2011.
+
+High-Level Hybrid & Quantum Optimization Frameworks
+
+17. Venturelli, et al. “Quantum Optimization for Finance with QUBO Mappings.” *Frontiers in Physics*, 2019.
+18. “Portfolio Optimization – Qiskit Finance.” Qiskit Community GitHub.
+
+Conceptual GAN / Data Generation Foundation
+
+19. Rizzato, et al. “GANs for Synthetic Financial Scenarios.” 2022.
+
