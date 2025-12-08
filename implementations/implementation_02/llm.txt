@@ -1,0 +1,31 @@
+
+I have 10 years OHLVC of 10 stocks, I want to first clean the data, and fill in any missing values. 
+Then I want to create 100,000 portfolios with randomly assigined allocations to these stocks. Ensure that the weights of each stock across all the portfolios follow the appropriate dirichlet distribution
+There are 4 blocks that we need to push data to: classical risk, quantum risk, classical portfolio constructions and optimization, and quantum portfolio constructions and optimization.
+The goal of this project is to have a comparative study of quantum v/s classical methods
+We want a comparative study of the performance of the quantum v/s classical risk assesement methods.
+We want a comparative study of the performance of the quantum v/s classical portfolio constructions and optimization methods.
+For classical risk assessment, we have the following tools:
+    -> Variance-Covariance Value-at-Risk (Parametric VaR)
+    -> Monte Carlo Simulation for VaR / CVaR
+    -> GARCH(1,1) Volatility Forecasting
+    -> Extreme Value Theory (EVT) - Peaks Over Threshold
+(For all the porfolios, we test the perfomance of these tools on the data and compare the results) (Keep track of the time taken to run each tool across all the portfolios) (Ensure that we measure all the research required performance metrics)
+For quantum risk assessment, we have the following tools:
+    -> Quantum Amplitude Estimation (QAE) for CVaR
+    -> Quantum Approximate Optimization Algorithm (QAOA) for CVaR-based Portfolio Optimization
+    -> Quantum Generative Adversarial Network (QGAN) for Scenario Generation
+    -> Quantum PCA (qPCA) for Factor Risk Analysis
+(For all the porfolios, we test the perfomance of these tools on the data and compare the results) (Keep track of the time taken to run each tool across all the portfolios) (Ensure that we measure all the research required performance metrics)
+For classical portfolio constructions and optimization, we have the following tools:
+    -> Black-Litterman Model
+    -> Risk Parity / ERC
+    -> CVaR Optimization
+    -> Markowitz Mean-Variance
+(For all the porfolios, we test the perfomance of these tools on the data and compare the results) (Keep track of the time taken to run each tool across all the portfolios) (Ensure that we measure all the research required performance metrics)
+For quantum portfolio constructions and optimization, we have the following tools:
+    -> Quantum Mean-Variance Optimization (QMV / QUBO Formulation)
+    -> Quantum Annealing for Multi-Objective Portfolio Construction
+    -> Quantum Amplitude Estimation (QAE) for CVaR
+    -> Quantum Approximate Optimization Algorithm (QAOA) for CVaR-based Portfolio Optimization
+(For all the porfolios, we test the perfomance of these tools on the data and compare the results) (Keep track of the time taken to run each tool across all the portfolios) (Ensure that we measure all the research required performance metrics)

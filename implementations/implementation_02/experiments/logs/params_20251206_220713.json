@@ -1,0 +1,17 @@
+{
+  "num_assets": 10,
+  "symbols": [
+    "ASIANPAINT",
+    "BAJFINANCE",
+    "HDFCBANK",
+    "HINDUNILVR",
+    "ICICIBANK",
+    "INFY",
+    "LT",
+    "NTPC",
+    "RELIANCE",
+    "TCS"
+  ],
+  "num_portfolios": 100000,
+  "num_windows": 0
+}

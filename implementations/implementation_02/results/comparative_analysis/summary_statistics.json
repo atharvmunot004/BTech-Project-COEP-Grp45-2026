@@ -1,0 +1,54 @@
+{
+  "risk_comparison": {
+    "total_comparisons": 320,
+    "methods": [
+      "monte_carlo",
+      "qae",
+      "parametric_var",
+      "evt_pot"
+    ],
+    "avg_runtime_by_method": {
+      "evt_pot": 0.0033699989318847655,
+      "monte_carlo": 0.009362418651580811,
+      "parametric_var": 0.000499117374420166,
+      "qae": 0.00024982690811157224
+    },
+    "sample_sizes_tested": [
+      1000.0,
+      5000.0,
+      8192.0,
+      10000.0,
+      50000.0,
+      100000.0
+    ]
+  },
+  "portfolio_optimization": {
+    "methods_tested": [
+      "markowitz_mv",
+      "risk_parity_erc",
+      "qmv_qubo",
+      "qaoa_cvar_portfolio"
+    ],
+    "avg_runtime_by_method": {
+      "markowitz_mv": 0.0,
+      "qaoa_cvar_portfolio": 0.0019974708557128906,
+      "qmv_qubo": 0.0,
+      "risk_parity_erc": 0.008986711502075195
+    },
+    "avg_sharpe_by_method": {
+      "markowitz_mv": 1.2239876889998214,
+      "qaoa_cvar_portfolio": 0.0,
+      "qmv_qubo": 1.2239876889998214,
+      "risk_parity_erc": 1.2196034939493587
+    }
+  },
+  "scalability": {
+    "asset_counts_tested": [
+      10
+    ],
+    "methods": [
+      "markowitz_mv",
+      "qmv_qubo"
+    ]
+  }
+}

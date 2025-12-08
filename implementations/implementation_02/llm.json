@@ -1,0 +1,676 @@
+{
+    "project": {
+      "name": "Quantum_vs_Classical_Risk_and_Portfolio_Engine",
+      "goal": "Comparative study of quantum vs classical methods for risk assessment (VaR/CVaR/etc.) and portfolio construction/optimization using 10 years of daily OHLCV data for 10 stocks.",
+      "universe": {
+        "num_assets": 10,
+        "asset_ids": [],
+        "data_horizon_years": 10,
+        "data_frequency": "daily"
+      }
+    },
+    "implementation_preferences": {
+      "language": "python",
+      "environment": {
+        "classical_libraries": [
+          "numpy",
+          "pandas",
+          "scipy",
+          "scikit-learn",
+          "statsmodels",
+          "cvxpy"
+        ],
+        "plotting_libraries": [
+          "matplotlib",
+          "seaborn"
+        ],
+        "quantum_framework": "qiskit",
+        "hardware": {
+          "quantum_backend_default": "aer_simulator",
+          "allow_real_hardware": true,
+          "ibm_quantum": {
+            "use_ibm_runtime": true,
+            "hub": "TBD",
+            "group": "TBD",
+            "project": "TBD"
+          }
+        }
+      },
+      "project_structure": {
+        "type": "monorepo",
+        "modules": [
+          "config",
+          "data_loading",
+          "data_cleaning",
+          "feature_engineering",
+          "portfolio_generation",
+          "classical_risk_engine",
+          "quantum_risk_engine",
+          "classical_portfolio_engine",
+          "quantum_portfolio_engine",
+          "evaluation_and_backtesting",
+          "experiment_tracking",
+          "notebooks"
+        ]
+      }
+    },
+    "data_config": {
+      "source_format": "csv",
+      "files_layout": "one_file_per_stock",
+      "file_naming_convention": "TBD (e.g., <TICKER>_ohlcv.csv)",
+      "columns_expected": [
+        "date",
+        "open",
+        "high",
+        "low",
+        "close",
+        "adj_close",
+        "volume"
+      ],
+      "adjusted_for_splits": true,
+      "time_zone": "local_exchange_tz",
+      "cleaning_pipeline": {
+        "steps": [
+          {
+            "id": "parse_dates_and_sort",
+            "description": "Parse date column, set as index, and sort ascending by date."
+          },
+          {
+            "id": "align_trading_days",
+            "description": "Align all assets on common trading dates using inner join on dates."
+          },
+          {
+            "id": "handle_missing_values_interpolation",
+            "description": "Interpolate missing OHLCV values per asset along the time axis (e.g., time-based or linear interpolation).",
+            "strategy": "time_interpolation"
+          },
+          {
+            "id": "drop_residual_missing",
+            "description": "Drop any remaining rows with missing values after interpolation."
+          }
+        ]
+      },
+      "returns_config": {
+        "price_field": "adj_close",
+        "return_type": "log",
+        "formula": "r_t = ln(P_t / P_{t-1})",
+        "aggregation": "daily",
+        "risk_horizon_days": 1,
+        "notes": "1-day horizon is standard in VaR/CVaR research; multi-day horizons can be added later."
+      }
+    },
+    "portfolio_generation": {
+      "num_portfolios": 100000,
+      "constraints": {
+        "long_only": true,
+        "fully_invested": true,
+        "allow_short_selling": false,
+        "min_weight_per_asset": 0.0,
+        "max_weight_per_asset": 1.0
+      },
+      "weight_distribution": {
+        "type": "dirichlet",
+        "alpha_scheme": "sparse_concentrated",
+        "alpha_values": 0.5,
+        "description": "Sample weights ~ Dirichlet(alpha,...,alpha) with alpha < 1 to allow concentrated portfolios (including near-single-asset portfolios) while remaining long-only and fully invested."
+      },
+      "output": {
+        "weights_matrix_shape": [
+          100000,
+          10
+        ],
+        "store_to_disk": true,
+        "storage_format": "parquet",
+        "path": "data/generated/portfolios_dirichlet.parquet"
+      }
+    },
+    "backtesting_and_splits": {
+      "split_strategy": "rolling_window",
+      "train_window_years": 3,
+      "test_horizon_years": 7,
+      "min_periods_for_estimation_days": 252,
+      "rolling_step_days": 1,
+      "evaluation_horizons": {
+        "var_cvar_horizon_days": 1,
+        "portfolio_rebalance_frequency_days": 21
+      }
+    },
+    "blocks": {
+      "classical_risk": {
+        "description": "Classical risk engines to compute VaR/CVaR and volatility metrics for each portfolio and date.",
+        "methods": [
+          {
+            "id": "classical_var_parametric",
+            "name": "Variance-Covariance Value-at-Risk (Parametric VaR)",
+            "inputs": [
+              "portfolio_weights",
+              "asset_returns_history",
+              "confidence_levels",
+              "risk_horizon_days"
+            ],
+            "outputs": [
+              "var_estimates_per_portfolio_per_date",
+              "runtime_stats",
+              "diagnostics"
+            ],
+            "config": {
+              "confidence_levels": [
+                0.95,
+                0.99
+              ],
+              "distribution_assumption": "multivariate_normal",
+              "use_historical_mean": true,
+              "use_sample_covariance": true,
+              "shrinkage_covariance": false
+            },
+            "performance_metrics": [
+              "var_coverage_ratio",
+              "number_of_var_breaches",
+              "kupiec_pof_test_pvalue",
+              "christoffersen_independence_test_pvalue"
+            ]
+          },
+          {
+            "id": "classical_var_cvar_mc",
+            "name": "Monte Carlo Simulation for VaR / CVaR",
+            "inputs": [
+              "portfolio_weights",
+              "asset_return_distribution_model",
+              "num_mc_paths",
+              "confidence_levels",
+              "risk_horizon_days"
+            ],
+            "outputs": [
+              "var_mc_estimates",
+              "cvar_mc_estimates",
+              "runtime_stats",
+              "diagnostics"
+            ],
+            "config": {
+              "num_mc_paths": 100000,
+              "simulation_assumption": "multivariate_normal",
+              "use_cholesky_for_correlation": true
+            },
+            "performance_metrics": [
+              "var_coverage_ratio",
+              "number_of_var_breaches",
+              "cvar_realized_vs_predicted_mae",
+              "cvar_realized_vs_predicted_rmse",
+              "convergence_error_vs_sample_size"
+            ]
+          },
+          {
+            "id": "garch_11_vol_forecasting",
+            "name": "GARCH(1,1) Volatility Forecasting",
+            "inputs": [
+              "asset_returns_history"
+            ],
+            "outputs": [
+              "asset_vol_forecasts",
+              "portfolio_vol_forecasts",
+              "runtime_stats",
+              "diagnostics"
+            ],
+            "config": {
+              "per_asset_model": true,
+              "distribution": "normal",
+              "use_rolling_estimation_window": true
+            },
+            "performance_metrics": [
+              "volatility_forecast_rmse",
+              "volatility_forecast_mae",
+              "likelihood_value",
+              "information_criteria_aic_bic"
+            ]
+          },
+          {
+            "id": "evt_pot",
+            "name": "Extreme Value Theory - Peaks Over Threshold (POT)",
+            "inputs": [
+              "portfolio_loss_series",
+              "threshold_selection_rule",
+              "confidence_levels"
+            ],
+            "outputs": [
+              "var_evt_estimates",
+              "cvar_evt_estimates",
+              "runtime_stats",
+              "diagnostics"
+            ],
+            "config": {
+              "threshold_type": "quantile",
+              "threshold_quantile": 0.95,
+              "tail_distribution": "generalized_pareto"
+            },
+            "performance_metrics": [
+              "var_coverage_ratio",
+              "number_of_var_breaches",
+              "gof_test_for_tail_fit",
+              "tail_index_stability"
+            ]
+          }
+        ]
+      },
+      "quantum_risk": {
+        "description": "Quantum-native or quantum-inspired methods for estimating CVaR and tail risk characteristics.",
+        "methods": [
+          {
+            "id": "qae_cvar",
+            "name": "Quantum Amplitude Estimation for CVaR",
+            "inputs": [
+              "loss_distribution_encoding",
+              "confidence_levels",
+              "quantum_backend_config"
+            ],
+            "outputs": [
+              "cvar_qae_estimates",
+              "runtime_stats",
+              "circuit_depth",
+              "num_qubits",
+              "diagnostics"
+            ],
+            "config": {
+              "encoding_scheme": "amplitude_encoding",
+              "num_shots": 8192,
+              "confidence_levels": [
+                0.95,
+                0.99
+              ],
+              "use_real_hardware_option": true
+            },
+            "performance_metrics": [
+              "cvar_realized_vs_predicted_mae",
+              "cvar_realized_vs_predicted_rmse",
+              "amplitude_estimation_error",
+              "runtime_vs_classical_baseline"
+            ]
+          },
+          {
+            "id": "qaoa_cvar_optimization_risk",
+            "name": "QAOA for CVaR-based Risk Minimization",
+            "inputs": [
+              "portfolio_loss_function",
+              "cvar_objective_parameters",
+              "quantum_backend_config"
+            ],
+            "outputs": [
+              "optimized_portfolio_weights_qaoa",
+              "risk_metrics",
+              "runtime_stats",
+              "circuit_depth",
+              "num_qubits"
+            ],
+            "config": {
+              "p_layers": 2,
+              "optimizer": "COBYLA",
+              "shots": 8192
+            },
+            "performance_metrics": [
+              "achieved_cvar",
+              "improvement_over_initial_portfolio_cvar",
+              "risk_return_tradeoff_index",
+              "runtime_vs_classical_cvar_optimization"
+            ]
+          },
+          {
+            "id": "qgan_scenario_generation",
+            "name": "Quantum GAN for Scenario Generation",
+            "inputs": [
+              "historical_joint_return_distribution",
+              "training_config",
+              "quantum_backend_config"
+            ],
+            "outputs": [
+              "synthetic_scenarios",
+              "training_loss_curve",
+              "runtime_stats",
+              "diagnostics"
+            ],
+            "config": {
+              "num_scenarios": 100000,
+              "epochs": 100,
+              "batch_size": 256
+            },
+            "performance_metrics": [
+              "distance_between_real_and_synthetic_distributions",
+              "tail_behavior_similarity_metric",
+              "scenario_quality_scores",
+              "impact_on_downstream_var_cvar_accuracy"
+            ]
+          },
+          {
+            "id": "qpca_factor_risk",
+            "name": "Quantum PCA for Factor Risk Analysis",
+            "inputs": [
+              "asset_return_covariance_matrix",
+              "quantum_backend_config"
+            ],
+            "outputs": [
+              "principal_components",
+              "explained_variance_ratios",
+              "runtime_stats",
+              "num_qubits",
+              "circuit_depth"
+            ],
+            "config": {
+              "num_components": 3,
+              "encoding": "density_matrix_encoding"
+            },
+            "performance_metrics": [
+              "variance_explained",
+              "factor_stability_over_time",
+              "runtime_vs_classical_pca"
+            ]
+          }
+        ]
+      },
+      "classical_portfolio": {
+        "description": "Classical portfolio construction and optimization frameworks.",
+        "methods": [
+          {
+            "id": "black_litterman",
+            "name": "Black-Litterman Model",
+            "inputs": [
+              "prior_returns",
+              "market_caps_or_benchmark_weights",
+              "investor_views",
+              "risk_aversion",
+              "tau"
+            ],
+            "outputs": [
+              "bl_implied_returns",
+              "optimal_weights_bl",
+              "runtime_stats",
+              "diagnostics"
+            ],
+            "config": {
+              "views_generation": "data_driven",
+              "risk_aversion": 3.0,
+              "tau": 0.05
+            },
+            "performance_metrics": [
+              "annualized_return",
+              "annualized_volatility",
+              "sharpe_ratio",
+              "max_drawdown",
+              "turnover"
+            ]
+          },
+          {
+            "id": "risk_parity_erc",
+            "name": "Risk Parity / Equal Risk Contribution",
+            "inputs": [
+              "asset_covariance_matrix"
+            ],
+            "outputs": [
+              "erc_weights",
+              "risk_contributions",
+              "runtime_stats",
+              "diagnostics"
+            ],
+            "config": {
+              "optimization_method": "iterative",
+              "constraints": {
+                "long_only": true,
+                "sum_to_one": true
+              }
+            },
+            "performance_metrics": [
+              "risk_concentration_index",
+              "annualized_return",
+              "annualized_volatility",
+              "sharpe_ratio",
+              "max_drawdown"
+            ]
+          },
+          {
+            "id": "classical_cvar_optimization",
+            "name": "CVaR Optimization",
+            "inputs": [
+              "scenario_return_matrix",
+              "confidence_level",
+              "risk_aversion_parameter"
+            ],
+            "outputs": [
+              "optimal_weights_cvar",
+              "cvar_value",
+              "runtime_stats",
+              "diagnostics"
+            ],
+            "config": {
+              "solver": "cvxpy",
+              "confidence_level": 0.95,
+              "risk_aversion_parameter": 1.0
+            },
+            "performance_metrics": [
+              "achieved_cvar",
+              "annualized_return",
+              "sharpe_ratio",
+              "max_drawdown"
+            ]
+          },
+          {
+            "id": "markowitz_mv",
+            "name": "Markowitz Mean-Variance Optimization",
+            "inputs": [
+              "expected_asset_returns",
+              "asset_covariance_matrix",
+              "risk_aversion_parameter"
+            ],
+            "outputs": [
+              "optimal_weights_mv",
+              "efficient_frontier_points",
+              "runtime_stats",
+              "diagnostics"
+            ],
+            "config": {
+              "constraints": {
+                "long_only": true,
+                "sum_to_one": true
+              },
+              "frontier_num_points": 50,
+              "risk_aversion_parameter": 1.0
+            },
+            "performance_metrics": [
+              "efficient_frontier_curve",
+              "annualized_return",
+              "annualized_volatility",
+              "sharpe_ratio",
+              "max_drawdown"
+            ]
+          }
+        ]
+      },
+      "quantum_portfolio": {
+        "description": "Quantum approaches for portfolio construction and optimization.",
+        "methods": [
+          {
+            "id": "qmv_qubo",
+            "name": "Quantum Mean-Variance Optimization (QMV / QUBO)",
+            "inputs": [
+              "expected_asset_returns",
+              "asset_covariance_matrix",
+              "risk_aversion_parameter",
+              "qubo_encoding_config",
+              "quantum_backend_config"
+            ],
+            "outputs": [
+              "optimal_or_near_optimal_weights_qmv",
+              "risk_return_tradeoff_metrics",
+              "runtime_stats",
+              "num_qubits",
+              "circuit_depth"
+            ],
+            "config": {
+              "solver_type": "qaoa",
+              "risk_aversion_parameter": 1.0
+            },
+            "performance_metrics": [
+              "annualized_return",
+              "annualized_volatility",
+              "sharpe_ratio",
+              "max_drawdown",
+              "runtime_vs_classical_markowitz"
+            ]
+          },
+          {
+            "id": "quantum_annealing_multi_objective",
+            "name": "Quantum Annealing for Multi-Objective Portfolio Construction",
+            "inputs": [
+              "return_objective",
+              "risk_objective",
+              "constraints",
+              "qubo_encoding_config"
+            ],
+            "outputs": [
+              "pareto_like_solutions",
+              "selected_portfolio",
+              "runtime_stats",
+              "diagnostics"
+            ],
+            "config": {
+              "platform": "dwave_simulator",
+              "num_reads": 1000
+            },
+            "performance_metrics": [
+              "risk_return_pareto_spread",
+              "annualized_return",
+              "annualized_volatility",
+              "sharpe_ratio",
+              "runtime_vs_classical_multi_objective"
+            ]
+          },
+          {
+            "id": "qae_cvar_portfolio",
+            "name": "QAE for CVaR-based Portfolio Optimization",
+            "inputs": [
+              "portfolio_loss_mapping",
+              "confidence_level",
+              "quantum_backend_config"
+            ],
+            "outputs": [
+              "weights_optimized_via_qae",
+              "cvar_estimates",
+              "runtime_stats",
+              "num_qubits",
+              "circuit_depth"
+            ],
+            "config": {
+              "encoding_scheme": "amplitude_encoding",
+              "shots": 8192,
+              "confidence_level": 0.95
+            },
+            "performance_metrics": [
+              "achieved_cvar",
+              "annualized_return",
+              "sharpe_ratio",
+              "runtime_vs_classical_cvar_optimization"
+            ]
+          },
+          {
+            "id": "qaoa_cvar_portfolio",
+            "name": "QAOA for CVaR-based Portfolio Optimization",
+            "inputs": [
+              "cvar_objective_qubo",
+              "quantum_backend_config"
+            ],
+            "outputs": [
+              "qaoa_optimal_bitstring_or_weights",
+              "risk_return_metrics",
+              "runtime_stats",
+              "num_qubits",
+              "circuit_depth"
+            ],
+            "config": {
+              "p_layers": 2,
+              "classical_optimizer": "COBYLA",
+              "shots": 8192
+            },
+            "performance_metrics": [
+              "achieved_cvar",
+              "annualized_return",
+              "sharpe_ratio",
+              "max_drawdown",
+              "runtime_vs_classical_cvar_optimization"
+            ]
+          }
+        ]
+      }
+    },
+    "evaluation_and_comparison": {
+      "risk_metrics_global": [
+        "var_coverage_ratio",
+        "number_of_var_breaches",
+        "kupiec_pof_test_pvalue",
+        "christoffersen_independence_test_pvalue",
+        "cvar_realized_vs_predicted_mae",
+        "cvar_realized_vs_predicted_rmse"
+      ],
+      "portfolio_metrics_global": [
+        "annualized_return",
+        "annualized_volatility",
+        "sharpe_ratio",
+        "sortino_ratio",
+        "max_drawdown",
+        "calmar_ratio",
+        "turnover"
+      ],
+      "runtime_metrics_global": [
+        "wall_clock_time_per_method",
+        "wall_clock_time_per_portfolio_average",
+        "runtime_scaling_with_num_portfolios"
+      ],
+      "quantum_specific_metrics_global": [
+        "num_qubits",
+        "circuit_depth",
+        "number_of_shots",
+        "simulator_vs_hardware_flag"
+      ],
+      "comparisons": {
+        "classical_vs_quantum_risk": {
+          "dimensions": [
+            "accuracy",
+            "stability",
+            "tail_fit_quality",
+            "runtime_efficiency",
+            "scaling_with_number_of_scenarios"
+          ]
+        },
+        "classical_vs_quantum_portfolio": {
+          "dimensions": [
+            "risk_adjusted_return",
+            "drawdown_profile",
+            "concentration_of_weights",
+            "runtime_efficiency",
+            "robustness_across_market_regimes"
+          ]
+        }
+      }
+    },
+    "experiment_tracking": {
+      "logging": {
+        "core_store": "local_parquet",
+        "mlflow_integration": true,
+        "log_directory": "experiments/logs",
+        "per_run_metadata": [
+          "run_id",
+          "timestamp",
+          "random_seed",
+          "method_id",
+          "num_portfolios",
+          "train_window_start",
+          "train_window_end",
+          "test_window_start",
+          "test_window_end",
+          "runtime",
+          "key_metrics"
+        ]
+      },
+      "reproducibility": {
+        "set_global_random_seeds": true,
+        "record_library_versions": true,
+        "record_git_commit_hash": true
+      }
+    }
+  }
+  
