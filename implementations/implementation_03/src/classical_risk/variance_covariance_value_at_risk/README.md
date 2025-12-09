@@ -34,33 +34,33 @@ Where:
 
 ```bash
 # Process first 100 portfolios (default - for testing)
-python -m src.classical-risk.variance-covariance-value-at-risk.main
+python -m src.classical_risk.variance_covariance_value_at_risk.main
 
 # Process all 100,000 portfolios
-python -m src.classical-risk.variance-covariance-value-at-risk.main --max-portfolios 0
+python -m src.classical_risk.variance_covariance_value_at_risk.main --max-portfolios 0
 
 # Process first 1,000 portfolios
-python -m src.classical-risk.variance-covariance-value-at-risk.main --max-portfolios 1000
+python -m src.classical_risk.variance_covariance_value_at_risk.main --max-portfolios 1000
 
 # Process 100 portfolios with 4 workers
-python -m src.classical-risk.variance-covariance-value-at-risk.main --max-portfolios 100 --n-jobs 4
+python -m src.classical_risk.variance_covariance_value_at_risk.main --max-portfolios 100 --n-jobs 4
 
 
 
 # Process first 100 portfolios (default - for testing)
-python -m src.classical-risk.variance-covariance-value-at-risk.main --config llm.json
+python -m src.classical_risk.variance_covariance_value_at_risk.main --config llm.json
 
 # Process all portfolios
-python -m src.classical-risk.variance-covariance-value-at-risk.main --config llm.json --max-portfolios 0
+python -m src.classical_risk.variance_covariance_value_at_risk.main --config llm.json --max-portfolios 0
 
 # Process specific number of portfolios
-python -m src.classical-risk.variance-covariance-value-at-risk.main --config llm.json --max-portfolios 1000
+python -m src.classical_risk.variance_covariance_value_at_risk.main --config llm.json --max-portfolios 1000
 
 # Use specific number of workers
-python -m src.classical-risk.variance-covariance-value-at-risk.main --config llm.json --n-jobs 8
+python -m src.classical_risk.variance_covariance_value_at_risk.main --config llm.json --n-jobs 8
 
 # Sequential processing (for debugging)
-python -m src.classical-risk.variance-covariance-value-at-risk.main --config llm.json --n-jobs 1 --max-portfolios 10
+python -m src.classical_risk.variance_covariance_value_at_risk.main --config llm.json --n-jobs 1 --max-portfolios 10
 ```
 
 ### Python API

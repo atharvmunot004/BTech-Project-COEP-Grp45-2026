@@ -4,3 +4,13 @@ numpy>=1.23.0
 pyarrow>=10.0.0  # Required for Parquet file format support
 scipy>=1.9.0  # Required for statistical tests (Kupiec, Christoffersen, Jarque-Bera)
 
+# Classical Risk Assessment dependencies
+arch>=6.2.0  # Required for GARCH models (GARCH(1,1) volatility forecasting)
+statsmodels>=0.14.0  # Time series analysis and statistical modeling
+
+# Utility dependencies
+joblib>=1.3.0  # Parallel processing and caching (alternative to multiprocessing)
+
+# Visualization dependencies (optional, for report generation and analysis)
+matplotlib>=3.7.0  # Plotting and visualization
+seaborn>=0.12.0  # Statistical data visualization

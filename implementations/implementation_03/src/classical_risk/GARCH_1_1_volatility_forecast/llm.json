@@ -1,0 +1,122 @@
+{
+    "task": "garch_1_1_var_cvar_evaluation",
+  
+    "inputs": {
+      "panel_price_path": "data/preprocessed/panel_price.parquet",
+      "portfolio_weights_path": "portfolios/portfolios.parquet"
+    },
+  
+    "garch_settings": {
+      "model_type": "GARCH",
+      "p": 1,
+      "q": 1,
+      "use_mean_model": false,
+      "return_type": "log",
+      "estimation_windows": [252, 500],
+      "distribution": "normal",
+      "confidence_levels": [0.95, 0.99],
+      "horizons": [1, 10],
+      "forecast_method": "rolling",
+      "fallback_long_run_variance": true,
+      "random_seed": 42
+    },
+  
+    "modules": {
+      "compute_daily_returns": true,
+      "compute_portfolio_returns": true,
+  
+      "fit_garch": true,
+      "compute_conditional_volatility": true,
+      "rolling_volatility_forecast": true,
+  
+      "var_from_volatility": true,
+      "cvar_from_volatility": true,
+  
+      "var_violations": true,
+      "cvar_violations": true,
+  
+      "accuracy_metrics": [
+        "hit_rate",
+        "violation_ratio",
+        "kupiec",
+        "christoffersen"
+      ],
+  
+      "tail_metrics": [
+        "mean_exceedance",
+        "max_exceedance",
+        "std_exceedance"
+      ],
+  
+      "structure_metrics": [
+        "hhi",
+        "enc",
+        "condition_number"
+      ],
+  
+      "distribution_metrics": [
+        "skew",
+        "kurtosis",
+        "jarque_bera"
+      ],
+  
+      "runtime_metrics": true
+    },
+  
+    "performance_metrics": {
+      "accuracy": [
+        "hit_rate",
+        "violation_ratio",
+        "kupiec_unconditional_coverage",
+        "christoffersen_independence",
+        "christoffersen_conditional_coverage",
+        "traffic_light_zone"
+      ],
+      "tail_behavior": [
+        "mean_exceedance",
+        "max_exceedance",
+        "std_exceedance",
+        "quantile_loss_score",
+        "rmse_var_vs_losses",
+        "cvar_mean_exceedance",
+        "cvar_max_exceedance"
+      ],
+      "portfolio_structure": [
+        "num_active_assets",
+        "hhi_concentration",
+        "effective_number_of_assets",
+        "covariance_condition_number"
+      ],
+      "distribution": [
+        "skewness",
+        "kurtosis",
+        "jarque_bera_p_value"
+      ],
+      "runtime": [
+        "runtime_per_portfolio_ms",
+        "p95_runtime_ms",
+        "garch_fitting_time_ms",
+        "forecast_time_ms"
+      ]
+    },
+  
+    "report_sections": [
+      "methodology_overview",
+      "garch_model_description",
+      "volatility_forecast_method",
+      "var_cvar_derivation_from_garch",
+      "backtesting_results",
+      "tail_risk_analysis",
+      "portfolio_structure_effects",
+      "robustness_and_normality_checks",
+      "computational_performance",
+      "key_insights"
+    ],
+  
+    "outputs": {
+      "metrics_table": "results/classical_risk/garch_var_cvar_metrics.parquet",
+      "metrics_json": "results/classical_risk/garch_var_cvar_metrics.json",
+      "summary_report": "results/classical_risk/garch_var_cvar_report.md"
+    }
+  }
+  
