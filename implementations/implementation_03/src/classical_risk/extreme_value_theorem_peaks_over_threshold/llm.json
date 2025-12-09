@@ -1,0 +1,145 @@
+{
+    "task": "evt_pot_var_cvar_evaluation",
+  
+    "inputs": {
+      "panel_price_path": "data/preprocessed/panel_price.parquet",
+      "portfolio_weights_path": "portfolios/portfolios.parquet"
+    },
+  
+    "evt_settings": {
+      "method": "peaks_over_threshold",
+      "return_type": "log",
+      "threshold_selection": {
+        "method": "quantile",
+        "quantiles": [0.90, 0.95, 0.97],
+        "automatic_threshold": true,
+        "min_exceedances": 50
+      },
+      "distribution": "generalized_pareto",
+      "confidence_levels": [0.95, 0.99, 0.995],
+      "horizons": [1, 10],
+      "estimation_windows": [252, 500, 750],
+      "shape_constraints": {
+        "xi_lower_bound": -0.5,
+        "xi_upper_bound": 0.5
+      },
+      "gpd_fitting_method": "mle",
+      "extreme_risk_measures": true,
+      "random_seed": 42
+    },
+  
+    "modules": {
+      "compute_daily_returns": true,
+      "compute_portfolio_returns": true,
+  
+      "threshold_determination": true,
+      "extract_exceedances": true,
+  
+      "fit_gpd": true,
+      "estimate_gpd_parameters": true,
+  
+      "var_from_evt": true,
+      "cvar_from_evt": true,
+  
+      "var_violations": true,
+      "cvar_violations": true,
+  
+      "accuracy_metrics": [
+        "hit_rate",
+        "violation_ratio",
+        "kupiec",
+        "christoffersen"
+      ],
+  
+      "tail_metrics": [
+        "mean_exceedance",
+        "max_exceedance",
+        "expected_shortfall_exceedance",
+        "tail_index_xi",
+        "scale_beta"
+      ],
+  
+      "threshold_diagnostics": [
+        "mean_excess_plot",
+        "threshold_stability_plot",
+        "xi_stability_plot",
+        "exceedance_count"
+      ],
+  
+      "structure_metrics": [
+        "hhi",
+        "enc",
+        "condition_number"
+      ],
+  
+      "distribution_metrics": [
+        "skew",
+        "kurtosis",
+        "jarque_bera"
+      ],
+  
+      "runtime_metrics": true
+    },
+  
+    "performance_metrics": {
+      "accuracy": [
+        "hit_rate",
+        "violation_ratio",
+        "kupiec_unconditional_coverage",
+        "christoffersen_independence",
+        "christoffersen_conditional_coverage",
+        "traffic_light_zone"
+      ],
+      "tail_behavior": [
+        "mean_exceedance",
+        "max_exceedance",
+        "std_exceedance",
+        "quantile_loss_score",
+        "rmse_var_vs_losses",
+        "rmse_cvar_vs_losses",
+        "cvar_mean_exceedance",
+        "cvar_max_exceedance",
+        "expected_shortfall_exceedance",
+        "tail_index_xi",
+        "shape_scale_stability"
+      ],
+      "portfolio_structure": [
+        "num_active_assets",
+        "hhi_concentration",
+        "effective_number_of_assets",
+        "covariance_condition_number"
+      ],
+      "distribution": [
+        "skewness",
+        "kurtosis",
+        "jarque_bera_p_value"
+      ],
+      "runtime": [
+        "runtime_per_portfolio_ms",
+        "p95_runtime_ms",
+        "evt_fitting_time_ms",
+        "threshold_selection_time_ms"
+      ]
+    },
+  
+    "report_sections": [
+      "methodology_overview",
+      "evt_theory_and_pot_framework",
+      "threshold_selection_procedure",
+      "gpd_parameter_estimation",
+      "evt_based_var_cvar_calculation",
+      "backtesting_results",
+      "tail_risk_behavior",
+      "portfolio_structure_effects",
+      "stability_and_robustness_checks",
+      "computational_performance",
+      "key_insights"
+    ],
+  
+    "outputs": {
+      "metrics_table": "results/classical_risk/evt_pot_var_cvar_metrics.parquet",
+      "metrics_json": "results/classical_risk/evt_pot_var_cvar_metrics.json",
+      "summary_report": "results/classical_risk/evt_pot_var_cvar_report.md"
+    }
+  }
+  
