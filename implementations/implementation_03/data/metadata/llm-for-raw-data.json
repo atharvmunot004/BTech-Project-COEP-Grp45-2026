@@ -1,0 +1,149 @@
+{
+  "dataset_name": "Indian Stock Market 10-Year Daily Data",
+  "description": "Daily stock price data for 10 major Indian companies from the National Stock Exchange (NSE) covering approximately 10 years of trading history. This dataset is suitable for time series analysis, portfolio optimization, risk modeling, and machine learning applications.",
+  "data_source": {
+    "provider": "yfinance",
+    "exchange": "NSE (National Stock Exchange of India)",
+    "download_method": "yf.download() with auto_adjust=True",
+    "period": "10y",
+    "interval": "1d"
+  },
+  "date_range": {
+    "start_date": "2015-12-01",
+    "end_date": "2025-11-28",
+    "duration_years": 10,
+    "trading_days_approx": 2470
+  },
+  "stocks": [
+    {
+      "name": "Asian Paints",
+      "ticker": "ASIANPAINT.NS",
+      "file": "ASIANPAINT_10yr_daily.csv",
+      "sector": "Consumer Goods"
+    },
+    {
+      "name": "Bajaj Finance",
+      "ticker": "BAJFINANCE.NS",
+      "file": "BAJFINANCE_10yr_daily.csv",
+      "sector": "Financial Services"
+    },
+    {
+      "name": "HDFC Bank",
+      "ticker": "HDFCBANK.NS",
+      "file": "HDFCBANK_10yr_daily.csv",
+      "sector": "Banking"
+    },
+    {
+      "name": "Hindustan Unilever",
+      "ticker": "HINDUNILVR.NS",
+      "file": "HINDUNILVR_10yr_daily.csv",
+      "sector": "Consumer Goods"
+    },
+    {
+      "name": "ICICI Bank",
+      "ticker": "ICICIBANK.NS",
+      "file": "ICICIBANK_10yr_daily.csv",
+      "sector": "Banking"
+    },
+    {
+      "name": "Infosys",
+      "ticker": "INFY.NS",
+      "file": "INFY_10yr_daily.csv",
+      "sector": "Information Technology"
+    },
+    {
+      "name": "Larsen & Toubro",
+      "ticker": "LT.NS",
+      "file": "LT_10yr_daily.csv",
+      "sector": "Engineering & Construction"
+    },
+    {
+      "name": "NTPC",
+      "ticker": "NTPC.NS",
+      "file": "NTPC_10yr_daily.csv",
+      "sector": "Power"
+    },
+    {
+      "name": "Reliance Industries",
+      "ticker": "RELIANCE.NS",
+      "file": "RELIANCE_10yr_daily.csv",
+      "sector": "Oil & Gas"
+    },
+    {
+      "name": "Tata Consultancy Services",
+      "ticker": "TCS.NS",
+      "file": "TCS_10yr_daily.csv",
+      "sector": "Information Technology"
+    }
+  ],
+  "data_structure": {
+    "file_format": "CSV",
+    "file_location": "data/raw/",
+    "columns": [
+      {
+        "name": "Price",
+        "description": "Adjusted closing price (adjusted for splits and dividends)",
+        "data_type": "float",
+        "unit": "INR"
+      },
+      {
+        "name": "Close",
+        "description": "Closing price for the trading day",
+        "data_type": "float",
+        "unit": "INR"
+      },
+      {
+        "name": "High",
+        "description": "Highest price during the trading day",
+        "data_type": "float",
+        "unit": "INR"
+      },
+      {
+        "name": "Low",
+        "description": "Lowest price during the trading day",
+        "data_type": "float",
+        "unit": "INR"
+      },
+      {
+        "name": "Open",
+        "description": "Opening price for the trading day",
+        "data_type": "float",
+        "unit": "INR"
+      },
+      {
+        "name": "Volume",
+        "description": "Number of shares traded during the day",
+        "data_type": "integer",
+        "unit": "shares"
+      }
+    ],
+    "index": {
+      "column": "Date",
+      "format": "YYYY-MM-DD",
+      "frequency": "daily",
+      "timezone": "IST (Indian Standard Time)"
+    },
+    "file_structure": {
+      "header_row": 1,
+      "ticker_row": 2,
+      "date_row": 3,
+      "data_start_row": 4
+    }
+  },
+  "data_quality": {
+    "adjustments": "auto_adjust=True (splits and dividends adjusted)",
+    "missing_data": "Not specified - check individual files",
+    "currency": "INR (Indian Rupees)",
+    "precision": "Float precision as provided by yfinance"
+  },
+  "notes": [
+    "Data is adjusted for stock splits and dividends",
+    "All prices are in Indian Rupees (INR)",
+    "Trading days exclude weekends and Indian market holidays",
+    "Volume represents the number of shares traded",
+    "Files follow naming convention: {STOCK_NAME}_10yr_daily.csv"
+  ],
+  "metadata_version": "1.0",
+  "last_updated": "2025-01-27"
+}
+

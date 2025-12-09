@@ -1,0 +1,104 @@
+{
+  "module_name": "src.data",
+  "description": "Data loading and cleaning pipeline for processing raw stock CSV files into cleaned, aligned time series data. Handles CSV parsing, date alignment, missing value interpolation, and data validation.",
+  "module_location": "src/data/",
+  "main_components": {
+    "DataLoader": {
+      "file": "data_loader.py",
+      "purpose": "Loads raw CSV files from data/raw/ directory",
+      "key_methods": [
+        {
+          "name": "load_single_stock",
+          "description": "Load one stock's CSV file, parse dates, handle column structure"
+        },
+        {
+          "name": "load_multiple_stocks",
+          "description": "Load multiple stocks into dictionary of DataFrames"
+        },
+        {
+          "name": "load_all_stocks",
+          "description": "Load all available stocks from raw directory"
+        },
+        {
+          "name": "get_available_symbols",
+          "description": "List all stock symbols available in raw data directory"
+        }
+      ],
+      "csv_structure": {
+        "header_row": 1,
+        "ticker_row": 2,
+        "date_row": 3,
+        "data_start_row": 4,
+        "columns": ["Date", "Price", "Close", "High", "Low", "Open", "Volume"]
+      }
+    },
+    "DataCleaner": {
+      "file": "data_cleaner.py",
+      "purpose": "Cleans and aligns stock data across multiple stocks",
+      "key_methods": [
+        {
+          "name": "parse_dates_and_sort",
+          "description": "Parse dates, set as index, sort chronologically"
+        },
+        {
+          "name": "align_trading_days",
+          "description": "Align all stocks on common trading days (intersection)"
+        },
+        {
+          "name": "handle_missing_values",
+          "description": "Interpolate missing values using specified method"
+        },
+        {
+          "name": "drop_residual_missing",
+          "description": "Drop rows with remaining missing values"
+        },
+        {
+          "name": "validate_data",
+          "description": "Validate data integrity, check for negative prices, OHLC consistency"
+        },
+        {
+          "name": "clean",
+          "description": "Run complete cleaning pipeline: parse dates → align → interpolate → validate"
+        }
+      ],
+      "interpolation_methods": ["time", "linear", "forward_fill", "backward_fill"]
+    },
+    "process_and_save": {
+      "file": "process_data.py",
+      "purpose": "Main function to run complete data processing pipeline",
+      "functionality": "Loads raw data → cleans → saves individual stock files and panel data",
+      "outputs": {
+        "individual_stocks": "{SYMBOL}_processed.{csv|parquet}",
+        "panel_data": "panel_{column}.{csv|parquet}",
+        "metadata": "processing_metadata.json"
+      }
+    }
+  },
+  "usage": {
+    "command_line": "python -m src.data.process_data [--symbols STOCK1 STOCK2] [--interpolation METHOD] [--keep-missing] [--format parquet csv]",
+    "python_api": {
+      "example_1": "from src.data import DataLoader, DataCleaner\nloader = DataLoader()\ndata = loader.load_all_stocks()\ncleaner = DataCleaner()\ncleaned = cleaner.clean(data)",
+      "example_2": "from src.data.process_data import process_and_save\nprocess_and_save(symbols=['RELIANCE', 'TCS'], interpolation_method='time')"
+    }
+  },
+  "data_flow": {
+    "input": "Raw CSV files in data/raw/ (format: {SYMBOL}_10yr_daily.csv)",
+    "processing": "Load → Parse Dates → Align Trading Days → Interpolate Missing Values → Validate",
+    "output": "Cleaned data in data/processed/ (individual files + panel data)"
+  },
+  "dependencies": {
+    "python_packages": ["pandas", "numpy", "pathlib"],
+    "data_requirements": "Raw CSV files following structure in data/metadata/llm.json"
+  },
+  "output_structure": {
+    "individual_files": "Time series format: Date index + columns (Price, Close, High, Low, Open, Volume)",
+    "panel_files": "Wide format: Date index + one column per stock symbol",
+    "formats": ["CSV", "Parquet"]
+  },
+  "related_files": {
+    "raw_data_metadata": "../data/metadata/llm.json",
+    "processed_data_metadata": "../data/processed/llm.json",
+    "module_init": "__init__.py"
+  }
+}
+

@@ -1,0 +1,5 @@
+# Data processing module (src/data) dependencies
+pandas>=1.5.0
+numpy>=1.23.0
+pyarrow>=10.0.0  # Required for Parquet file format support
+

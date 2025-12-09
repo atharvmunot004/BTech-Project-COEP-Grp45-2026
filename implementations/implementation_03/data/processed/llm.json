@@ -1,0 +1,346 @@
+{
+  "dataset_name": "Processed Indian Stock Market Data - 10-Year Daily",
+  "description": "Cleaned, aligned, and processed daily stock price data for 10 major Indian companies from the National Stock Exchange (NSE). Data has been cleaned, missing values interpolated, and all stocks aligned on common trading days. Suitable for portfolio optimization, risk analysis, time series modeling, and machine learning applications.",
+  "source_data": {
+    "raw_data_location": "data/raw/",
+    "raw_data_metadata": "data/metadata/llm.json",
+    "processing_script": "src/data/process_data.py",
+    "processing_date": "2025-12-09 14:07:50"
+  },
+  "processing_pipeline": {
+    "steps": [
+      {
+        "step": 1,
+        "name": "Data Loading",
+        "description": "Load raw CSV files using DataLoader class",
+        "module": "src.data.data_loader"
+      },
+      {
+        "step": 2,
+        "name": "Date Parsing and Sorting",
+        "description": "Parse date columns, set as index, and sort chronologically",
+        "module": "src.data.data_cleaner"
+      },
+      {
+        "step": 3,
+        "name": "Trading Day Alignment",
+        "description": "Align all stocks on common trading days (intersection of dates)",
+        "module": "src.data.data_cleaner"
+      },
+      {
+        "step": 4,
+        "name": "Missing Value Interpolation",
+        "description": "Interpolate missing values using time-based interpolation",
+        "method": "time",
+        "module": "src.data.data_cleaner"
+      },
+      {
+        "step": 5,
+        "name": "Data Validation",
+        "description": "Validate data integrity, check for negative values, OHLC consistency",
+        "module": "src.data.data_cleaner"
+      }
+    ],
+    "parameters": {
+      "interpolation_method": "time",
+      "drop_missing": false,
+      "alignment_method": "inner_join"
+    }
+  },
+  "date_range": {
+    "start_date": "2015-12-01",
+    "end_date": "2025-12-01",
+    "total_trading_days": 2472,
+    "duration_years": 10,
+    "timezone": "IST (Indian Standard Time)"
+  },
+  "stocks": [
+    {
+      "name": "Asian Paints",
+      "symbol": "ASIANPAINT",
+      "ticker": "ASIANPAINT.NS",
+      "sector": "Consumer Goods",
+      "individual_files": {
+        "csv": "ASIANPAINT_processed.csv",
+        "parquet": "ASIANPAINT_processed.parquet"
+      }
+    },
+    {
+      "name": "Bajaj Finance",
+      "symbol": "BAJFINANCE",
+      "ticker": "BAJFINANCE.NS",
+      "sector": "Financial Services",
+      "individual_files": {
+        "csv": "BAJFINANCE_processed.csv",
+        "parquet": "BAJFINANCE_processed.parquet"
+      }
+    },
+    {
+      "name": "HDFC Bank",
+      "symbol": "HDFCBANK",
+      "ticker": "HDFCBANK.NS",
+      "sector": "Banking",
+      "individual_files": {
+        "csv": "HDFCBANK_processed.csv",
+        "parquet": "HDFCBANK_processed.parquet"
+      }
+    },
+    {
+      "name": "Hindustan Unilever",
+      "symbol": "HINDUNILVR",
+      "ticker": "HINDUNILVR.NS",
+      "sector": "Consumer Goods",
+      "individual_files": {
+        "csv": "HINDUNILVR_processed.csv",
+        "parquet": "HINDUNILVR_processed.parquet"
+      }
+    },
+    {
+      "name": "ICICI Bank",
+      "symbol": "ICICIBANK",
+      "ticker": "ICICIBANK.NS",
+      "sector": "Banking",
+      "individual_files": {
+        "csv": "ICICIBANK_processed.csv",
+        "parquet": "ICICIBANK_processed.parquet"
+      }
+    },
+    {
+      "name": "Infosys",
+      "symbol": "INFY",
+      "ticker": "INFY.NS",
+      "sector": "Information Technology",
+      "individual_files": {
+        "csv": "INFY_processed.csv",
+        "parquet": "INFY_processed.parquet"
+      }
+    },
+    {
+      "name": "Larsen & Toubro",
+      "symbol": "LT",
+      "ticker": "LT.NS",
+      "sector": "Engineering & Construction",
+      "individual_files": {
+        "csv": "LT_processed.csv",
+        "parquet": "LT_processed.parquet"
+      }
+    },
+    {
+      "name": "NTPC",
+      "symbol": "NTPC",
+      "ticker": "NTPC.NS",
+      "sector": "Power",
+      "individual_files": {
+        "csv": "NTPC_processed.csv",
+        "parquet": "NTPC_processed.parquet"
+      }
+    },
+    {
+      "name": "Reliance Industries",
+      "symbol": "RELIANCE",
+      "ticker": "RELIANCE.NS",
+      "sector": "Oil & Gas",
+      "individual_files": {
+        "csv": "RELIANCE_processed.csv",
+        "parquet": "RELIANCE_processed.parquet"
+      }
+    },
+    {
+      "name": "Tata Consultancy Services",
+      "symbol": "TCS",
+      "ticker": "TCS.NS",
+      "sector": "Information Technology",
+      "individual_files": {
+        "csv": "TCS_processed.csv",
+        "parquet": "TCS_processed.parquet"
+      }
+    }
+  ],
+  "data_structure": {
+    "individual_stock_files": {
+      "format": ["CSV", "Parquet"],
+      "file_location": "data/processed/",
+      "naming_convention": "{SYMBOL}_processed.{ext}",
+      "structure": "Time series (Date x Columns)",
+      "index": {
+        "column": "Date",
+        "format": "YYYY-MM-DD",
+        "frequency": "daily",
+        "type": "DatetimeIndex"
+      },
+      "columns": [
+        {
+          "name": "Price",
+          "description": "Adjusted closing price (adjusted for splits and dividends)",
+          "data_type": "float64",
+          "unit": "INR"
+        },
+        {
+          "name": "Close",
+          "description": "Closing price for the trading day",
+          "data_type": "float64",
+          "unit": "INR"
+        },
+        {
+          "name": "High",
+          "description": "Highest price during the trading day",
+          "data_type": "float64",
+          "unit": "INR"
+        },
+        {
+          "name": "Low",
+          "description": "Lowest price during the trading day",
+          "data_type": "float64",
+          "unit": "INR"
+        },
+        {
+          "name": "Open",
+          "description": "Opening price for the trading day (may be interpolated if missing)",
+          "data_type": "float64",
+          "unit": "INR",
+          "note": "Some values may be interpolated from High/Low average if missing in raw data"
+        },
+        {
+          "name": "Volume",
+          "description": "Number of shares traded during the day",
+          "data_type": "int64",
+          "unit": "shares",
+          "note": "May be zero if not available in raw data"
+        }
+      ],
+      "row_count": 2472,
+      "constraints": [
+        "All stocks have the same date index (aligned on common trading days)",
+        "No missing values (interpolated or filled)",
+        "All prices are non-negative",
+        "OHLC consistency validated"
+      ]
+    },
+    "panel_data_files": {
+      "format": ["CSV", "Parquet"],
+      "file_location": "data/processed/",
+      "naming_convention": "panel_{column_name}.{ext}",
+      "structure": "Wide format panel data (Date x Symbol)",
+      "description": "Panel data files contain one column per stock, with Date as index. Each file represents one data column (Price, Close, High, Low, Open, Volume) across all stocks.",
+      "index": {
+        "column": "Date",
+        "format": "YYYY-MM-DD",
+        "frequency": "daily",
+        "type": "DatetimeIndex"
+      },
+      "columns": {
+        "description": "One column per stock symbol (ASIANPAINT, BAJFINANCE, HDFCBANK, HINDUNILVR, ICICIBANK, INFY, LT, NTPC, RELIANCE, TCS)",
+        "count": 10
+      },
+      "files": [
+        {
+          "name": "panel_price",
+          "description": "Adjusted closing prices (Price) for all stocks",
+          "columns": ["Date", "ASIANPAINT", "BAJFINANCE", "HDFCBANK", "HINDUNILVR", "ICICIBANK", "INFY", "LT", "NTPC", "RELIANCE", "TCS"]
+        },
+        {
+          "name": "panel_close",
+          "description": "Closing prices for all stocks",
+          "columns": ["Date", "ASIANPAINT", "BAJFINANCE", "HDFCBANK", "HINDUNILVR", "ICICIBANK", "INFY", "LT", "NTPC", "RELIANCE", "TCS"]
+        },
+        {
+          "name": "panel_high",
+          "description": "Highest prices for all stocks",
+          "columns": ["Date", "ASIANPAINT", "BAJFINANCE", "HDFCBANK", "HINDUNILVR", "ICICIBANK", "INFY", "LT", "NTPC", "RELIANCE", "TCS"]
+        },
+        {
+          "name": "panel_low",
+          "description": "Lowest prices for all stocks",
+          "columns": ["Date", "ASIANPAINT", "BAJFINANCE", "HDFCBANK", "HINDUNILVR", "ICICIBANK", "INFY", "LT", "NTPC", "RELIANCE", "TCS"]
+        },
+        {
+          "name": "panel_open",
+          "description": "Opening prices for all stocks",
+          "columns": ["Date", "ASIANPAINT", "BAJFINANCE", "HDFCBANK", "HINDUNILVR", "ICICIBANK", "INFY", "LT", "NTPC", "RELIANCE", "TCS"]
+        },
+        {
+          "name": "panel_volume",
+          "description": "Trading volumes for all stocks",
+          "columns": ["Date", "ASIANPAINT", "BAJFINANCE", "HDFCBANK", "HINDUNILVR", "ICICIBANK", "INFY", "LT", "NTPC", "RELIANCE", "TCS"]
+        }
+      ],
+      "row_count": 2472
+    }
+  },
+  "data_quality": {
+    "missing_values": {
+      "status": "None (all interpolated or filled)",
+      "interpolation_method": "time-based interpolation",
+      "missing_data_handling": "Forward fill, backward fill, and time interpolation applied"
+    },
+    "alignment": {
+      "method": "Inner join on dates",
+      "result": "All stocks aligned on 2472 common trading days",
+      "date_range": "2015-12-01 to 2025-12-01"
+    },
+    "validation": {
+      "negative_prices": "Checked - none found",
+      "ohlc_consistency": "Validated",
+      "date_consistency": "All stocks have identical date index",
+      "data_types": "Validated"
+    },
+    "currency": "INR (Indian Rupees)",
+    "adjustments": "Prices adjusted for stock splits and dividends (from raw data)"
+  },
+  "usage": {
+    "recommended_for": [
+      "Portfolio optimization and allocation",
+      "Risk analysis (VaR, CVaR calculations)",
+      "Time series analysis and forecasting",
+      "Correlation and covariance matrix calculations",
+      "Machine learning model training",
+      "Backtesting trading strategies",
+      "Returns calculation and analysis"
+    ],
+    "data_formats": {
+      "individual_stocks": "Use for single-stock analysis or when working with individual time series",
+      "panel_data": "Use for multi-stock analysis, portfolio calculations, or when comparing stocks side-by-side"
+    },
+    "performance": {
+      "parquet_format": "Recommended for faster loading and smaller file sizes",
+      "csv_format": "Use for compatibility with tools that don't support Parquet"
+    }
+  },
+  "statistics_summary": {
+    "total_stocks": 10,
+    "total_trading_days": 2472,
+    "date_coverage": "2015-12-01 to 2025-12-01 (10 years)",
+    "data_points_per_stock": 2472,
+    "total_data_points": 24720,
+    "file_formats": ["CSV", "Parquet"],
+    "total_files": 32,
+    "breakdown": {
+      "individual_stock_files": 20,
+      "panel_data_files": 12,
+      "metadata_files": 2
+    }
+  },
+  "related_files": {
+    "processing_metadata": "processing_metadata.json",
+    "raw_data_metadata": "../metadata/llm.json",
+    "processing_code": {
+      "data_loader": "../../src/data/data_loader.py",
+      "data_cleaner": "../../src/data/data_cleaner.py",
+      "process_data": "../../src/data/process_data.py"
+    }
+  },
+  "notes": [
+    "All stocks are aligned on common trading days (intersection of all date ranges)",
+    "Missing values have been interpolated using time-based interpolation",
+    "Open prices may be interpolated from High/Low average if missing in raw data",
+    "Volume data may be zero for some stocks if not available in raw data",
+    "Panel data files are in wide format (Date x Symbol) for easy portfolio calculations",
+    "Individual stock files maintain time series format (Date as index)",
+    "All prices are in Indian Rupees (INR)",
+    "Data is adjusted for stock splits and dividends",
+    "Parquet format is recommended for better performance and smaller file sizes"
+  ],
+  "metadata_version": "1.0",
+  "last_updated": "2025-12-09"
+}
+

@@ -1,0 +1,321 @@
+{
+  "dataset_name": "Portfolio Weights Dataset - 100,000 Portfolios",
+  "description": "100,000 randomly generated portfolios for 10 Indian stocks using Dirichlet distribution. Portfolios have varying sizes (2-10 stocks) with some stocks assigned zero weight to create diverse portfolio configurations.",
+  "generation_method": {
+    "distribution": "Dirichlet",
+    "alpha_parameter": 1.0,
+    "description": "Uniform Dirichlet distribution (alpha=1.0) used to generate weights for active stocks in each portfolio"
+  },
+  "portfolio_configuration": {
+    "total_portfolios": 100000,
+    "total_stocks": 10,
+    "stocks": [
+      "RELIANCE",
+      "HDFCBANK",
+      "TCS",
+      "INFY",
+      "ICICIBANK",
+      "HINDUNILVR",
+      "ASIANPAINT",
+      "LT",
+      "BAJFINANCE",
+      "NTPC"
+    ],
+    "min_portfolio_size": 2,
+    "max_portfolio_size": 10,
+    "mean_portfolio_size": 5.978,
+    "median_portfolio_size": 6.0,
+    "std_portfolio_size": 2.571583584179465
+  },
+  "portfolio_size_distribution": {
+    "2": {
+      "count": 11048,
+      "percentage": 11.048
+    },
+    "3": {
+      "count": 11263,
+      "percentage": 11.263
+    },
+    "4": {
+      "count": 11247,
+      "percentage": 11.247
+    },
+    "5": {
+      "count": 11280,
+      "percentage": 11.28
+    },
+    "6": {
+      "count": 11018,
+      "percentage": 11.018
+    },
+    "7": {
+      "count": 11228,
+      "percentage": 11.228
+    },
+    "8": {
+      "count": 11209,
+      "percentage": 11.209
+    },
+    "9": {
+      "count": 10919,
+      "percentage": 10.918999999999999
+    },
+    "10": {
+      "count": 10788,
+      "percentage": 10.788
+    }
+  },
+  "weight_statistics": {
+    "RELIANCE": {
+      "mean": 0.10051528485364598,
+      "std": 0.15465385983618624,
+      "min": 0.0,
+      "max": 0.9999475508231951,
+      "median": 0.02989560063335056,
+      "non_zero_count": 59874,
+      "non_zero_percentage": 59.874,
+      "non_zero_mean": 0.1678780185951264,
+      "non_zero_std": 0.16922846204380212
+    },
+    "HDFCBANK": {
+      "mean": 0.09967359245874068,
+      "std": 0.15447579637320355,
+      "min": 0.0,
+      "max": 0.9997660097534333,
+      "median": 0.028875413817512408,
+      "non_zero_count": 59675,
+      "non_zero_percentage": 59.675,
+      "non_zero_mean": 0.16702738577082643,
+      "non_zero_std": 0.16952298027812165
+    },
+    "TCS": {
+      "mean": 0.09950253491458232,
+      "std": 0.15406012564947977,
+      "min": 0.0,
+      "max": 0.999476094610187,
+      "median": 0.029259457202916443,
+      "non_zero_count": 59693,
+      "non_zero_percentage": 59.693,
+      "non_zero_mean": 0.16669045769953314,
+      "non_zero_std": 0.1690014086907366
+    },
+    "INFY": {
+      "mean": 0.09982862834246894,
+      "std": 0.15455812582405584,
+      "min": 0.0,
+      "max": 0.9991975953505243,
+      "median": 0.02889610560953225,
+      "non_zero_count": 59719,
+      "non_zero_percentage": 59.719,
+      "non_zero_mean": 0.1671639316506789,
+      "non_zero_std": 0.16954372848802018
+    },
+    "ICICIBANK": {
+      "mean": 0.09926236038625515,
+      "std": 0.1536238477375477,
+      "min": 0.0,
+      "max": 0.9994646285148505,
+      "median": 0.028965382730231262,
+      "non_zero_count": 59616,
+      "non_zero_percentage": 59.616,
+      "non_zero_mean": 0.16650288577941352,
+      "non_zero_std": 0.16849779737138337
+    },
+    "HINDUNILVR": {
+      "mean": 0.10106508024587971,
+      "std": 0.15523250698481975,
+      "min": 0.0,
+      "max": 0.9998731856412311,
+      "median": 0.030036198610395845,
+      "non_zero_count": 60037,
+      "non_zero_percentage": 60.037,
+      "non_zero_mean": 0.16833799198141094,
+      "non_zero_std": 0.16974282255451065
+    },
+    "ASIANPAINT": {
+      "mean": 0.09999113822622357,
+      "std": 0.15424748361664473,
+      "min": 0.0,
+      "max": 0.9990229876377051,
+      "median": 0.029581359581174513,
+      "non_zero_count": 59743,
+      "non_zero_percentage": 59.743,
+      "non_zero_mean": 0.16736879337533028,
+      "non_zero_std": 0.16896021494103694
+    },
+    "LT": {
+      "mean": 0.10020694278283379,
+      "std": 0.15453704134723853,
+      "min": 0.0,
+      "max": 0.9990269424709175,
+      "median": 0.02964160724411405,
+      "non_zero_count": 59831,
+      "non_zero_percentage": 59.831,
+      "non_zero_mean": 0.1674833159780612,
+      "non_zero_std": 0.16925621448174896
+    },
+    "BAJFINANCE": {
+      "mean": 0.10016241658606563,
+      "std": 0.15467875446837442,
+      "min": 0.0,
+      "max": 0.9994299185990168,
+      "median": 0.02956915583180387,
+      "non_zero_count": 59763,
+      "non_zero_percentage": 59.763,
+      "non_zero_mean": 0.1675993785219377,
+      "non_zero_std": 0.1695042288605666
+    },
+    "NTPC": {
+      "mean": 0.09979202120330422,
+      "std": 0.1537570349127769,
+      "min": 0.0,
+      "max": 0.9986777213184667,
+      "median": 0.029402868188530586,
+      "non_zero_count": 59849,
+      "non_zero_percentage": 59.849,
+      "non_zero_mean": 0.1667396634919618,
+      "non_zero_std": 0.16834104108139572
+    }
+  },
+  "overall_weight_statistics": {
+    "mean": 0.1,
+    "std": 0.1543831354683679,
+    "min": 0.0,
+    "max": 0.9999475508231951,
+    "median": 0.029401916562922778,
+    "zero_weight_percentage": 40.22,
+    "non_zero_mean": 0.16728002676480427
+  },
+  "data_structure": {
+    "file_format": [
+      "CSV",
+      "Parquet"
+    ],
+    "file_location": "portfolios/",
+    "columns": [
+      {
+        "name": "RELIANCE",
+        "description": "Weight allocation for RELIANCE in the portfolio",
+        "data_type": "float",
+        "range": [
+          0.0,
+          1.0
+        ],
+        "constraint": "Sum of all weights in a portfolio equals 1.0"
+      },
+      {
+        "name": "HDFCBANK",
+        "description": "Weight allocation for HDFCBANK in the portfolio",
+        "data_type": "float",
+        "range": [
+          0.0,
+          1.0
+        ],
+        "constraint": "Sum of all weights in a portfolio equals 1.0"
+      },
+      {
+        "name": "TCS",
+        "description": "Weight allocation for TCS in the portfolio",
+        "data_type": "float",
+        "range": [
+          0.0,
+          1.0
+        ],
+        "constraint": "Sum of all weights in a portfolio equals 1.0"
+      },
+      {
+        "name": "INFY",
+        "description": "Weight allocation for INFY in the portfolio",
+        "data_type": "float",
+        "range": [
+          0.0,
+          1.0
+        ],
+        "constraint": "Sum of all weights in a portfolio equals 1.0"
+      },
+      {
+        "name": "ICICIBANK",
+        "description": "Weight allocation for ICICIBANK in the portfolio",
+        "data_type": "float",
+        "range": [
+          0.0,
+          1.0
+        ],
+        "constraint": "Sum of all weights in a portfolio equals 1.0"
+      },
+      {
+        "name": "HINDUNILVR",
+        "description": "Weight allocation for HINDUNILVR in the portfolio",
+        "data_type": "float",
+        "range": [
+          0.0,
+          1.0
+        ],
+        "constraint": "Sum of all weights in a portfolio equals 1.0"
+      },
+      {
+        "name": "ASIANPAINT",
+        "description": "Weight allocation for ASIANPAINT in the portfolio",
+        "data_type": "float",
+        "range": [
+          0.0,
+          1.0
+        ],
+        "constraint": "Sum of all weights in a portfolio equals 1.0"
+      },
+      {
+        "name": "LT",
+        "description": "Weight allocation for LT in the portfolio",
+        "data_type": "float",
+        "range": [
+          0.0,
+          1.0
+        ],
+        "constraint": "Sum of all weights in a portfolio equals 1.0"
+      },
+      {
+        "name": "BAJFINANCE",
+        "description": "Weight allocation for BAJFINANCE in the portfolio",
+        "data_type": "float",
+        "range": [
+          0.0,
+          1.0
+        ],
+        "constraint": "Sum of all weights in a portfolio equals 1.0"
+      },
+      {
+        "name": "NTPC",
+        "description": "Weight allocation for NTPC in the portfolio",
+        "data_type": "float",
+        "range": [
+          0.0,
+          1.0
+        ],
+        "constraint": "Sum of all weights in a portfolio equals 1.0"
+      }
+    ],
+    "rows": 100000,
+    "constraints": [
+      "Each portfolio's weights sum to 1.0",
+      "All weights are non-negative (>= 0)",
+      "Portfolios can have 2-10 active stocks (non-zero weights)"
+    ]
+  },
+  "generation_parameters": {
+    "random_seed": 42,
+    "num_portfolios": 100000,
+    "num_stocks": 10,
+    "min_active_stocks": 2,
+    "max_active_stocks": 10
+  },
+  "notes": [
+    "Portfolios are generated using Dirichlet distribution with alpha=1.0 (uniform)",
+    "Each portfolio randomly selects 2-10 stocks to include",
+    "Weights for non-selected stocks are set to 0",
+    "All portfolio weights sum to 1.0",
+    "Suitable for portfolio optimization, risk analysis, and backtesting",
+    "Portfolios represent diverse allocation strategies from concentrated to diversified"
+  ],
+  "metadata_version": "1.0",
+  "last_updated": "2025-12-09"
+}

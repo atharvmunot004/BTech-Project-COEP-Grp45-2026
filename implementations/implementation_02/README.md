@@ -120,3 +120,37 @@ This implementation provides:
 - Runtime comparisons
 - Risk metric accuracy (VaR/CVaR coverage, MAE, RMSE)
 
+## Documentation
+
+### Research Methodology
+See **[METHODOLOGY.md](METHODOLOGY.md)** for a comprehensive research-level methodology document covering:
+- Research objectives and hypotheses
+- Mathematical formulations for all methods
+- Experimental design and evaluation framework
+- Statistical analysis approach
+- Results structure and reporting standards
+
+### Implementation Details
+See **[IMPLEMENTATION.md](IMPLEMENTATION.md)** for detailed technical documentation including:
+- System architecture and module structure
+- Code-level implementation details
+- Algorithm specifications
+- Performance considerations
+- Error handling and robustness
+
+### Comparative Analysis
+See **[COMPARATIVE_ANALYSIS_REPORT.md](COMPARATIVE_ANALYSIS_REPORT.md)** for data availability assessment and analysis capabilities.
+
+## Citation
+
+If you use this implementation in your research, please cite:
+
+```bibtex
+@software{quantum_classical_risk_portfolio_2024,
+  title={Quantum vs Classical Risk Assessment and Portfolio Optimization Framework},
+  author={Research Implementation Team},
+  year={2024},
+  url={https://github.com/your-repo/implementation_02}
+}
+```
+
