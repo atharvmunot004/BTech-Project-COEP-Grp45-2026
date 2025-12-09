@@ -1,0 +1,255 @@
+{
+    "system": "Hybrid Quantum-Classical Portfolio & Risk Engine",
+    "description": "Unified architecture for classical + quantum risk assessment, classical + quantum portfolio optimization, and integrated backtesting. Designed for 10 stocks x 10 years dataset, extensible to larger universes and quantum simulators / hardware.",
+    "blocks": [
+      {
+        "name": "Data Layer",
+        "purpose": "Persistent raw data storage and serving; canonical source of truth for OHLCV and metadata.",
+        "components": [
+          "dataset folder"
+        ],
+        "input": {},
+        "output": {},
+        "dependencies": []
+      },
+      {
+        "name": "Data Preprocessing Engine",
+        "purpose": "",
+        "components": [],
+        "input": {},
+        "output": {},
+        "dependencies": []
+      },
+      {
+        "name": "Classical Risk",
+        "tools-used": [
+          {
+            "id": 1,
+            "name": "Variance-Covariance Value-at-Risk (Parametric VaR)", 
+            "type": "classical"
+          },
+          {
+            "id": 2,
+            "name": "Monte Carlo Simulation for VaR / CVaR",
+            "type": "classical"
+          },
+          {
+            "id": 3,
+            "name": "GARCH (1,1) Volatility Forecasts",
+            "type": "classical"
+          },
+          {
+            "id": 4,
+            "name": "Extreme Value Theory (EVT) - Peaks Over Threshold",
+            "type": "classical"
+          }
+        ],
+        "purpose": "",
+        "components": [],
+        "input": {},
+        "output": {
+          "destination": [],
+          "format": {}
+        },
+        "dependencies": [],
+        "expected_runtime_estimate": "",
+        "notes": ""
+      },
+      {
+        "name": "Quantum Risk",
+        "tools-used": [
+          {
+            "id": 5,
+            "name": "Quantum Amplitude Estimation (QAE) for CVaR",
+            "type": "quantum"
+          },
+          {
+            "id": 7,
+            "name": "Quantum Generative Adversarial Network (QGAN) for Scenario Generation",
+            "type": "quantum"
+          },
+          {
+            "id": 8,
+            "name": "Quantum PCA (qPCA) for Factor Risk Analysis",
+            "type": "quantum"
+          }
+        ],
+        "purpose": "",
+        "components": [],
+        "input": {},
+        "output": {
+          "destination": [],
+          "format": {
+            "quantum_VaR_est": "",
+            "quantum_CVaR_est": "",
+            "qgan_scenarios": "",
+            "qpca_components": ""
+          }
+        },
+        "dependencies": [
+          "qiskit, qiskit-aer, numpy, scipy, joblib (for parallel sims)"
+        ],
+        "expected_runtime_estimate": "",
+        "notes": ""
+      },
+      {
+        "name": "Classical Optimization",
+        "tools-used": [
+          {
+            "id": 11,
+            "name": "Markowitz Mean-Variance",
+            "type": "classical"
+          },
+          {
+            "id": 17,
+            "name": "CVaR Optimization",
+            "type": "classical"
+          },
+          {
+            "id": 12,
+            "name": "Black-Litterman",
+            "type": "classical"
+          },
+          {
+            "id": 18,
+            "name": "Risk Parity / ERC",
+            "type": "classical"
+          }
+        ],
+        "purpose": "",
+        "components": [],
+        "input": {},
+        "output": {
+          "destination": [],
+          "format": {
+            "weights": "",
+            "objective_value": "",
+            "solver_stats": ""
+          }
+        },
+        "dependencies": [
+          "cvxpy (or OSQP / scipopt), numpy, pandas"
+        ],
+        "expected_runtime_estimate": "",
+        "notes": ""
+      },
+      {
+        "name": "Quantum Optimization",
+        "tools-used": [
+          {
+            "id": 32,
+            "name": "Quantum Mean-Variance Optimization (QMV / QUBO Formulation)",
+            "type": "quantum"
+          },
+          {
+            "id": 33,
+            "name": "Quantum Annealing for Multi-Objective Portfolio Construction",
+            "type": "quantum"
+          },
+          {
+            "id": 6,
+            "name": "Quantum Approximate Optimization Algorithm (QAOA) for CVaR-based Portfolio Optimization",
+            "type": "quantum"
+          }
+        ],
+        "purpose": "",
+        "components": [],
+        "input": {},
+        "output": {
+          "destination": [],
+          "format": {
+            "discrete_solution": "",
+            "decoded_weights": "",
+            "qsolver_stats": ""
+          }
+        },
+        "dependencies": [],
+        "expected_runtime_estimate": "",
+        "notes": ""
+      },
+      {
+        "name": "Backtesting Engine",
+        "purpose": "",
+        "components": [],
+        "input": {},
+        "output": {
+          "destination": [
+            "Reporting & Research"
+          ],
+          "format": {
+            "equity_curve": "pandas Series (date -> portfolio value)",
+            "performance_metrics": "dict (CAGR, Sharpe, MaxDrawdown, Volatility, VaR breaches, turnover)",
+            "trade_log": "DataFrame (date, symbol, side, qty, price, cost)"
+          }
+        },
+        "dependencies": [
+          "pandas, numpy"
+        ],
+        "expected_runtime_estimate": "10 assets x 10 years daily, monthly rebalancing: ~0.5-3 s for a full run; daily rebalancing: ~1-8 s",
+        "notes": "Ensure deterministic order execution model for reproducibility. Include slippage and liquidity models when needed."
+      },
+      {
+        "name": "Reporting & Research",
+        "purpose": "",
+        "components": [
+          "research/figures.py",
+          "research/tables.py",
+          "research/statistics.py",
+          "research/export_latex.py",
+          "notebooks/analysis.ipynb"
+        ],
+        "input": {},
+        "output": {
+          "destination": [],
+          "format": {}
+        },
+        "dependencies": [],
+        "expected_runtime_estimate": "",
+        "notes": ""
+      },
+      {
+        "name": "Research Paper Notes / Experiment Manifest",
+        "purpose": "Store reproducible experiment metadata used for the paper: dataset version, preprocessing steps, parameter grids, solver versions, quantum backend metadata.",
+        "components": [
+          "research/manifest.json",
+          "research/README_experiments.md",
+          "research/citation_list.bib"
+        ],
+        "input": {
+          "source": "All modules (manifests auto-generated after runs)",
+          "format": {
+            "manifest": "JSON (git_hash, date, qiskit_version, seeds, data_checksum, parameter_grid)"
+          }
+        },
+        "output": {
+          "destination": "Research folder; included as appendix in paper",
+          "format": {
+            "manifest.json": "JSON",
+            "repro_instructions.md": "Markdown",
+            "notebooks": "ipynb"
+          }
+        },
+        "dependencies": [],
+        "expected_runtime_estimate": "",
+        "notes": ""
+      }
+    ],
+    "global_notes": {
+      "data_format_standards": {
+        "dates": "ISO8601 (YYYY-MM-DD)",
+        "numerics": "float64",
+        "missing_data_policy": "flag missing and forward-fill only where appropriate; document imputation"
+      },
+      "reproducibility": "Every run must log a manifest (git commit, code versions, seeds, backend config). Quantum runs must log simulator/hardware name and shots.",
+      "hybrid_strategies_examples": [
+        "quantum_seed_then_classical_refine: use QAOA solution to initialize classical QP solver",
+        "ensemble_avg_by_confidence: weight classical and quantum proposals inversely by estimated risk error",
+        "quantum_only_for_discrete_constraints: use QUBO for cardinality then classical optimize continuous weights"
+      ],
+      "performance_assumptions": {
+        "hardware_baseline": "Standard research server: 4-8 vCPUs, 16-32 GB RAM, SSD",
+        "quantum_simulator": "Qiskit Aer running locally or in clouds; hardware runs subject to queue times"
+      }
+    }
+  }
+  

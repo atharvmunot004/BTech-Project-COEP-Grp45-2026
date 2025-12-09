@@ -1,0 +1,69 @@
+{
+    "task": "classical_var_evaluation",
+    "inputs": {
+      "panel_price_path": "data/preprocessed/panel_price.parquet",
+      "portfolio_weights_path": "portfolios/portfolios.parquet"
+    },
+    "var_settings": {
+      "confidence_levels": [0.95, 0.99],
+      "horizons": [1, 10],
+      "estimation_windows": [252]
+    },
+    "modules": {
+      "compute_daily_returns": true,
+      "compute_portfolio_returns": true,
+      "align_returns_and_var": true,
+      "rolling_var": true,
+      "var_violations": true,
+      "accuracy_metrics": ["hit_rate", "violation_ratio", "kupiec", "christoffersen"],
+      "tail_metrics": ["mean_exceedance", "max_exceedance"],
+      "structure_metrics": ["hhi", "enc", "condition_number"],
+      "distribution_metrics": ["skew", "kurtosis", "jarque_bera"],
+      "runtime_metrics": true
+    },
+    "performance_metrics": {
+      "accuracy": [
+        "hit_rate",
+        "violation_ratio",
+        "kupiec_unconditional_coverage",
+        "christoffersen_independence",
+        "christoffersen_conditional_coverage",
+        "traffic_light_zone"
+      ],
+      "tail_behavior": [
+        "mean_exceedance",
+        "max_exceedance",
+        "std_exceedance",
+        "quantile_loss_score",
+        "rmse_var_vs_losses"
+      ],
+      "portfolio_structure": [
+        "num_active_assets",
+        "hhi_concentration",
+        "effective_number_of_assets",
+        "covariance_condition_number"
+      ],
+      "distribution": [
+        "skewness",
+        "kurtosis",
+        "jarque_bera_p_value"
+      ],
+      "runtime": [
+        "runtime_per_portfolio_ms",
+        "p95_runtime_ms"
+      ]
+    },
+    "report_sections": [
+      "methodology_overview",
+      "backtesting_results",
+      "tail_risk_analysis",
+      "portfolio_structure_effects",
+      "robustness_and_normality_checks",
+      "computational_performance",
+      "key_insights"
+    ],
+    "outputs": {
+      "metrics_table": "results/var_metrics.parquet",
+      "summary_report": "results/var_report.md"
+    }
+  }  

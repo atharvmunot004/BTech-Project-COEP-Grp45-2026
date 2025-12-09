@@ -1,0 +1,56 @@
+// dot -Tpng architecture.gv -o architecture.png (for PNG)
+// dot -Tsvg architecture.gv -o architecture.svg (for SVG)
+digraph Architecture {
+    rankdir=TB;
+    node [shape=box, style=rounded, fontname="Arial"];
+    
+    // Define the 12 blocks
+    subgraph cluster_main {
+        label="";
+        style=invis;
+        
+        // Layer 1: Data Layer
+        DataLayer [label="Data Layer\n(Stocks, Benchmarks, ETF)"];
+        
+        // Layer 2: Data Preprocessing
+        DataPreprocessing [label="Data Preprocessing Engine\n- cleaning, alignment\n- returns, log-returns"];
+        
+        // Layer 3: Risk & Optimization Components
+        ClassicalRisk [label="Classical Risk\n(MC, Hist, Parametric)"];
+        QuantumRisk [label="Quantum Risk\n(QAE for VaR/CVaR Estim.)"];
+        QuantumOpt [label="Quantum Opt.\n(QAOA/QUBO)\nMean-Variance"];
+        ClassicalOpt [label="Classical Opt.\n(QP, BL, RP)\nCVaR Opt, etc."];
+        
+        // Layer 5: Analysis & Reporting
+        BacktestingEngine [label="Backtesting Engine\n(Walk-forward)"];
+        ReportingResearch [label="Reporting & Research\nMetrics Dashboard"];
+        
+        // Layer 6: Output
+        ResearchPaperNotes [label="Research Paper Notes\n(Plots + Results)"];
+    }
+    
+    // Define the connections
+    DataLayer -> DataPreprocessing;
+    
+    DataPreprocessing -> ClassicalRisk;
+    DataPreprocessing -> QuantumRisk;
+    DataPreprocessing -> QuantumOpt;
+    DataPreprocessing -> ClassicalOpt;
+    
+    ClassicalRisk -> BacktestingEngine;
+    ClassicalRisk -> ReportingResearch;
+
+    QuantumRisk -> BacktestingEngine;
+    QuantumRisk -> ReportingResearch;
+
+    QuantumOpt -> BacktestingEngine;
+    QuantumOpt -> ReportingResearch;
+
+    ClassicalOpt -> BacktestingEngine;
+    ClassicalOpt -> ReportingResearch;
+
+
+    BacktestingEngine -> ResearchPaperNotes;
+    ReportingResearch -> ResearchPaperNotes;
+}
+
