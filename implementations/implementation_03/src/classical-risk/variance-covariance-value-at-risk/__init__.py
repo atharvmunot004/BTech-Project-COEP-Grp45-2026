@@ -18,6 +18,7 @@ from .metrics import (
     compute_structure_metrics,
     compute_distribution_metrics
 )
+from .time_sliced_metrics import compute_time_sliced_metrics
 
 __all__ = [
     'evaluate_var',
@@ -29,5 +30,6 @@ __all__ = [
     'compute_tail_metrics',
     'compute_structure_metrics',
     'compute_distribution_metrics',
+    'compute_time_sliced_metrics',
 ]
 

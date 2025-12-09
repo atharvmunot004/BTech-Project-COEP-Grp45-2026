@@ -33,14 +33,34 @@ Where:
 ### Command Line
 
 ```bash
-# Use all CPU cores (default)
+# Process first 100 portfolios (default - for testing)
+python -m src.classical-risk.variance-covariance-value-at-risk.main
+
+# Process all 100,000 portfolios
+python -m src.classical-risk.variance-covariance-value-at-risk.main --max-portfolios 0
+
+# Process first 1,000 portfolios
+python -m src.classical-risk.variance-covariance-value-at-risk.main --max-portfolios 1000
+
+# Process 100 portfolios with 4 workers
+python -m src.classical-risk.variance-covariance-value-at-risk.main --max-portfolios 100 --n-jobs 4
+
+
+
+# Process first 100 portfolios (default - for testing)
 python -m src.classical-risk.variance-covariance-value-at-risk.main --config llm.json
+
+# Process all portfolios
+python -m src.classical-risk.variance-covariance-value-at-risk.main --config llm.json --max-portfolios 0
+
+# Process specific number of portfolios
+python -m src.classical-risk.variance-covariance-value-at-risk.main --config llm.json --max-portfolios 1000
 
 # Use specific number of workers
 python -m src.classical-risk.variance-covariance-value-at-risk.main --config llm.json --n-jobs 8
 
 # Sequential processing (for debugging)
-python -m src.classical-risk.variance-covariance-value-at-risk.main --config llm.json --n-jobs 1
+python -m src.classical-risk.variance-covariance-value-at-risk.main --config llm.json --n-jobs 1 --max-portfolios 10
 ```
 
 ### Python API
@@ -48,14 +68,20 @@ python -m src.classical-risk.variance-covariance-value-at-risk.main --config llm
 ```python
 from src.classical_risk.variance_covariance_value_at_risk import evaluate_var
 
-# Load configuration and evaluate (uses all CPU cores by default)
+# Load configuration and evaluate (default: 100 portfolios, all CPU cores)
 results_df = evaluate_var(config_path='llm.json')
 
-# Use specific number of workers
-results_df = evaluate_var(config_path='llm.json', n_jobs=8)
+# Process all portfolios
+results_df = evaluate_var(config_path='llm.json', max_portfolios=None)
 
-# Sequential processing
-results_df = evaluate_var(config_path='llm.json', n_jobs=1)
+# Process specific number of portfolios
+results_df = evaluate_var(config_path='llm.json', max_portfolios=1000)
+
+# Use specific number of workers
+results_df = evaluate_var(config_path='llm.json', n_jobs=8, max_portfolios=500)
+
+# Sequential processing (for debugging)
+results_df = evaluate_var(config_path='llm.json', n_jobs=1, max_portfolios=10)
 
 # Or use configuration dictionary
 config = {
@@ -104,6 +130,7 @@ The module uses a JSON configuration file (`llm.json`) with the following struct
     },
     "outputs": {
         "metrics_table": "results/var_metrics.parquet",
+        "metrics_json": "results/var_metrics.json",
         "summary_report": "results/var_report.md"
     }
 }
@@ -113,7 +140,12 @@ The module uses a JSON configuration file (`llm.json`) with the following struct
 
 The module generates:
 
-1. **Metrics Table** (Parquet/CSV): DataFrame with all computed metrics for each portfolio-configuration combination
+1. **Metrics Table** (Parquet/CSV/JSON): DataFrame with all computed metrics for each portfolio-configuration combination
+   - **Parquet**: Efficient binary format (default)
+   - **CSV**: Human-readable tabular format
+   - **JSON**: Structured JSON format with metadata, includes:
+     - Metadata: generation timestamp, total portfolios, runtime, VaR settings
+     - Results: Array of all portfolio-configuration combinations with metrics
 2. **Summary Report** (Markdown): Comprehensive report with:
    - Methodology overview
    - Backtesting results
@@ -122,6 +154,40 @@ The module generates:
    - Robustness and normality checks
    - Computational performance
    - Key insights
+
+### JSON Output Format
+
+The JSON output has the following structure:
+
+```json
+{
+  "metadata": {
+    "generated_at": "2025-01-15T10:30:00",
+    "total_portfolios": 100,
+    "total_combinations": 400,
+    "var_settings": {
+      "confidence_levels": [0.95, 0.99],
+      "horizons": [1, 10],
+      "estimation_windows": [252]
+    },
+    "runtime_seconds": 45.2,
+    "runtime_minutes": 0.75,
+    "n_jobs": 8
+  },
+  "results": [
+    {
+      "portfolio_id": 0,
+      "confidence_level": 0.95,
+      "horizon": 1,
+      "estimation_window": 252,
+      "hit_rate": 0.05,
+      "violation_ratio": 1.0,
+      ...
+    },
+    ...
+  ]
+}
+```
 
 ## Module Structure
 
@@ -149,7 +215,8 @@ The module generates:
 
 ## Notes
 
-- The module processes **all portfolios** by default (no sampling limit)
+- **Default behavior**: Processes first **100 portfolios** for initial testing
+- Use `--max-portfolios 0` to process all portfolios
 - All paths are resolved relative to `implementation_03` root directory
 - VaR violations occur when actual return < -VaR
 - Traffic light zones follow Basel guidelines (adjusted for confidence level)

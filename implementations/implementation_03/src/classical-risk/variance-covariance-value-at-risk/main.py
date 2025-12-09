@@ -35,6 +35,237 @@ from .metrics import (
     compute_runtime_metrics
 )
 from .report_generator import generate_report
+from .time_sliced_metrics import compute_time_sliced_metrics
+
+
+def _restructure_results_by_portfolio(
+    all_results: List[Dict],
+    aligned_data_dict: Dict[int, Dict],
+    prices: pd.DataFrame
+) -> List[Dict]:
+    """
+    Restructure results grouped by portfolio.
+    
+    Args:
+        all_results: List of flat result dictionaries
+        aligned_data_dict: Dictionary mapping portfolio_id to aligned data
+        prices: Original price DataFrame for date range
+        
+    Returns:
+        List of portfolio result dictionaries with nested structure
+    """
+    # Group results by portfolio_id
+    portfolios_dict = {}
+    
+    for result in all_results:
+        portfolio_id = result['portfolio_id']
+        
+        if portfolio_id not in portfolios_dict:
+            portfolios_dict[portfolio_id] = {
+                'portfolio_id': portfolio_id,
+                'structure': {
+                    'portfolio_size': result.get('portfolio_size', result.get('num_active_assets', 0)),
+                    'num_active_assets': result.get('num_active_assets', result.get('portfolio_size', 0)),
+                    'hhi': result.get('hhi_concentration', np.nan),
+                    'effective_assets': result.get('effective_number_of_assets', np.nan),
+                    'covariance_condition_number': result.get('covariance_condition_number', np.nan)
+                },
+                'distribution': {
+                    'skewness': result.get('skewness', np.nan),
+                    'kurtosis': result.get('kurtosis', np.nan),
+                    'jarque_bera_p_value': result.get('jarque_bera_p_value', np.nan),
+                    'jarque_bera_statistic': result.get('jarque_bera_statistic', np.nan)
+                },
+                'var_evaluations': []
+            }
+        
+        # Create VaR evaluation entry
+        var_eval = {
+            'confidence_level': result['confidence_level'],
+            'horizon': result['horizon'],
+            'estimation_window': result['estimation_window'],
+            'global_metrics': {
+                'hit_rate': result.get('hit_rate', np.nan),
+                'num_violations': result.get('num_violations', 0),
+                'expected_violations': result.get('expected_violations', np.nan),
+                'violation_ratio': result.get('violation_ratio', np.nan),
+                'accuracy_tests': {
+                    'kupiec_p_value': result.get('kupiec_unconditional_coverage', np.nan),
+                    'kupiec_statistic': result.get('kupiec_test_statistic', np.nan),
+                    'kupiec_reject_null': result.get('kupiec_reject_null', False),
+                    'christoffersen_independence_p': result.get('christoffersen_independence', np.nan),
+                    'christoffersen_independence_statistic': result.get('christoffersen_independence_statistic', np.nan),
+                    'christoffersen_independence_reject': result.get('christoffersen_independence_reject_null', False),
+                    'christoffersen_cc_p': result.get('christoffersen_conditional_coverage', np.nan),
+                    'christoffersen_cc_statistic': result.get('christoffersen_conditional_coverage_statistic', np.nan),
+                    'christoffersen_cc_reject': result.get('christoffersen_conditional_coverage_reject_null', False),
+                    'traffic_light_zone': result.get('traffic_light_zone', 'unknown')
+                },
+                'tail_metrics': {
+                    'mean_exceedance': result.get('mean_exceedance', np.nan),
+                    'max_exceedance': result.get('max_exceedance', np.nan),
+                    'std_exceedance': result.get('std_exceedance', np.nan),
+                    'quantile_loss_score': result.get('quantile_loss_score', np.nan),
+                    'rmse': result.get('rmse_var_vs_losses', np.nan)
+                },
+                'runtime': {
+                    'runtime_ms': result.get('var_runtime_ms', np.nan),
+                    'p95_runtime_ms': result.get('p95_runtime_ms', np.nan),
+                    'median_runtime_ms': result.get('median_runtime_ms', np.nan)
+                }
+            },
+            'time_sliced_metrics': []
+        }
+        
+        # Add time-sliced metrics if available
+        if portfolio_id in aligned_data_dict:
+            aligned_data = aligned_data_dict[portfolio_id]
+            key = f"{result['confidence_level']}_{result['horizon']}_{result['estimation_window']}"
+            if key in aligned_data:
+                time_slices = compute_time_sliced_metrics(
+                    aligned_data[key]['returns'],
+                    aligned_data[key]['var'],
+                    confidence_level=result['confidence_level'],
+                    slice_by='year'
+                )
+                var_eval['time_sliced_metrics'] = time_slices
+        
+        portfolios_dict[portfolio_id]['var_evaluations'].append(var_eval)
+    
+    return list(portfolios_dict.values())
+
+
+def _save_restructured_json(
+    json_path: Path,
+    portfolio_results: List[Dict],
+    summary_stats: Dict,
+    data_period: str,
+    num_portfolios: int,
+    confidence_levels: List[float],
+    horizons: List[int],
+    estimation_windows: List[int]
+):
+    """
+    Save results in the restructured JSON format.
+    
+    Args:
+        json_path: Path to save JSON file
+        portfolio_results: List of restructured portfolio results
+        summary_stats: Summary statistics dictionary
+        data_period: Data period string
+        num_portfolios: Number of portfolios evaluated
+        confidence_levels: List of confidence levels
+        horizons: List of horizons
+        estimation_windows: List of estimation windows
+    """
+    # Convert NaN to None for JSON serialization
+    def clean_nan(obj):
+        if isinstance(obj, dict):
+            return {k: clean_nan(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [clean_nan(item) for item in obj]
+        elif isinstance(obj, (np.floating, float)) and np.isnan(obj):
+            return None
+        elif isinstance(obj, np.integer):
+            return int(obj)
+        elif isinstance(obj, np.floating):
+            return float(obj)
+        else:
+            return obj
+    
+    output_data = {
+        'metadata': {
+            'task': 'classical_var_backtesting',
+            'data_period': data_period,
+            'portfolios_evaluated': num_portfolios,
+            'confidence_levels': confidence_levels,
+            'horizons': horizons,
+            'estimation_windows': estimation_windows,
+            'generated_at': datetime.now().isoformat()
+        },
+        'portfolio_results': clean_nan(portfolio_results),
+        'summary': clean_nan(summary_stats)
+    }
+    
+    with open(json_path, 'w', encoding='utf-8') as f:
+        json.dump(output_data, f, indent=2, ensure_ascii=False, default=str)
+
+
+def _compute_summary_statistics(
+    all_results: List[Dict],
+    runtimes: List[float]
+) -> Dict:
+    """
+    Compute summary statistics across all portfolios.
+    
+    Args:
+        all_results: List of flat result dictionaries
+        runtimes: List of runtime values
+        
+    Returns:
+        Dictionary with summary statistics
+    """
+    if len(all_results) == 0:
+        return {}
+    
+    results_df = pd.DataFrame(all_results)
+    
+    # Portfolio-level insights
+    portfolio_insights = {}
+    
+    # Average violation ratios by confidence level
+    for cl in [0.95, 0.99]:
+        cl_results = results_df[results_df['confidence_level'] == cl]
+        if len(cl_results) > 0:
+            portfolio_insights[f'avg_violation_ratio_{int(cl*100)}'] = float(
+                cl_results['violation_ratio'].mean()
+            )
+    
+    # Traffic light zones
+    if 'traffic_light_zone' in results_df.columns:
+        zone_counts = results_df['traffic_light_zone'].value_counts()
+        total = len(results_df)
+        portfolio_insights['percent_red_zone'] = float(zone_counts.get('red', 0) / total) if total > 0 else 0.0
+        portfolio_insights['percent_yellow_zone'] = float(zone_counts.get('yellow', 0) / total) if total > 0 else 0.0
+        portfolio_insights['percent_green_zone'] = float(zone_counts.get('green', 0) / total) if total > 0 else 0.0
+    
+    # Distribution effects
+    distribution_effects = {}
+    if 'skewness' in results_df.columns:
+        distribution_effects['avg_skew'] = float(results_df['skewness'].mean())
+    if 'kurtosis' in results_df.columns:
+        distribution_effects['avg_kurtosis'] = float(results_df['kurtosis'].mean())
+    if 'jarque_bera_p_value' in results_df.columns:
+        # Normality rejection rate (p < 0.05)
+        rejection_rate = (results_df['jarque_bera_p_value'] < 0.05).mean()
+        distribution_effects['normality_rejection_rate'] = float(rejection_rate)
+    
+    # Structure effects
+    structure_effects = {}
+    if 'hhi_concentration' in results_df.columns and 'violation_ratio' in results_df.columns:
+        corr = results_df['hhi_concentration'].corr(results_df['violation_ratio'])
+        if not np.isnan(corr):
+            structure_effects['correlation_hhi_vs_violation_ratio'] = float(corr)
+    
+    if 'effective_number_of_assets' in results_df.columns and 'rmse_var_vs_losses' in results_df.columns:
+        corr = results_df['effective_number_of_assets'].corr(results_df['rmse_var_vs_losses'])
+        if not np.isnan(corr):
+            structure_effects['correlation_enc_vs_rmse'] = float(corr)
+    
+    # Runtime stats
+    runtime_stats = {}
+    if len(runtimes) > 0:
+        runtime_array = np.array(runtimes) * 1000  # Convert to ms
+        runtime_stats['mean_runtime_ms'] = float(np.mean(runtime_array))
+        runtime_stats['p95_runtime_ms'] = float(np.percentile(runtime_array, 95))
+        runtime_stats['median_runtime_ms'] = float(np.median(runtime_array))
+    
+    return {
+        'portfolio_level_insights': portfolio_insights,
+        'distribution_effects': distribution_effects,
+        'structure_effects': structure_effects,
+        'runtime_stats': runtime_stats
+    }
 
 
 def _process_single_portfolio(
@@ -42,8 +273,9 @@ def _process_single_portfolio(
     daily_returns: pd.DataFrame,
     confidence_levels: List[float],
     horizons: List[int],
-    estimation_windows: List[int]
-) -> Tuple[List[Dict], float]:
+    estimation_windows: List[int],
+    compute_time_slices: bool = True
+) -> Tuple[List[Dict], float, Dict]:
     """
     Process a single portfolio and return all results for all configurations.
     
@@ -55,14 +287,18 @@ def _process_single_portfolio(
         confidence_levels: List of confidence levels
         horizons: List of horizons
         estimation_windows: List of estimation windows
+        compute_time_slices: Whether to compute time-sliced metrics
         
     Returns:
-        Tuple of (list of result dictionaries, runtime in seconds)
+        Tuple of (list of result dictionaries, VaR calculation runtime in seconds, 
+                 dict with aligned returns/VaR for time slicing)
+        Note: Runtime only includes time spent computing rolling VaR, not metrics calculation
     """
     portfolio_idx, portfolio_id, portfolio_weights = portfolio_data
     
-    start_time = time.time()
     results = []
+    var_runtimes = []  # Track VaR calculation time per configuration
+    aligned_data = {}  # Store aligned returns/VaR for time slicing
     
     try:
         # Compute portfolio returns
@@ -73,7 +309,7 @@ def _process_single_portfolio(
         )
     except Exception as e:
         # Return empty list on error
-        return results
+        return results, 0.0, {}
     
     # Compute covariance matrix for structure metrics (once per portfolio)
     try:
@@ -88,7 +324,8 @@ def _process_single_portfolio(
         for horizon in horizons:
             for window in estimation_windows:
                 try:
-                    # Compute rolling VaR
+                    # Compute rolling VaR - track time only for this
+                    var_start_time = time.time()
                     rolling_var = compute_rolling_var(
                         daily_returns,
                         portfolio_weights,
@@ -96,6 +333,8 @@ def _process_single_portfolio(
                         confidence_level=confidence_level,
                         horizon=horizon
                     )
+                    var_runtime = time.time() - var_start_time
+                    var_runtimes.append(var_runtime)
                     
                     # Align returns and VaR
                     aligned_returns, aligned_var = align_returns_and_var(
@@ -106,39 +345,50 @@ def _process_single_portfolio(
                     if len(aligned_returns) == 0:
                         continue
                     
-                    # Compute accuracy metrics
+                    # Store aligned data for time slicing
+                    if compute_time_slices:
+                        key = f"{confidence_level}_{horizon}_{window}"
+                        aligned_data[key] = {
+                            'returns': aligned_returns,
+                            'var': aligned_var,
+                            'confidence_level': confidence_level
+                        }
+                    
+                    # Compute accuracy metrics (not included in runtime)
                     accuracy_metrics = compute_accuracy_metrics(
                         aligned_returns,
                         aligned_var,
                         confidence_level=confidence_level
                     )
                     
-                    # Compute tail metrics
+                    # Compute tail metrics (not included in runtime)
                     tail_metrics = compute_tail_metrics(
                         aligned_returns,
                         aligned_var
                     )
                     
-                    # Compute structure metrics
+                    # Compute structure metrics (not included in runtime)
                     structure_metrics = compute_structure_metrics(
                         portfolio_weights,
                         covariance_matrix
                     )
                     
-                    # Compute distribution metrics
+                    # Compute distribution metrics (not included in runtime)
                     distribution_metrics = compute_distribution_metrics(
                         aligned_returns
                     )
                     
                     # Combine all metrics
+                    # Note: portfolio_size is included in structure_metrics
                     result = {
                         'portfolio_id': portfolio_id,
                         'confidence_level': confidence_level,
                         'horizon': horizon,
                         'estimation_window': window,
+                        'var_runtime_ms': var_runtime * 1000,  # Runtime for this specific configuration
                         **accuracy_metrics,
                         **tail_metrics,
-                        **structure_metrics,
+                        **structure_metrics,  # Includes portfolio_size and num_active_assets
                         **distribution_metrics
                     }
                     
@@ -148,14 +398,17 @@ def _process_single_portfolio(
                     # Continue to next configuration on error
                     continue
     
-    runtime = time.time() - start_time
-    return results, runtime
+    # Return total runtime per portfolio (for summary stats)
+    var_runtime_total = sum(var_runtimes) if len(var_runtimes) > 0 else 0.0
+    
+    return results, var_runtime_total, aligned_data
 
 
 def evaluate_var(
     config_path: Optional[Union[str, Path]] = None,
     config_dict: Optional[Dict] = None,
-    n_jobs: Optional[int] = None
+    n_jobs: Optional[int] = None,
+    max_portfolios: Optional[int] = 100
 ) -> pd.DataFrame:
     """
     Main function to evaluate VaR for multiple portfolios.
@@ -164,6 +417,7 @@ def evaluate_var(
         config_path: Path to JSON configuration file
         config_dict: Configuration dictionary (if not loading from file)
         n_jobs: Number of parallel workers (default: number of CPU cores)
+        max_portfolios: Maximum number of portfolios to process (default: 100, None for all)
         
     Returns:
         DataFrame with all computed metrics
@@ -205,9 +459,13 @@ def evaluate_var(
     prices = load_panel_prices(panel_price_path)
     portfolio_weights_df = load_portfolio_weights(portfolio_weights_path)
     
+    # Get data period
+    data_period = f"{prices.index.min().strftime('%Y-%m-%d')} to {prices.index.max().strftime('%Y-%m-%d')}"
+    
     print(f"\nLoaded:")
     print(f"  Prices: {len(prices)} dates, {len(prices.columns)} assets")
     print(f"  Portfolios: {len(portfolio_weights_df)} portfolios")
+    print(f"  Data period: {data_period}")
     
     # Compute daily returns
     print(f"\nComputing daily returns...")
@@ -222,6 +480,7 @@ def evaluate_var(
     # Initialize results list
     all_results = []
     runtimes = []
+    aligned_data_dict = {}  # Store aligned data for time slicing: portfolio_id -> aligned_data
     
     # Process each portfolio
     print(f"\nEvaluating {len(portfolio_weights_df)} portfolios...")
@@ -229,7 +488,16 @@ def evaluate_var(
     print(f"  Horizons: {horizons} days")
     print(f"  Estimation windows: {estimation_windows} days")
     
-    num_portfolios = len(portfolio_weights_df)
+    num_portfolios_total = len(portfolio_weights_df)
+    
+    # Limit number of portfolios if specified
+    if max_portfolios is not None and max_portfolios > 0:
+        num_portfolios = min(num_portfolios_total, max_portfolios)
+        portfolio_weights_df = portfolio_weights_df.iloc[:num_portfolios]
+        print(f"  Limiting to first {num_portfolios:,} portfolios (out of {num_portfolios_total:,} total)")
+    else:
+        num_portfolios = num_portfolios_total
+        print(f"  Processing all {num_portfolios:,} portfolios")
     
     # Calculate total combinations for progress tracking
     total_combinations = num_portfolios * len(confidence_levels) * len(horizons) * len(estimation_windows)
@@ -244,7 +512,6 @@ def evaluate_var(
         n_jobs = 1
     
     print(f"  Using {n_jobs} parallel workers...")
-    print(f"  Processing all {num_portfolios:,} portfolios...")
     
     # Prepare portfolio data for parallel processing
     portfolio_data_list = [
@@ -258,7 +525,8 @@ def evaluate_var(
         daily_returns=daily_returns,
         confidence_levels=confidence_levels,
         horizons=horizons,
-        estimation_windows=estimation_windows
+        estimation_windows=estimation_windows,
+        compute_time_slices=True
     )
     
     # Process portfolios in parallel
@@ -271,9 +539,13 @@ def evaluate_var(
             if (portfolio_idx + 1) % 100 == 0 or (portfolio_idx + 1) in [1, 10, 50, 500, 1000, 5000, 10000]:
                 print(f"  Processing portfolio {portfolio_idx + 1:,}/{num_portfolios:,} ({100*(portfolio_idx+1)/num_portfolios:.1f}%)...")
             
-            results, runtime = worker_func(portfolio_data)
+            results, runtime, aligned_data = worker_func(portfolio_data)
             all_results.extend(results)
             runtimes.append(runtime)
+            # Store aligned data for time slicing
+            portfolio_id = portfolio_data[1]  # portfolio_id is second element
+            if aligned_data:
+                aligned_data_dict[portfolio_id] = aligned_data
     else:
         # Parallel processing
         print(f"  Running in parallel mode with {n_jobs} workers...")
@@ -283,10 +555,16 @@ def evaluate_var(
             # Use imap for progress tracking
             results_iter = pool.imap(worker_func, portfolio_data_list, chunksize=max(1, num_portfolios // (n_jobs * 4)))
             
-            for results, runtime in results_iter:
+            for results, runtime, aligned_data in results_iter:
                 completed += 1
                 all_results.extend(results)
                 runtimes.append(runtime)
+                # Store aligned data for time slicing
+                # Extract portfolio_id from first result
+                if results and len(results) > 0:
+                    portfolio_id = results[0]['portfolio_id']
+                    if aligned_data:
+                        aligned_data_dict[portfolio_id] = aligned_data
                 
                 # Progress reporting
                 if completed % 100 == 0 or completed in [1, 10, 50, 500, 1000, 5000, 10000]:
@@ -301,7 +579,7 @@ def evaluate_var(
     total_runtime = time.time() - start_time_total
     avg_runtime_per_portfolio = total_runtime / num_portfolios if num_portfolios > 0 else 0
     
-    # Create results DataFrame
+    # Create results DataFrame (for backward compatibility and Parquet output)
     if len(all_results) == 0:
         raise ValueError("No results computed. Check data and configuration.")
     
@@ -312,9 +590,26 @@ def evaluate_var(
     for key, value in runtime_metrics.items():
         results_df[key] = value
     
+    # Restructure results by portfolio
+    portfolio_results = _restructure_results_by_portfolio(
+        all_results,
+        aligned_data_dict,
+        prices
+    )
+    
+    # Compute summary statistics
+    summary_stats = _compute_summary_statistics(all_results, runtimes)
+    
     print(f"\nCompleted evaluation of {len(results_df)} portfolio-configuration combinations")
     print(f"  Total runtime: {total_runtime/60:.2f} minutes ({total_runtime:.2f} seconds)")
-    print(f"  Average runtime: {avg_runtime_per_portfolio*1000:.2f} ms per portfolio")
+    
+    # Calculate VaR-only runtime statistics
+    if len(runtimes) > 0:
+        var_runtime_total = sum(runtimes)
+        avg_var_runtime_per_portfolio = var_runtime_total / num_portfolios if num_portfolios > 0 else 0
+        print(f"  VaR calculation runtime: {var_runtime_total/60:.2f} minutes ({var_runtime_total:.2f} seconds)")
+        print(f"  Average VaR runtime: {avg_var_runtime_per_portfolio*1000:.2f} ms per portfolio")
+    
     if n_jobs > 1:
         print(f"  Speedup: ~{n_jobs}x (theoretical maximum with {n_jobs} workers)")
     
@@ -332,12 +627,45 @@ def evaluate_var(
             results_df.to_parquet(metrics_path, index=False)
         elif metrics_path.suffix == '.csv':
             results_df.to_csv(metrics_path, index=False)
+        elif metrics_path.suffix == '.json':
+            # Use restructured format
+            _save_restructured_json(
+                metrics_path,
+                portfolio_results,
+                summary_stats,
+                data_period,
+                num_portfolios,
+                confidence_levels,
+                horizons,
+                estimation_windows
+            )
         else:
             # Default to parquet
             metrics_path = metrics_path.with_suffix('.parquet')
             results_df.to_parquet(metrics_path, index=False)
         
         print(f"  Saved: {metrics_path}")
+    
+    # Also save JSON if specified separately
+    if 'metrics_json' in outputs:
+        json_path = project_root / outputs['metrics_json']
+        json_path.parent.mkdir(parents=True, exist_ok=True)
+        
+        print(f"\nSaving metrics JSON...")
+        print(f"  Path: {json_path}")
+        
+        _save_restructured_json(
+            json_path,
+            portfolio_results,
+            summary_stats,
+            data_period,
+            num_portfolios,
+            confidence_levels,
+            horizons,
+            estimation_windows
+        )
+        
+        print(f"  Saved: {json_path}")
     
     # Generate report
     if 'summary_report' in outputs:
@@ -382,6 +710,12 @@ def main():
         default=None,
         help='Number of parallel workers (default: number of CPU cores, use -1 for all cores, 1 for sequential)'
     )
+    parser.add_argument(
+        '--max-portfolios',
+        type=int,
+        default=100,
+        help='Maximum number of portfolios to process (default: 100, use 0 to process all)'
+    )
     
     args = parser.parse_args()
     
@@ -390,7 +724,16 @@ def main():
     if n_jobs == -1:
         n_jobs = None
     
-    results_df = evaluate_var(config_path=args.config, n_jobs=n_jobs)
+    # Handle max_portfolios: 0 means process all
+    max_portfolios = args.max_portfolios
+    if max_portfolios == 0:
+        max_portfolios = None
+    
+    results_df = evaluate_var(
+        config_path=args.config,
+        n_jobs=n_jobs,
+        max_portfolios=max_portfolios
+    )
     
     print(f"\nResults summary:")
     print(f"  Total rows: {len(results_df)}")

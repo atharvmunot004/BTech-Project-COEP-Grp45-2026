@@ -63,7 +63,8 @@
       "key_insights"
     ],
     "outputs": {
-      "metrics_table": "results/var_metrics.parquet",
-      "summary_report": "results/var_report.md"
+      "metrics_table": "results/classical-risk/var_metrics.parquet",
+      "metrics_json": "results/classical-risk/var_metrics.json",
+      "summary_report": "results/classical-risk/var_report.md"
     }
   }  

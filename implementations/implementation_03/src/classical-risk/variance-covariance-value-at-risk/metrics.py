@@ -98,7 +98,8 @@ def compute_structure_metrics(
             condition_number = np.nan
     
     return {
-        'num_active_assets': num_active_assets,
+        'portfolio_size': num_active_assets,  # Number of assets with non-zero weights
+        'num_active_assets': num_active_assets,  # Alias for portfolio_size
         'hhi_concentration': hhi,
         'effective_number_of_assets': enc,
         'covariance_condition_number': condition_number
