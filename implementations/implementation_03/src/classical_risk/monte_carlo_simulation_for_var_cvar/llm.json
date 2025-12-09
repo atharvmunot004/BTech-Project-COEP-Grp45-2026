@@ -1,20 +1,25 @@
 {
-    "task": "classical_var_evaluation",
+    "task": "monte_carlo_var_cvar_evaluation",
     "inputs": {
       "panel_price_path": "data/preprocessed/panel_price.parquet",
       "portfolio_weights_path": "portfolios/portfolios.parquet"
     },
-    "var_settings": {
+    "monte_carlo_settings": {
       "confidence_levels": [0.95, 0.99],
       "horizons": [1, 10],
-      "estimation_windows": [252]
+      "estimation_windows": [252],
+      "num_simulations": 10000,
+      "random_seed": 42,
+      "distribution_type": "multivariate_normal"
     },
     "modules": {
       "compute_daily_returns": true,
       "compute_portfolio_returns": true,
       "align_returns_and_var": true,
       "rolling_var": true,
+      "rolling_cvar": true,
       "var_violations": true,
+      "cvar_violations": true,
       "accuracy_metrics": ["hit_rate", "violation_ratio", "kupiec", "christoffersen"],
       "tail_metrics": ["mean_exceedance", "max_exceedance"],
       "structure_metrics": ["hhi", "enc", "condition_number"],
@@ -35,7 +40,9 @@
         "max_exceedance",
         "std_exceedance",
         "quantile_loss_score",
-        "rmse_var_vs_losses"
+        "rmse_var_vs_losses",
+        "cvar_mean_exceedance",
+        "cvar_max_exceedance"
       ],
       "portfolio_structure": [
         "num_active_assets",
@@ -50,12 +57,15 @@
       ],
       "runtime": [
         "runtime_per_portfolio_ms",
-        "p95_runtime_ms"
+        "p95_runtime_ms",
+        "simulation_time_ms"
       ]
     },
     "report_sections": [
       "methodology_overview",
+      "monte_carlo_simulation_details",
       "backtesting_results",
+      "var_cvar_comparison",
       "tail_risk_analysis",
       "portfolio_structure_effects",
       "robustness_and_normality_checks",
@@ -63,8 +73,8 @@
       "key_insights"
     ],
     "outputs": {
-      "metrics_table": "results/classical-risk/var_metrics.parquet",
-      "metrics_json": "results/classical-risk/var_metrics.json",
-      "summary_report": "results/classical-risk/var_report.md"
+      "metrics_table": "results/classical_risk/monte_carlo_var_cvar_metrics.parquet",
+      "metrics_json": "results/classical_risk/monte_carlo_var_cvar_metrics.json",
+      "summary_report": "results/classical_risk/monte_carlo_var_cvar_report.md"
     }
-  }  
+  }
