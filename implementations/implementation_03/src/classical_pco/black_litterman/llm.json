@@ -1,0 +1,216 @@
+{
+    "task": "black_litterman_optimization",
+  
+    "inputs": {
+      "panel_price_path": "data/processed/panel_price.parquet",
+      "baseline_portfolios_path": "portfolios/portfolios.parquet",
+      "return_type": "log",
+      "risk_free_rate": 0.0001
+    },
+  
+    "black_litterman_settings": {
+      "model": "black_litterman",
+      "risk_aversion": 2.5,
+      "tau": 0.025,
+  
+      "covariance_estimation": {
+        "method": "sample",
+        "estimation_windows": [252, 500, 750],
+        "shrinkage": {
+          "use_shrinkage": true,
+          "method": "ledoit_wolf"
+        }
+      },
+  
+      "market_equilibrium": {
+        "derive_pi_from_portfolios": true,
+        "market_weight_source": "baseline_portfolios",
+        "use_cap_weighted_benchmark": false,
+        "market_weight_normalization": "sum_to_one"
+      },
+  
+      "views": {
+        "generate_synthetic_views": true,
+        "view_generation_method": "return_differentials",
+        "num_views": 5,
+        "view_type": "absolute_relative_mixed",
+        "uncertainty_matrix": "diagonal",
+        "confidence_levels": [0.50, 0.75, 0.90]
+      },
+  
+      "posterior_settings": {
+        "compute_posterior_returns": true,
+        "posterior_covariance_method": "black_litterman"
+      },
+  
+      "optimization": {
+        "objective": "maximize_posterior_sharpe",
+        "risk_return_tradeoff": {
+          "lambda_values": [0.1, 0.5, 1, 2]
+        },
+        "constraints": {
+          "long_only": true,
+          "fully_invested": true,
+          "no_short_selling": true,
+          "weight_bounds": [0.0, 1.0],
+          "max_weight_per_asset": 0.25
+        },
+        "solver": {
+          "method": "quadratic_programming",
+          "qp_backend": "osqp",
+          "tolerance": 1e-6
+        }
+      },
+  
+      "frontier_settings": {
+        "compute_efficient_frontier": true,
+        "num_portfolios": 50
+      },
+  
+      "random_seed": 42
+    },
+  
+    "modules": {
+      "compute_daily_returns": true,
+      "compute_covariance_matrix": true,
+      "derive_market_equilibrium_returns": true,
+  
+      "generate_synthetic_views": true,
+      "parse_and_scale_views": true,
+  
+      "compute_posterior_bl_returns": true,
+      "compute_posterior_covariance": true,
+  
+      "run_bl_optimizer": true,
+      "generate_efficient_frontier": true,
+      "extract_optimal_portfolios": true,
+  
+      "compute_portfolio_statistics": true,
+      "compute_sharpe_ratio": true,
+      "compute_sortino_ratio": true,
+      "compute_max_drawdown": true,
+  
+      "compare_prior_vs_posterior": true,
+      "view_impact_analysis": true,
+      "uncertainty_sensitivity_analysis": true,
+  
+      "structure_metrics": [
+        "hhi",
+        "effective_number_of_assets",
+        "weight_entropy",
+        "correlation_structure_stability"
+      ],
+  
+      "distribution_metrics": [
+        "skew",
+        "kurtosis",
+        "jarque_bera"
+      ],
+  
+      "runtime_metrics": true
+    },
+  
+    "performance_metrics": {
+      "portfolio_quality": [
+        "expected_return",
+        "volatility",
+        "sharpe_ratio",
+        "sortino_ratio",
+        "max_drawdown",
+        "calmar_ratio",
+        "information_ratio",
+        "tracking_error_vs_market",
+        "alpha_vs_market_portfolio"
+      ],
+  
+      "black_litterman_specific": [
+        "prior_equilibrium_returns",
+        "posterior_returns",
+        "prior_vs_posterior_distance",
+        "prior_vs_posterior_correlation",
+        "view_consistency",
+        "view_contribution_to_weights",
+        "view_impact_magnitude",
+        "tau_sensitivity",
+        "risk_aversion_sensitivity",
+        "lambda_sensitivity",
+        "confidence_level_impact",
+        "omega_uncertainty_impact",
+        "market_equilibrium_weight_distance",
+        "posterior_sharpe_vs_prior_sharpe",
+        "information_gain_from_views"
+      ],
+  
+      "risk_metrics": [
+        "value_at_risk",
+        "conditional_value_at_risk",
+        "downside_deviation",
+        "posterior_variance",
+        "prior_variance",
+        "variance_reduction_from_views"
+      ],
+  
+      "structure": [
+        "num_assets_in_portfolio",
+        "hhi_concentration",
+        "effective_number_of_assets",
+        "weight_entropy",
+        "turnover_vs_market_portfolio",
+        "active_share"
+      ],
+  
+      "normality_checks": [
+        "skewness",
+        "kurtosis",
+        "jarque_bera_p_value"
+      ],
+  
+      "comparison_metrics": [
+        "prior_portfolio_expected_return",
+        "posterior_portfolio_expected_return",
+        "market_portfolio_expected_return",
+        "prior_portfolio_volatility",
+        "posterior_portfolio_volatility",
+        "market_portfolio_volatility",
+        "prior_portfolio_sharpe",
+        "posterior_portfolio_sharpe",
+        "market_portfolio_sharpe"
+      ],
+  
+      "runtime": [
+        "runtime_per_optimization_ms",
+        "p95_runtime_ms",
+        "covariance_estimation_time_ms",
+        "equilibrium_returns_calculation_time_ms",
+        "posterior_calculation_time_ms",
+        "view_processing_time_ms",
+        "solver_time_ms"
+      ]
+    },
+  
+    "report_sections": [
+      "methodology_overview",
+      "black_litterman_theory",
+      "equilibrium_prior_estimation_from_portfolios",
+      "synthetic_view_generation_method",
+      "posterior_distribution_derivation",
+      "optimization_results",
+      "efficient_frontier_analysis",
+      "comparison_with_markowitz_results",
+      "impact_of_views_and_confidence_levels",
+      "robustness_and_sensitivity_analysis",
+      "portfolio_structure_effects",
+      "computational_performance",
+      "key_insights"
+    ],
+  
+    "outputs": {
+      "posterior_returns": "results/classical_optimization/bl_posterior_returns.parquet",
+      "optimal_portfolios": "results/classical_optimization/bl_optimal_weights.parquet",
+      "efficient_frontier": "results/classical_optimization/bl_efficient_frontier.parquet",
+      "metrics_table": "results/classical_optimization/bl_metrics.parquet",
+      "metrics_json": "results/classical_optimization/bl_metrics.json",
+      "summary_report": "results/classical_optimization/bl_report.md"
+    }
+  }
+  

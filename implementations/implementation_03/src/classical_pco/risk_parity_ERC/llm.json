@@ -1,0 +1,172 @@
+{
+    "task": "risk_parity_erc_optimization",
+  
+    "inputs": {
+      "panel_price_path": "data/processed/panel_price.parquet",
+      "baseline_portfolios_path": "portfolios/portfolios.parquet",
+      "return_type": "log"
+    },
+  
+    "risk_parity_settings": {
+      "method": "equal_risk_contribution",
+  
+      "risk_measure": "volatility", 
+      "weighted_risk_contributions": false,
+  
+      "covariance_estimation": {
+        "method": "sample",
+        "estimation_windows": [252, 500, 750],
+        "shrinkage": {
+          "use_shrinkage": true,
+          "method": "ledoit_wolf"
+        }
+      },
+  
+      "constraints": {
+        "long_only": true,
+        "fully_invested": true,
+        "weight_bounds": [0.0, 1.0],
+        "max_weight_per_asset": 0.25
+      },
+  
+      "optimization": {
+        "solver": "nonlinear_programming",
+        "backend": "scipy_slsqp",
+        "tolerance": 1e-8,
+        "max_iterations": 5000
+      },
+  
+      "generalized_rp": {
+        "enable": true,
+        "target_risk_contributions": "equal", 
+        "allow_risk_weight_vectors": false
+      },
+  
+      "random_seed": 42
+    },
+  
+    "modules": {
+      "compute_daily_returns": true,
+      "compute_covariance_matrix": true,
+  
+      "calculate_risk_contributions": true,
+      "run_risk_parity_optimizer": true,
+      "extract_optimal_portfolio": true,
+  
+      "compute_portfolio_statistics": true,
+      "compute_sharpe_ratio": true,
+      "compute_sortino_ratio": true,
+      "compute_max_drawdown": true,
+  
+      "risk_contribution_analysis": true,
+      "covariance_sensitivity_analysis": true,
+      "constraint_impact_analysis": true,
+  
+      "structure_metrics": [
+        "hhi",
+        "effective_number_of_assets",
+        "weight_entropy",
+        "pairwise_correlation_mean"
+      ],
+  
+      "distribution_metrics": [
+        "skew",
+        "kurtosis",
+        "jarque_bera"
+      ],
+  
+      "runtime_metrics": true
+    },
+  
+    "performance_metrics": {
+      "portfolio_quality": [
+        "expected_return",
+        "volatility",
+        "portfolio_variance",
+        "sharpe_ratio",
+        "sortino_ratio",
+        "max_drawdown",
+        "calmar_ratio"
+      ],
+
+      "risk_parity_specific": [
+        "risk_contribution_vector",
+        "risk_contribution_variance",
+        "risk_contribution_std",
+        "risk_contribution_coefficient_of_variation",
+        "max_risk_contribution",
+        "min_risk_contribution",
+        "equal_risk_gap",
+        "volatility_contribution_per_asset",
+        "marginal_risk_contribution_vector",
+        "risk_parity_deviation_score",
+        "risk_concentration_index"
+      ],
+
+      "risk_metrics": [
+        "value_at_risk",
+        "conditional_value_at_risk",
+        "downside_deviation",
+        "semivariance"
+      ],
+
+      "structure": [
+        "num_assets_in_portfolio",
+        "hhi_concentration",
+        "effective_number_of_assets",
+        "weight_entropy",
+        "pairwise_correlation_mean"
+      ],
+
+      "normality_checks": [
+        "skewness",
+        "kurtosis",
+        "jarque_bera_p_value"
+      ],
+
+      "comparison_metrics": [
+        "baseline_portfolio_volatility",
+        "baseline_portfolio_sharpe",
+        "baseline_portfolio_expected_return",
+        "volatility_reduction_vs_baseline",
+        "sharpe_improvement_vs_baseline",
+        "risk_contribution_improvement_vs_baseline",
+        "erc_vs_equal_weight_volatility",
+        "erc_vs_equal_weight_sharpe",
+        "erc_vs_equal_weight_risk_contributions",
+        "difference_in_risk_contributions_vs_baseline"
+      ],
+
+      "runtime": [
+        "runtime_per_optimization_ms",
+        "p95_runtime_ms",
+        "covariance_estimation_time_ms",
+        "risk_contribution_calculation_time_ms",
+        "solver_time_ms"
+      ]
+    },
+  
+    "report_sections": [
+      "methodology_overview",
+      "risk_parity_theory",
+      "equal_risk_contribution_framework",
+      "covariance_estimation_methods",
+      "optimization_procedure",
+      "risk_contribution_results",
+      "portfolio_quality_metrics",
+      "comparison_with_baseline_portfolios",
+      "robustness_and_sensitivity_analysis",
+      "portfolio_structure_effects",
+      "computational_performance",
+      "key_insights"
+    ],
+  
+    "outputs": {
+      "optimal_portfolios": "results/classical_optimization/rp_erc_weights.parquet",
+      "risk_contribution_table": "results/classical_optimization/rp_erc_risk_contributions.parquet",
+      "metrics_table": "results/classical_optimization/rp_erc_metrics.parquet",
+      "metrics_json": "results/classical_optimization/rp_erc_metrics.json",
+      "summary_report": "results/classical_optimization/rp_erc_report.md"
+    }
+  }
+  

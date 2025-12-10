@@ -1,0 +1,140 @@
+{
+    "task": "markowitz_mean_variance_optimization",
+  
+    "inputs": {
+      "panel_price_path": "data/processed/panel_price.parquet",
+      "return_type": "log",
+      "portfolio_universe_path": "portfolios/portfolios.parquet",
+      "risk_free_rate": 0.0001
+    },
+  
+    "markowitz_settings": {
+      "objective": "min_variance", 
+      "risk_return_tradeoff": {
+        "use_risk_aversion": true,
+        "lambda_values": [0.1, 0.5, 1, 2, 5]
+      },
+      "constraints": {
+        "long_only": true,
+        "fully_invested": true,
+        "no_short_selling": true,
+        "weight_bounds": [0.0, 1.0],
+        "max_weight_per_asset": 0.25,
+        "min_num_assets": 1
+      },
+      "covariance_estimation": {
+        "method": "sample",
+        "estimation_windows": [252, 500, 750],
+        "shrinkage": {
+          "use_shrinkage": true,
+          "method": "ledoit_wolf"
+        }
+      },
+      "frontier_settings": {
+        "compute_efficient_frontier": true,
+        "num_portfolios": 100,
+        "risk_levels": "auto"
+      },
+      "expected_return_estimation": {
+        "method": "historical_mean",
+        "use_annualization": true
+      },
+      "optimization_solver": {
+        "method": "quadratic_programming",
+        "qp_backend": "osqp",
+        "tolerance": 1e-6
+      },
+      "random_seed": 42
+    },
+  
+    "modules": {
+      "compute_daily_returns": true,
+      "compute_covariance_matrix": true,
+      "compute_expected_returns": true,
+  
+      "run_markowitz_optimizer": true,
+      "generate_efficient_frontier": true,
+      "extract_optimal_portfolios": true,
+  
+      "compute_portfolio_statistics": true,
+      "compute_sharpe_ratio": true,
+      "compute_sortino_ratio": true,
+      "compute_max_drawdown": true,
+  
+      "optimization_sensitivity_analysis": true,
+      "constraint_impact_analysis": true,
+  
+      "structure_metrics": [
+        "hhi",
+        "effective_number_of_assets",
+        "weight_entropy",
+        "pairwise_correlation_mean"
+      ],
+  
+      "distribution_metrics": [
+        "skew",
+        "kurtosis",
+        "jarque_bera"
+      ],
+  
+      "runtime_metrics": true
+    },
+  
+    "performance_metrics": {
+      "portfolio_quality": [
+        "expected_return",
+        "volatility",
+        "portfolio_variance",
+        "sharpe_ratio",
+        "sortino_ratio",
+        "max_drawdown",
+        "calmar_ratio"
+      ],
+      "structure": [
+        "num_assets_in_portfolio",
+        "hhi_concentration",
+        "effective_number_of_assets",
+        "weight_entropy",
+        "pairwise_correlation_mean"
+      ],
+      "risk_metrics": [
+        "value_at_risk",
+        "conditional_value_at_risk",
+        "downside_deviation"
+      ],
+      "normality_checks": [
+        "skewness",
+        "kurtosis",
+        "jarque_bera_p_value"
+      ],
+      "runtime": [
+        "runtime_per_optimization_ms",
+        "p95_runtime_ms",
+        "covariance_estimation_time_ms",
+        "solver_time_ms"
+      ]
+    },
+  
+    "report_sections": [
+      "methodology_overview",
+      "mean_variance_theory",
+      "covariance_estimation",
+      "efficient_frontier_construction",
+      "portfolio_optimization_results",
+      "risk_return_tradeoff_analysis",
+      "portfolio_structure_effects",
+      "sensitivity_and_constraint_analysis",
+      "robustness_checks",
+      "computational_performance",
+      "key_insights"
+    ],
+  
+    "outputs": {
+      "optimal_portfolios": "results/classical_optimization/markowitz_optimal_weights.parquet",
+      "efficient_frontier": "results/classical_optimization/markowitz_efficient_frontier.parquet",
+      "metrics_table": "results/classical_optimization/markowitz_metrics.parquet",
+      "metrics_json": "results/classical_optimization/markowitz_metrics.json",
+      "summary_report": "results/classical_optimization/markowitz_report.md"
+    }
+  }
+  

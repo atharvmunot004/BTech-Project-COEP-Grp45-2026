@@ -1,0 +1,164 @@
+{
+    "task": "cvar_optimization",
+  
+    "inputs": {
+      "panel_price_path": "data/processed/panel_price.parquet",
+      "return_type": "log",
+      "risk_free_rate": 0.0001,
+      "baseline_portfolios_path": "portfolios/portfolios.parquet"
+    },
+  
+    "cvar_settings": {
+      "risk_measure": "cvar",
+      "confidence_levels": [0.95, 0.99],
+      "horizons": [1],
+      "objective": "min_cvar", 
+      "formulation": "rockafellar_uryasev",
+      "risk_return_tradeoff": {
+        "mode": "cvar_return_frontier",
+        "target_return_grid": [0.0002, 0.0005, 0.001, 0.002],
+        "lambda_cvar": [1.0],
+        "lambda_mean_return": [0.0]
+      },
+      "constraints": {
+        "long_only": true,
+        "fully_invested": true,
+        "no_short_selling": true,
+        "weight_bounds": [0.0, 1.0],
+        "max_weight_per_asset": 0.25,
+        "min_num_assets": 1
+      },
+      "scenario_generation": {
+        "source": "historical",
+        "estimation_windows": [252, 500, 750],
+        "use_block_bootstrap": false,
+        "num_scenarios": null
+      },
+      "optimization_solver": {
+        "method": "linear_programming",
+        "lp_backend": "highs",
+        "tolerance": 1e-6,
+        "max_iterations": 100000
+      },
+      "random_seed": 42
+    },
+  
+    "modules": {
+      "compute_daily_returns": true,
+      "compute_scenario_matrix": true,
+  
+      "setup_cvar_linear_program": true,
+      "run_cvar_optimizer": true,
+      "generate_cvar_return_frontier": true,
+      "extract_optimal_portfolios": true,
+  
+      "compute_portfolio_statistics": true,
+      "compute_sharpe_ratio": true,
+      "compute_sortino_ratio": true,
+      "compute_max_drawdown": true,
+  
+      "post_optimization_risk": {
+        "compute_var": true,
+        "compute_cvar": true,
+        "backtest_cvar": true,
+        "backtest_horizon": 1
+      },
+  
+      "optimization_sensitivity_analysis": true,
+      "constraint_impact_analysis": true,
+  
+      "structure_metrics": [
+        "hhi",
+        "effective_number_of_assets",
+        "weight_entropy",
+        "pairwise_correlation_mean"
+      ],
+  
+      "distribution_metrics": [
+        "skew",
+        "kurtosis",
+        "jarque_bera"
+      ],
+  
+      "runtime_metrics": true
+    },
+  
+    "performance_metrics": {
+      "portfolio_quality": [
+        "expected_return",
+        "volatility",
+        "var",
+        "cvar",
+        "sharpe_ratio",
+        "sortino_ratio",
+        "cvar_sharpe_ratio",
+        "cvar_sortino_ratio",
+        "return_over_cvar",
+        "return_over_var",
+        "max_drawdown",
+        "calmar_ratio",
+        "cvar_calmar_ratio"
+      ],
+      "risk_metrics": [
+        "value_at_risk",
+        "conditional_value_at_risk",
+        "expected_shortfall",
+        "downside_deviation",
+        "semivariance",
+        "tail_ratio",
+        "cvar_sensitivity_to_conf_level",
+        "var_sensitivity_to_conf_level",
+        "cvar_var_ratio",
+        "worst_case_loss",
+        "expected_loss_beyond_cvar"
+      ],
+      "structure": [
+        "num_assets_in_portfolio",
+        "hhi_concentration",
+        "effective_number_of_assets",
+        "weight_entropy",
+        "pairwise_correlation_mean"
+      ],
+      "normality_checks": [
+        "skewness",
+        "kurtosis",
+        "jarque_bera_p_value"
+      ],
+      "tail_risk_analysis": [
+        "tail_index",
+        "extreme_value_risk",
+        "cvar_coherence_check",
+        "cvar_consistency_across_conf_levels"
+      ],
+      "runtime": [
+        "runtime_per_optimization_ms",
+        "p95_runtime_ms",
+        "scenario_construction_time_ms",
+        "solver_time_ms"
+      ]
+    },
+  
+    "report_sections": [
+      "methodology_overview",
+      "cvar_theory_and_definition",
+      "rockafellar_uryasev_linear_program_formulation",
+      "scenario_generation_procedure",
+      "cvar_optimization_results",
+      "cvar_return_frontier_analysis",
+      "comparison_with_markowitz_solutions",
+      "portfolio_structure_effects",
+      "backtesting_and_tail_risk_behavior",
+      "robustness_and_sensitivity_checks",
+      "computational_performance",
+      "key_insights"
+    ],
+  
+    "outputs": {
+      "optimal_portfolios": "results/classical_optimization/cvar_optimal_weights.parquet",
+      "cvar_return_frontier": "results/classical_optimization/cvar_return_frontier.parquet",
+      "metrics_table": "results/classical_optimization/cvar_optimization_metrics.parquet",
+      "metrics_json": "results/classical_optimization/cvar_optimization_metrics.json",
+      "summary_report": "results/classical_optimization/cvar_optimization_report.md"
+    }
+  }
+  

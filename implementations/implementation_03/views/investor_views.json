@@ -1,0 +1,29 @@
+{
+  "absolute_views": [
+    {
+      "asset": "RELIANCE",
+      "return": 0.12,
+      "confidence": 0.75
+    },
+    {
+      "asset": "TCS",
+      "return": 0.10,
+      "confidence": 0.80
+    }
+  ],
+  "relative_views": [
+    {
+      "assets": ["HDFCBANK", "ICICIBANK"],
+      "return_diff": 0.02,
+      "confidence": 0.70,
+      "comment": "HDFCBANK expected to outperform ICICIBANK by 2%"
+    },
+    {
+      "assets": ["INFY", "TCS"],
+      "return_diff": -0.01,
+      "confidence": 0.65,
+      "comment": "TCS expected to outperform INFY by 1%"
+    }
+  ]
+}
+
